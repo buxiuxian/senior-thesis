@@ -81,3 +81,6 @@ python run_sync.py
 - If your working tree is dirty, sync is skipped unless you explicitly confirm cleanup actions in interactive mode.
 - No add/commit/push action is
 - When AI commit generation fails, the script asks whether to use fallback timestamp message.
+
+4. add commit
+5. add something
