@@ -1,0 +1,29 @@
+﻿# Server Configuration
+HOST=0.0.0.0
+PORT=8000
+RELOAD=true
+
+# RSHub Configuration
+RSHUB_BASE_URL=https://rshub.zju.edu.cn
+
+# LLM Configuration (Phase 2)
+OPENROUTER_API_KEY=your_openrouter_key_here
+LLM_MODEL=google/gemini-3-flash-preview
+LLM_TEMPERATURE=1.0
+LLM_MAX_TOKENS=64000
+
+# CORS Configuration
+CORS_ORIGINS=http://localhost:3000,https://rshub.zju.edu.cn
+
+# Credit Billing Configuration
+TASK_SUBMIT_COST=1
+AGENT_CHAT_COST=1
+
+# Logging
+LOG_LEVEL=INFO
+
+# HITL (Human-in-the-Loop) — Plan → Check → Confirm → Execute
+HITL_ENABLED=false
+
+# Skill registry: tiered load (short catalog + selected full docs) to reduce tokens
+SKILL_TIERED_LOAD_ENABLED=true

@@ -1,0 +1,539 @@
+# Passive and Active Multiple Scattering of Forests Using Radiative Transfer Theory With an Iterative Approach and Cyclical Corrections
+
+**Maryam Salim**, *Member, IEEE*, **Shurun Tan**, *Member, IEEE*, **Roger D. De Roo**, *Member, IEEE*,
+**Andreas Colliander**, *Senior Member, IEEE*, and **Kamal Sarabandi**, *Fellow, IEEE*
+
+**Abstract—In this article, a unified framework of vegetation scattering using radiative transfer (RT) theory for passive and active remote sensing of vegetated land surfaces, especially those associated with moderate-to-large vegetation water contents (VWCs), e.g., forest field, is presented. The framework allows for modeling passive and active microwave signatures of the vegetated field with the same physical parameters describing the vegetation structure. RT equations are solved by a numerical iterative approach for both passive and active configurations. This approach allows including higher order scattering, which represents multiple scattering. In fields such as forests with large VWCs, associated with large scattering albedo and optical thickness, multiple scattering effects are critical. In the active iterative approach, cyclical terms are identified and backscattering enhancement is included by doubling contributions from cyclical terms. The method is applied to aspen trees in forest fields to compute the brightness temperatures and backscattering coefficients for passive and active remote sensing configurations, respectively. In the passive configuration, for forest field with VWC of 15 kg/m², the deviation between the zeroth-order brightness temperature, i.e., the tau–omega model results, and multiple scattering results around 40° observation angle, can be as large as 50 K for vertical polarization and 35 K for horizontal polarization. In the active configuration, the deviation between first-order results, which is identical to the distorted Born approximation, and the multiple scattering results around 40° incidence angle, is about 1.6 dB for VV and 0.7 dB for HH polarization. Multiple scattering is shown to be crucial for accurate forward modeling, especially over forested areas. The proposed approach is thus suitable for vegetation scattering with large VWCs. Furthermore, the proposed model is validated with the passive and active L-band sensor (PALS) acquired in SMAPVEX12 measurements in 2012, which demonstrates the applicability of this model.**
+
+**Index Terms—Backscattering enhancement, cyclical corrections, distorted Born approximation (DBA), forest, multiple scattering, passive and active microwave remote sensing, radiative transfer equations (RTEs), tau–omega ($\tau-\omega$) model.**
+
+> Manuscript received November 16, 2020; revised March 26, 2021 and May 6, 2021; accepted May 14, 2021. Date of publication June 2, 2021; date of current version January 12, 2022. This work was supported in part by the Jet Propulsion Laboratory, California Institute of Technology, through the National Aeronautics and Space Administration under Contract NNX17AD66G. The work of Shurun Tan was supported by the Startup Funds from Zhejiang University. *(Corresponding author: Shurun Tan.)*
+>
+> Maryam Salim and Kamal Sarabandi are with the Department of Electrical Engineering and Computer Science, University of Michigan, Ann Arbor, MI 48109 USA (e-mail: maryamsa@umich.edu; saraband@umich.edu).
+>
+> Shurun Tan is with the Zhejiang University/University of Illinois at Urbana–Champaign Institute, Zhejiang University, Haining 314400, China, also with the College of Information Science and Electronic Engineering, Zhejiang University, Hangzhou 310027, China, and also with the Department of Electrical and Computer Engineering, University of Illinois at Urbana–Champaign, Urbana, IL 61801 USA (e-mail: srtan@intl.zju.edu.cn).
+>
+> Roger D. De Roo is with the Department of Climate and Space Sciences and Engineering, University of Michigan, Ann Arbor, MI 48109 USA (e-mail: deroo@umich.edu).
+>
+> Andreas Colliander is with the Jet Propulsion Laboratory, California Institute of Technology, Pasadena, CA 91109 USA (e-mail: andreas.colliander@jpl.nasa.gov).
+>
+> Digital Object Identifier 10.1109/TGRS.2021.3082137
+
+## I. INTRODUCTION
+
+PASSIVE and active microwave remote sensing of vegetated land surface is important as indicated by the rapid growth of the number of microwave radiometers and radars in the L- to X-band frequency range for land surface observation. These include the Advanced Microwave Scanning Radiometer-2 (AMSR2) [1], the Soil Moisture and Ocean Salinity (SMOS) radiometer [2], the NASA-ISRO Synthetic Aperture Radar (NISAR) [3], and the Soil Moisture Active and Passive (SMAP) mission [4]. A unified physical model of vegetated surface for active and passive microwave remote sensing would be beneficial to interpret and synergistically utilize data from these missions, including backscattering coefficients and brightness temperatures [5], [6]. The sensitivity of radar backscatter and radiometer brightness temperature signatures to land surface features is affected strongly by the sensing wavelength, as well as the landscape structure and moisture conditions. Soils are typically covered by heterogeneous vegetation of various types, such as grass, crops, woodlands, and forests. L-band frequency is suitable for remote sensing of soil moisture of vegetated surface with various amounts of vegetation water contents (VWCs) [7], [8].
+
+In passive microwave remote sensing of vegetated land surface, the tau–omega ($\tau-\omega$) model has been primarily adopted over the years. The $\tau-\omega$ model can be derived from the zeroth-order solution of radiative transfer equation (RTE), which does not consider the effect of the scattering phase matrix [9]. In this model, scattering albedo is estimated empirically for specific vegetation types, which is generally much smaller than the physical single scattering albedo, i.e., the ratio of the scattering coefficient over the extinction coefficient of the random media distributed in a random volume [10]. This approach is only valid for small scattering albedo and optical thickness. In [11] and [12], the solution to RTEs is developed to zeroth and first order for vegetation canopy scattering. For moderate scattering albedo when the optical thickness of the layer of vegetation over soil is larger than 0.4, the effects of multiple scattering need to be carefully considered [13]. In this article, an iterative approach is used to solve the passive RTE and the iteration is carried out to higher orders numerically to compute the brightness temperatures. Effects of multiple scattering for vegetation layer with large scattering albedo and optical thickness are illustrated.
+
+For active remote sensing modeling, the distorted Born approximation (DBA) [14] is frequently applied. DBA is used to calculate the backscattering coefficients at different polarizations considering the enhancement factor in the double-bounce scattering mechanism. The double-bounce backscattering for a single particle includes two paths where reflection by the underlying surface can take place after scattering from the particle or before that [15]. Ulaby *et al.* [16] proposed the first implementation of radiative transfer (RT) model for the calculation of polarimetric bistatic scatter from forest-covered terrain. In this model, the trunk layer is modeled using a 2-D RT to maintain the coherence of the long tree trunks in RT formulations. In [17], the first fully coherent model for forest that accounts for the coherence effects of tree structure is proposed. The model is capable of producing phase information needed for simulation of SAR interferometry. It is based on a single scattering model in which very accurate scattering from individual elements is used [18]–[24]. In [25], a first-order backscattering model is proposed. However, DBA and these models ignore the effect of multiple scattering and only account for single scattering. As a result, this method is only valid for vegetations with small optical thickness, such as wheat and canola fields. Ferrazzoli and Guerriero *et al.* [26] include multiple scattering effects for calculating backscattering coefficients using the matrix-doubling method based on the active RT theory [27]. However, this approach did not consider the backscattering enhancement factor for cyclical terms, which also occurs in higher order volume scattering and in bounces from the surface. In [13] and [28], both backscattering enhancement effects and multiple scattering effects are incorporated by solving the active RT equation through numerical iterations and identifying the cyclical terms for enhancement corrections. In this article, we apply this iterative approach with backscattering enhancements under active configurations for calculating backscattering coefficients of tree trunks.
+
+In this article, a unified framework is presented for both active and passive remote sensing of vegetated land surfaces using RT theory that considers multiple scattering effects and backscattering enhancement effects. Earlier in [29] and [30], combined active and passive models are presented without including backscattering enhancement. Other previous models of active and passive RT theories are inconsistent, requiring different sets of parameters for the same vegetated surface [31]. Multiple scattering effects are important in C- and X-bands for moderate vegetation coverage and in L-band for high VWC cases such as tree trunks in forest areas. In this article, the iterative approach is used to solve both the active and passive RT equations with a single-reflective boundary at the bottom of the vegetation layer and negligible reflections from the top (vegetation/air) boundary. The approach we adopted is closely related to [28] where a snow layer with reflective boundaries at both top and bottom is considered. In [28], the iterative approach with cyclical corrections is only applied to active RTE; since the snow layer comprised of snow grains has a regular and smooth phase matrix, the discrete coordinate approach [6] can be readily applied for passive RTEs to consider the multiple scattering effects. However, in this article, the vegetation layer, including large scatterers of tree trunks and branches, is characterized by highly singular phase matrices; the discrete coordinate approach fails so that we seek the iterative approach to solve both active and passive RTEs.
+
+Recently, the numerical Maxwell model of 3-D (NMM3D) simulations of vegetation scattering is proposed and being implemented [32], providing benchmark solutions for vegetation scattering. The approach yields much higher vegetation transmissivity than the $\tau-\omega$ model predictions. In [32], the vegetation structure is decomposed into simple parts, such as small branches, and for each part, the scattering T-matrix is calculated; wave interactions among multiple objects are then solved through the Foldy–Lax multiple scattering equations using the T-matrices. With Monte Carlo statistical averages and the overhead to construct the T-matrices, this hybrid method costs considerable CPU time and memory. This article presents the RTEs that are solved by a numerical iterative approach for both passive and active configurations, which includes multiple scattering of the vegetation and cyclical corrections. The numerical iterative approach predicts significantly different results compared to the $\tau-\omega$ model and the DBA for the passive and active configurations.
+
+This article is organized as follows. In Section II, we review the general RTEs with boundary conditions for both passive and active configurations. In Section III, the DBA method that only considers single scattering is reviewed. Next, in Sections IV and V, the numerical iterative approach for multiple scattering is formulated to solve RTEs under both active and passive configurations, respectively. In Section VI, we compare the results of brightness temperatures using an iterative approach with the $\tau-\omega$ model to show the effect of multiple scattering in soil moisture retrieval. Furthermore, the results of backscattering coefficients for VV and HH polarizations with enhancement factors are compared with DBA and RT results without enhancement, to show the effects of both multiple scattering and backscattering enhancement, respectively. In Section VII, a realistic forest scenario inspired by the SMAPVEX12 campaign measurements is set up and the results of simulated brightness temperatures at L-band are compared with measurements from the airborne passive and active L-band sensor (PALS) acquired in the SMAPVEX12 campaign. Finally, conclusions are drawn in Section VIII.
+
+## II. RT THEORY
+
+The RT theory with a single-reflective boundary at the bottom is typically used for vegetation scattering layer. The reflection off the top boundary (vegetation/air) is negligible and is considered to be zero. The vector RTE is expressed in the following equation [33]:
+
+$$
+\begin{cases}
+\cos \theta \frac{d \overline{I}_u(\theta, \phi, z)}{dz} = -\overline{\overline{\kappa}}_e(\theta) \cdot \overline{I}_u(\theta, \phi, z) + C\overline{\kappa}_a(\theta)T + \overline{S}(\theta, \phi, z) \\
+-\cos \theta \frac{d \overline{I}_d(\theta, \phi, z)}{dz} = -\overline{\overline{\kappa}}_e(\pi - \theta) \cdot \overline{I}_d(\theta, \phi, z) + C\overline{\kappa}_a(\pi - \theta)T + \overline{W}(\theta, \phi, z)
+\end{cases} \tag{1}
+$$
+
+where $C$ is equal to $(k_B/\lambda^2)$ with $k_B$ and $\lambda$ representing the Boltzmann’s constant and the wavelength, respectively, and $T$ represents the temperature of vegetation layer. $\overline{I}_u(\theta, \phi, z)$ and $\overline{I}_d(\theta, \phi, z)$ represent the upward and downward intensities, respectively. Source terms $\overline{S}(\theta, \phi, z)$ and $\overline{W}(\theta, \phi, z)$ represent coupled scattering from other directions of intensity propagation to $\overline{I}_u(\theta, \phi, z)$ and $\overline{I}_d(\theta, \phi, z)$, respectively. These two source terms and the specific intensities $\overline{I}_u$ and $\overline{I}_d$ are functions of three independent variables, the vertical coordinate $z$, the inclination angle $\theta$, between $0$ and $\pi/2$, and the azimuth angle $\phi$, between $0$ and $2\pi$
+
+$$
+\begin{cases}
+\overline{S}(\theta, \phi, z) = \int_{0}^{2\pi} d\phi' \int_{0}^{\frac{\pi}{2}} d\theta' \sin\theta' \left[ \overline{\overline{P}}(\theta, \phi; \theta', \phi') \overline{I}_u(\theta', \phi', z) + \overline{\overline{P}}(\theta, \phi; \pi - \theta', \phi') \overline{I}_d(\theta', \phi', z) \right] \\
+\overline{W}(\theta, \phi, z) = \int_{0}^{2\pi} d\phi' \int_{0}^{\frac{\pi}{2}} d\theta' \sin\theta' \left[ \overline{\overline{P}}(\pi - \theta, \phi; \theta', \phi') \overline{I}_u(\theta', \phi', z) + \overline{\overline{P}}(\pi - \theta, \phi; \pi - \theta', \phi') \overline{I}_d(\theta', \phi', z) \right]
+\end{cases} \tag{2}
+$$
+
+In the RT equations, the source terms $\overline{S}$ and $\overline{W}$ are related to $\overline{I}$ by the scattering phase matrix $\overline{\overline{P}}(\theta, \phi; \theta', \phi')$, as described in (2). The phase matrix is derived from the scattering amplitude of the elementary scatterers using physical models, such as the finite-length cylinder scattering with infinite cylinder approximation (ICA) for the scattering of tree trunk, primary branches, and secondary branches and the thin disk approximation (TDA) for the leaf scattering [6]. $\kappa_e(\theta)$ is the extinction coefficient, which is calculated using the optical theorem from the forward scattering amplitude, and $\kappa_s(\theta)$ is the scattering coefficient derived from the scattering amplitude ($f_{\alpha\beta}$) and integrated over all scattering angles. The subscripts “$\alpha$” and “$\beta$” denote the scattering and incidence polarizations, respectively. $\kappa_a(\theta)$ is the absorption coefficient, which is calculated by subtracting the scattering coefficient from the extinction coefficient.
+
+The boundary conditions for active RT theory are expressed in the following equation:
+
+$$
+\begin{cases}
+\overline{I}_d(\theta, \phi, z=d) = \overline{I}_0 \delta(\cos\theta - \cos\theta_0)\delta(\phi - \phi_0) \\
+\overline{I}_u(\theta, \phi, z=0) = \overline{\overline{r}}_{12}(\theta) \overline{I}_d(\theta, \phi, z=0)
+\end{cases} \tag{3}
+$$
+
+where the $\overline{I}_0$ term represents the incident wave. The boundary conditions of the specific intensity in passive RT are shown in the following equation:
+
+$$
+\begin{cases}
+\overline{I}_d(\theta, z=d) = 0 \\
+\overline{I}_u(\theta, z=0) = \overline{\overline{r}}_{12} \overline{I}_d(\theta, z=0) + C (\overline{\overline{1}} - \overline{\overline{r}}_{12}) \overline{T}_2.
+\end{cases} \tag{4}
+$$
+
+In (3) and (4), $\overline{\overline{r}}_{12}$ is the Fresnel reflectivity matrix for the Stokes parameters at the vegetation/soil boundary and $T_2$ is the physical temperature of soil. $T_2$ is stacked into a vector in (4) to facilitate the mathematical formulation. The Kirchhoff approximation [34] is used to account for the effects of interface roughness where the Fresnel reflectivity of power for horizontal and vertical polarizations, $r_h$ and $r_v$, respectively, is multiplied by an attenuation factor $\exp(-4(k_0 s \cos\theta)^2)$, where $s$ is the rms height of the vegetation/soil interface and $k_0$ is the wavenumber in the vegetation layer, which is approximated to be the free-space wavenumber, while the bistatic scattering from the rough interface is ignored
+
+$$
+\begin{cases}
+r_h = \left| \frac{\cos\theta_1 - \sqrt{\frac{\epsilon_2}{\epsilon_1} - \sin^2\theta_1}}{\cos\theta_1 + \sqrt{\frac{\epsilon_2}{\epsilon_1} - \sin^2\theta_1}} \right|^2 \exp(-4(k_0 s \cos\theta)^2) \\
+r_v = \left| \frac{\frac{\epsilon_2}{\epsilon_1}\cos\theta_1 - \sqrt{\frac{\epsilon_2}{\epsilon_1} - \sin^2\theta_1}}{\frac{\epsilon_2}{\epsilon_1}\cos\theta_1 + \sqrt{\frac{\epsilon_2}{\epsilon_1} - \sin^2\theta_1}} \right|^2 \exp(-4(k_0 s \cos\theta)^2)
+\end{cases} \tag{5}
+$$
+
+where $\epsilon_1$ represents the permittivity of the layer of vegetation and $\epsilon_2$ denotes the soil permittivity. The above passive and active RTEs are of the same form and the extinction, scattering, and attenuation computations are based on the same physical model. This consistent formulation using the same physical scattering parameters provides a unified framework for active and passive remote sensing modeling.
+
+## III. COMBINED ACTIVE AND PASSIVE MODELS USING DBA
+
+Combination of active and passive models is possible by relating emissivity to the bistatic scattering coefficient when the scene temperature is assumed homogeneous vertically. In this scenario, emissivity is one minus reflectivity, which can be computed from integration of the bistatic scattering coefficients over the upper hemisphere of solid angles [34]
+
+$$
+e_q = 1 - \frac{1}{4\pi} \int_{0}^{\pi/2} d\theta_s \sin\theta_s \int_{0}^{2\pi} d\phi_s \sum_{p=v,h} \gamma_{pq}(\theta_s, \phi_s; \theta_i, \phi_i) \tag{6}
+$$
+
+where $\gamma_{pq}$ is the bistatic scattering coefficient and “$p$” and “$q$” denote the polarizations of the scattered and incident waves, respectively. “$p$” and “$q$” can be either the vertical or horizontal polarization. In [35], $\gamma_{pq}$ is calculated using DBA. In DBA, the total bistatic scattering coefficient is calculated as the sum of three scattering terms corresponding to the three scattering mechanisms of volume scattering ($\gamma_{pq}^{\text{vol}}$), double-bounce scattering ($\gamma_{pq}^{\text{db}}$), and surface scattering ($\gamma_{pq}^{\text{surf}}$), as shown in Fig. 1. The double-bounce scattering contains two scattering terms. The first term, $\gamma_{pq}^{\text{db,sr}}$, is the scattering from a scatterer that is then reflected by the surface, and the second term, $\gamma_{pq}^{\text{db,rs}}$, corresponds to scattering of the reflected wave by a scatterer.
+
+[Figure 1: Scattering mechanisms in DBA. It contains surface scattering, double-bounce scattering, and volume scattering.]
+
+[Figure 2: Illustration of a vegetation layer above soil and the microwave emission mechanism for passive configuration.]
+
+For copolarizations and in the backward scattering direction, these two terms are identical and in phase by nature, and thus, the scattering fields add up coherently and constructively. The backscattering coefficient is
+
+$$
+\sigma_{pq}(\theta_{0i}, \phi_i) = \gamma_{pq}(\theta_{0i}, \phi_i + \pi, \theta_{0i}, \phi_i) \cos\theta_{0i} \tag{7}
+$$
+
+where $\theta_{0i}$ is the observation angle of the instrument with respect to nadir. Thus, the total backscattering is
+
+$$
+\sigma_{pp} = \sigma_{pp}^{\text{vol}} + 2 \times \sigma_{pp}^{\text{db}} + \sigma_{pp}^{\text{surf}} \tag{8}
+$$
+
+with
+
+$$
+\sigma_{pp}^{\text{db}} = \sigma_{pp}^{\text{db,sr}} + \sigma_{pp}^{\text{db,rs}}. \tag{9}
+$$
+
+In (8), the factor 2 before $\sigma_{pp}^{\text{db}}$ accounts for the constructive coherent wave interference between the two double-bounce scattering mechanisms. Such wave interference leads to backscattering enhancement in the first scattering order. Backscattering also occurs in cross polarization, but the relations are more complicated. Formulations to compute $\gamma_{pq}$ in (6) is detailed in [35].
+
+Despite its wide usage, it is important to note that there are three important assumptions in the DBA that might not be valid.
+
+1) Scatterers are uniformly distributed in the vegetation layer.
+2) Only single scattering from vegetation is considered.
+3) The position of the vegetation scatterer has no correlation with that of other scatterers.
+
+In this article, we try to address the second limitation by incorporating multiple scattering effects in the RT formulation.
+
+## IV. MULTIPLE SCATTERING IN PASSIVE REMOTE SENSING USING ITERATIVE SOLUTION OF RTE
+
+Multiple scattering in passive remote sensing is shown in Fig. 2. In this section, we present the formulation of passive RTE to include the effect of multiple scattering in the modeling of brightness temperatures. Passive RTE with a single-reflective boundary at the bottom is assumed [36]. With statistical azimuthal symmetry, the passive RTEs are rewritten as follows with no explicit azimuthal angle $\phi$ dependence:
+
+$$
+\begin{cases}
+\cos \theta \frac{d \overline{I}_u(\theta, z)}{dz} = -\overline{\overline{\kappa}}_e(\theta) \cdot \overline{I}_u(\theta, z) + C\overline{\kappa}_a(\theta)T + \overline{S}(\theta, z) \\
+-\cos \theta \frac{d \overline{I}_d(\theta, z)}{dz} = -\overline{\overline{\kappa}}_e(\pi - \theta) \cdot \overline{I}_d(\theta, z) + C\overline{\kappa}_a(\pi - \theta)T + \overline{W}(\theta, z)
+\end{cases} \tag{10}
+$$
+
+where
+
+$$
+\begin{cases}
+\overline{S}(\theta, z) = \int_{0}^{\frac{\pi}{2}} d\theta' \sin\theta' \left[ \overline{\overline{p}}(\theta; \theta') \overline{I}_u(\theta', z) + \overline{\overline{p}}(\theta; \pi - \theta') \overline{I}_d(\theta', z) \right] \\
+\overline{W}(\theta, z) = \int_{0}^{\frac{\pi}{2}} d\theta' \sin\theta' \left[ \overline{\overline{p}}(\pi - \theta; \theta') \overline{I}_u(\theta', z) + \overline{\overline{p}}(\pi - \theta; \pi - \theta') \overline{I}_d(\theta', z) \right].
+\end{cases} \tag{11}
+$$
+
+In the passive RTEs, the phase matrix $\overline{\overline{p}}$ has no $\phi$ dependence due to statistical azimuthal symmetry, and it is related to $\overline{\overline{P}}$ through the following equation:
+
+$$
+\overline{\overline{p}}(\theta, \theta') = \int_{0}^{2\pi} d\phi \overline{\overline{P}}(\theta, \phi; \theta', \phi'). \tag{12}
+$$
+
+To derive the iterative solution, the passive RTE in differential form, as illustrated in (10), is first cast into a set of coupled integral equations, as shown in (13), in scalar form
+
+$$
+\begin{cases}
+I_u(\theta, z) = C \sec\theta \int_{0}^{z} dz' \exp(\kappa_e(\theta) \sec\theta(z' - z)) [\kappa_a(\theta)T + S(\theta, z')] + C \exp(-\kappa_e(\theta) \sec\theta z) r_{12} \sec\theta \int_{0}^{d} dz' \exp(-\kappa_e(\pi - \theta) \sec\theta z') [\kappa_a(\pi - \theta)T + W(\theta, z')] + C \exp(-\kappa_e(\theta) \sec\theta z)(1 - r_{12})T_2 \\
+I_d(\theta, z) = C \sec\theta \int_{z}^{d} dz' \exp(-\kappa_e(\pi - \theta) \sec\theta(z' - z)) [\kappa_a(\pi - \theta)T + W(\theta, z')].
+\end{cases} \tag{13}
+$$
+
+The integral equations are then solved iteratively by considering the phase matrix as a small argument and balancing orders [28], [37], [38]. Therefore, the zeroth-order solution is achieved by setting $\overline{S}$ and $\overline{W}$ to be zero, while the first-order solution is obtained by substituting zeroth-order solution into $\overline{S}$ and $\overline{W}$ and evaluating the integrals. Following the same procedure, higher order solution of intensity is obtained.
+
+[Figure 3: Zeroth-order solution of brightness temperature which is a scattering free medium. It contains three terms: upward emission of ground, upward emission from the vegetation layer, and downward emission from the vegetation layer reflected by the ground.]
+
+The zeroth-order intensities are explicitly given in (14). This leads to the $\tau-\omega$ model where scattering from the vegetation only contributes to extinction of coherent wave propagation
+
+$$
+\begin{cases}
+I_u^{(0)}(\theta, z) = C \sec\theta \int_{0}^{z} dz' \exp(\kappa_e(\theta)\sec\theta(z' - z)) \kappa_a(\theta)T + C \exp(-\kappa_e(\theta)\sec\theta z)r_{12}(\theta) \sec\theta \int_{0}^{d} dz' \exp(-\kappa_e(\pi - \theta)\sec\theta z') \kappa_a(\pi - \theta)T + C \exp(-\kappa_e(\theta)\sec\theta z)(1 - r_{12}(\theta))T_2 \\
+I_d^{(0)}(\theta, z) = C \sec\theta \int_{z}^{d} dz' \exp(-\kappa_e(\pi - \theta)\sec\theta(z' - z)) \kappa_a(\pi - \theta)T.
+\end{cases} \tag{14}
+$$
+
+The zeroth-order brightness temperature is shown in (16) related to the zeroth-order upward intensity through (16) and by carrying out the z-integrals. It contains three terms that correspond to upward emission from the soil, upward emission from the vegetation layer, and downward emission from the vegetation layer reflected by the ground as shown in Fig. 3
+
+$$
+T_B^{(0)} = \frac{I_u^{(0)}(z=d, \theta)}{C} \tag{15}
+$$
+
+$$
+\begin{cases}
+T_B^{(0)} = T_2(1 - r_{12})e^{-\kappa_e d \sec(\theta)} \\
++ \frac{\kappa_a T}{\kappa_e} (1 - e^{-\kappa_e d \sec(\theta)}) \\
++ \frac{\kappa_a T r_{12}}{\kappa_e} (1 - e^{-\kappa_e d \sec(\theta)}) e^{-\kappa_e d \sec(\theta)}.
+\end{cases} \tag{16}
+$$
+
+Higher order upward and downward intensities are computed as follows. The $(n + 1)$th order is related to the $n$th order, $n \ge 0$ by
+
+$$
+\begin{cases}
+I_u^{(n+1)}(\theta, z) = \sec\theta \int_{0}^{z} dz' \exp(\kappa_e(\theta)\sec\theta(z' - z)) S^{(n+1)}(\theta, z') + \exp(-\kappa_e(\theta)\sec\theta z)r_{12}(\theta)\sec\theta \int_{0}^{d} dz' \exp(-\kappa_e(\pi - \theta)\sec\theta z') W^{(n+1)}(\theta, z') \\
+I_d^{(n+1)}(\theta, z) = \sec\theta \int_{z}^{d} dz' \exp(-\kappa_e(\pi - \theta)\sec\theta(z' - z)) W^{(n+1)}(\theta, z').
+\end{cases} \tag{17}
+$$
+
+Note that (13)–(17) are put in scalar forms that apply to both vertical and horizontal polarizations. These are following the assumption that $\kappa_e$ and $r_{12}$ are diagonal matrices. To reflect the vector nature of RTEs arising from volume scattering, we update the source term $\overline{S}$ and $\overline{W}$ polarimetrically
+
+$$
+\begin{cases}
+\overline{S}^{(n+1)}(\theta, z) = \int_{0}^{\pi/2} d\theta' \overline{\overline{p}}(\theta, \theta') \cdot \overline{I}_u^{(n)}(\theta', z) + \int_{0}^{\pi/2} d\theta' \overline{\overline{p}}(\theta, \pi - \theta') \cdot \overline{I}_d^{(n)}(\theta', z) \\
+\overline{W}^{(n+1)}(\theta, z) = \int_{0}^{\pi/2} d\theta' \overline{\overline{p}}(\pi - \theta, \theta') \cdot \overline{I}_u^{(n)}(\theta', z) + \int_{0}^{\pi/2} d\theta' \overline{\overline{p}}(\pi - \theta, \pi - \theta') \cdot \overline{I}_d^{(n)}(\theta', z).
+\end{cases} \tag{18}
+$$
+
+Higher order intensities can be derived by substituting $\overline{I}^{(0)}$ into $\overline{I}^{(1)}$ and $\overline{I}^{(1)}$ into $\overline{I}^{(2)}$. The procedure can be extended to any order, where $\overline{S}^{(n+1)}$ and $\overline{W}^{(n+1)}$ will be updated from $\overline{I}^{(n)}$. Finally, brightness temperature is obtained by summing up contributions from all orders as illustrated in (19). The process is repeated until the brightness temperature converges
+
+$$
+T_B = \frac{\sum_{n=0}^{\infty} I_u^{(n)}(z=d, \theta)}{C}. \tag{19}
+$$
+
+## V. SOLUTION TO ACTIVE RTE WITH MULTIPLE SCATTERING AND BACKSCATTERING ENHANCEMENT
+
+In this section, we review the numerical iterative approach developed in [39] and [40] to solve the active RTE where iteration is numerically carried out to higher orders, and cyclical corrections are applied to all the cyclical terms to account for the backscattering enhancement effects in the copolarization. Fig. 4 shows the scattering mechanism of active configuration for a vegetation layer over soil.
+
+The zeroth-order solution of upward and downward intensity for active RT equations is shown in the following equation [28]:
+
+$$
+\begin{cases}
+\overline{I}_u^{(0)}(z, \theta, \phi) = \overline{\overline{r}}_{12} \exp(-\overline{\overline{\kappa}}_e(z+d)\sec\theta) \overline{I}_0 \delta(\cos\theta - \cos\theta_0)\delta(\phi - \phi_0) \\
+\overline{I}_d^{(0)}(z, \theta, \phi) = \exp(\overline{\overline{\kappa}}_e(z-d)\sec\theta) \overline{I}_0 \delta(\cos\theta - \cos\theta_0)\delta(\phi - \phi_0).
+\end{cases} \tag{20}
+$$
+
+For high orders, the $n$th order solution relates to the $(n-1)$th order solution recursively
+
+$$
+\begin{cases}
+\overline{I}_u^{(n+1)}(\theta, \phi, z) = \sec\theta \int_{0}^{z} dz' \exp(\overline{\overline{\kappa}}_e(\theta)\sec\theta(z' - z)) \overline{S}^{(n+1)}(\theta, \phi, z') + \exp(-\overline{\overline{\kappa}}_e(\theta)\sec\theta z) \overline{\overline{r}}_{12}(\theta) \sec\theta \int_{0}^{d} dz' \exp(-\overline{\overline{\kappa}}_e(\pi - \theta)\sec\theta z') \overline{W}^{(n+1)}(\theta, \phi, z') \\
+\overline{I}_d^{(n+1)}(\theta, \phi, z) = \sec\theta \int_{z}^{d} dz' \exp(-\overline{\overline{\kappa}}_e(\pi - \theta)\sec\theta(z' - z)) \overline{W}^{(n+1)}(\theta, \phi, z')
+\end{cases} \tag{21}
+$$
+
+where the source terms $\overline{S}^{(n)}$ and $\overline{W}^{(n)}$ can be updated from a lower order solution $\overline{I}^{(n-1)}$
+
+$$
+\begin{cases}
+\overline{S}^{(n+1)}(\theta, \phi, z) = \int_{0}^{\pi/2} d\theta' \int_{0}^{2\pi} d\phi' \overline{\overline{P}}(\theta, \phi, \theta', \phi') \cdot \overline{I}_u^{(n)}(\theta', \phi', z) + \int_{0}^{\pi/2} d\theta' \int_{0}^{2\pi} d\phi' \overline{\overline{P}}(\theta, \phi, \pi - \theta', \phi') \cdot \overline{I}_d^{(n)}(\theta', \phi', z) \\
+\overline{W}^{(n+1)}(\theta, \phi, z) = \int_{0}^{\pi/2} d\theta' \int_{0}^{2\pi} d\phi' \overline{\overline{P}}(\pi - \theta, \phi, \theta', \phi') \cdot \overline{I}_u^{(n)}(\theta', \phi', z) + \int_{0}^{\pi/2} d\theta' \int_{0}^{2\pi} d\phi' \overline{\overline{P}}(\pi - \theta, \phi, \pi - \theta', \phi') \cdot \overline{I}_d^{(n)}(\theta', \phi', z).
+\end{cases} \tag{22}
+$$
+
+Note that (21) and (22) are in the same form as in (17) and (18), respectively, except for the explicit $\phi$-dependence. The angular integrals in $\overline{S}^{(1)}(\theta, \phi, z)$ and $\overline{W}^{(1)}(\theta, \phi, z)$ are evaluated due to the Dirac delta functions in $\overline{I}^{(0)}$. Therefore, the expressions for the zeroth- and first-order solutions can be derived explicitly [28]. For high orders, the intensity $I$ is discretized along its three dimensions and computed numerically following (21) and (22). This process is continued until the backscattering coefficient converges. In [28], the angular integrals in (21) are evaluated by the Gaussian–Legendre quadrature for $\theta$-integral and trapezoidal quadrature for $\phi$-integral. The $z$-integrals in (22) are solved by the trapezoidal quadrature rule. Similar quadrature rules are adopted in solving the passive RTEs iteratively.
+
+[Figure 4: Illustration of a vegetation layer above soil and the microwave scattering mechanism under active configuration.]
+
+Distinct from the iterative solution of the passive RTE, where we directly sum up the contribution from one scattering order, in the active iterative solution, we need to keep track of contribution from each scattering mechanism. This is to facilitate the subsequent cyclical corrections to be applied to the cyclical terms. Such cyclical correction accounts for backscattering enhancement. Fig. 5 shows the backscattering enhancement mechanism in double-bounce scattering. The scattering by particle can occur before the ground reflection or after the ground reflection. In conventional RT theory, the intensities of the two paths add up incoherently. This is not true in the backward scattering direction, where the two fields add up coherently, doubling the contribution from incoherent additions. Such cyclical corrections are included in the DBA for the first-order scattering, and the iterative approach extends such corrections to any higher orders. Of special interest is the explicit solution to (21) for first-order scattering. With the cyclical correction as shown in Fig. 5, this leads to the backscattering coefficient solution, in (23), where the first two terms represent volume scattering and double-bounce scattering, respectively. This is in agreement with the results of DBA, as shown in the following equation:
+
+$$
+\begin{aligned}
+\sigma^{(1)}(\theta_0, \phi_0) &= 4\pi \cos\theta_0 \{ P(\theta_0, \pi + \phi_0; \pi - \theta_0, \phi_0) \\
+&\quad \times \frac{1 - \exp(-2\kappa_e(\theta_0)d \sec\theta_0)}{2\kappa_e(\theta_0)} + 4r(\theta_0) \\
+&\quad \times P(\pi - \theta_0, \pi + \phi_0; \pi - \theta_0, \phi_0)d \sec\theta_0 \\
+&\quad \times \exp(-2\kappa_e(\theta_0)d \sec\theta_0) + r^2(\theta_0) \\
+&\quad \times P(\pi - \theta_0, \pi + \phi_0; \theta_0, \phi_0) \\
+&\quad \times \exp(-2\kappa_e(\theta_0)d \sec\theta_0) \\
+&\quad \times \frac{1 - \exp(-2\kappa_e(\theta_0)d \sec\theta_0)}{2\kappa_e(\theta_0)}.
+\end{aligned} \tag{23}
+$$
+
+[Figure 5: Cyclical paths corresponding to double-bounce scattering. In solid path, reflection occurs after volume scattering, and in dashed path, reflection occurs before volume scattering.]
+
+[Figure 6: RT theory assumes uniformly distributed discrete scatterers for a tree model.]
+
+## VI. NUMERICAL RESULTS
+
+The present iterative RT method incorporates multiple scattering effects for a layer of random media with large optical thickness and scattering albedo. In active RT, the correction of contributions from cyclical terms allows us to consider the backscattering enhancement effects. To illustrate the impact of the proposed new model on brightness temperature and radar backscattering cross sections for vegetated area, a realistic simulation is set up. In support of investigations related to the SMAP mission, we considered an L-band radiometer and radar at an incidence angle of 40° with a land cover type of aspen trees. For the purpose of this simulation, the measured parameters acquired from the SMAPVEX12 campaign are applied to the model. Trees are considered as discrete scatterers of tree trunks, primary branches, secondary branches, and leaves.
+
+In RTE, the scatterers, including trunks, branches, and leaves, are assumed to be uniformly distributed in the 3-D space, as shown in Fig. 6.
+
+The scattering coefficient, absorption coefficient, and extinction coefficient and phase matrix are calculated using the ICA and TDA assuming independent scattering and incoherent addition from multiple cylinders and disks. ICA is used for tree trunks, primary branches, and secondary branches and TDA is used for simulation of aspen leaves modeled with circular disks [34]. The vegetation parameters are given in Table I.
+
+The probability distribution function of the Eulerian angles $\alpha$ and $\beta$ of the cylinder or disk axis is
+
+$$
+p(\alpha, \beta) = \begin{cases}
+\frac{1}{2\pi} \frac{1}{1 - \cos\Delta\beta}, & \text{for } 0 \le \beta \le \Delta\beta \\
+0, & \text{otherwise}
+\end{cases} \tag{24}
+$$
+
+**TABLE I**
+VEGETATION PARAMETERS FOR MEDIUM ASPEN TREES OF FORESTRY AREAS SOUTHWEST OF WINNIPEG, CANADA, BASED ON MEASUREMENTS COLLECTED DURING SMAPVEX12 CAMPAIGN. TREES ARE MODELED WITH TRUNKS, PRIMARY BRANCHES (PB), SECONDARY BRANCHES (SB), AND LEAVES (L). THE LEAVES' THICKNESS AND RADIUS ARE NOT REPORTED IN THE SMAPVEX12 AND ARE CONSIDERED TO BE 1 MM AND 2 CM, RESPECTIVELY
+
+| Parameter | Value | Parameter | Value |
+| :--- | :--- | :--- | :--- |
+| Trunk Height | 7.85 m | PB Volumetric Moisture | 0.501 |
+| Trunk Diameter | 15 cm | SB Length | 55.5 cm |
+| Trunk Density | 0.24/m² | SB Diameter | 1.12 cm |
+| Trunk Dielectric | 25+7i | SB Density | 143/tree |
+| PB Length | 1.41 m | SB Orientation | 35°-90° |
+| PB Diameter | 2.88 cm | SB Volumetric Moisture | 0.444 |
+| PB Density | 13/tree | L density | 1648/PB |
+| PB Orientation | 30°-90° | L Volumetric Moisture | 0.58 |
+
+where $\alpha$ and $\beta$ are the orientation angles of the body axis of the cylinder and disk, respectively, $\alpha$ is the azimuthal direction, and $\beta$ is the elevation angle from the vertical direction (+z-axis). Equation (24) assumes that the cylinders and disks are uniformly distributed in a specified range of elevation angles. In the following numerical examples, the ranges of the elevation angles $\Delta\beta$ for primary branches and secondary branches are reported in Table I based on the campaign’s measurements and $\alpha$ is uniformly distributed from 0° to 360°. The tree trunks are assumed to be vertical, and the leaves are assumed to be uniformly distributed in all directions.
+
+The orientation average for the phase matrix and coefficients is taken as shown in (25) using the extinction coefficient as an example
+
+$$
+< \kappa_e > = \int_{0}^{2\pi} d\alpha \int_{0}^{\Delta\beta} \sin\beta d\beta p(\alpha, \beta) \kappa_e(\alpha, \beta). \tag{25}
+$$
+
+The vegetation layer is characterized by its VWC, which is related to the tree parameters as follows, considering trunks, branches, and leaves:
+
+$$
+\text{VWC}_{\text{tree}} = \text{VWC}_{\text{trunk}} + \text{VWC}_{\text{primary branches}} + \text{VWC}_{\text{secondary branches}} + \text{VWC}_{\text{leaves}}. \tag{26}
+$$
+
+Equation (27) is the example of tree trunk’s VWC. The VWC of each part of the tree is calculated similarly
+
+$$
+\text{VWC}_{\text{trunk}} = \rho_{\text{water}} \pi r_{\text{trunk}}^2 L_{\text{trunk}} m_{\text{veg,trunk}} N_A \tag{27}
+$$
+
+where $\rho_{\text{water}} = 10^3$ kg/m³ is the density of water. For VWC = 15 kg/m², which is reported in the SMAPVEX12 campaign for medium aspen trees, the calculated density is $N_A =$ 0.24 trees/m². For simplicity, in the analysis, when we modify VWC, we do so by scaling $N_A$. A rough soil surface is assumed under the vegetation layer with an rms height of 1 cm. In the following calculations, the microwave frequency is 1.41 GHz (L-band). The dielectric constant of tree is calculated using [41] and the dielectric constant of soil is calculated from the Mironov model [42] with soil moisture of 20% and clay fraction of 19%.
+
+Fig. 7 shows the absorption and scattering cross sections per tree for the tree trunk, primary branches, secondary branches, and leaves for both vertical and horizontal polarizations as a function of incidence angle. The cross section of each element, namely primary or secondary branches, or leaves, is multiplied by the number of elements per tree.
+
+[Figure 7: Absorption and scattering cross sections per tree, in m²/tree, of (a) tree trunk, (b) primary branches, (c) secondary branches, and (d) leaves with specifications of Table I as a function of the incident angle.]
+
+Results show that for the tree trunk, both scattering coefficients and absorption coefficients increase with the incidence angle, and the scattering coefficients exceed the absorption coefficient around 15° for the vertical polarization and 25° for the horizontal polarization. The scattering coefficients of the vertical polarization are in general larger than that of the horizontal polarization for a tree trunk. In primary and secondary branches, the orientation average is considered and the results for horizontal polarization are larger than vertical polarization. For leaves and secondary branches, the absorption coefficients are dominant over the scattering coefficients.
+
+Numerical iterations up to fourth order are performed for passive RTEs. Fig. 8(a) shows the brightness temperature up to fourth order using multiple scattering model versus observation angle. In Fig. 8(b), the contributions from each order are shown. At 40°, contributions from zeroth up to second order are significant with contribution percentages of 79%, 15.6%, and 3.8% for vertical polarization and 82.9%, 12.84%, and 3.2% for horizontal polarization. These results clearly show the importance of including multiple scattering effects for large scattering albedo and optical thickness. These effects are less significant near nadir and grazing.
+
+Fig. 9 shows the brightness temperature results for the zeroth-order contribution, which is the $\tau-\omega$ model for both physical and empirical parameters, and results including contributions up to fourth order using the proposed multiple scattering model. When we calculate the tau and albedo using computed extinction and absorption coefficients, we call them physical parameters, while those that have been calculated using measurements and matched to the tau-omega ($\tau-\omega$) model are called empirical parameters. The results of bare soil are also given for reference. It is shown that the $\tau-\omega$ model based on physical parameters derived from the calculated extinction and absorption coefficient does not capture correctly either the value of brightness temperature nor the angular pattern of brightness temperature. The black dot shows the $\tau-\omega$ model’s result based on empirical parameters reported in the algorithm theoretical basis document (ATBD) of SMAP [43]. The empirical parameters are reported for deciduous broadleaf forests at 40°, which predicts higher brightness temperature than the $\tau-\omega$ model based on physical parameters. The empirical parameters predict a lower value albedo, $\omega = 0.07$, which results in higher brightness temperature. At 40°, the difference between the passive iterative RTE and the $\tau-\omega$ model is more than 55.5 K for vertical polarization and 38 K for horizontal polarization, which confirms the importance of multiple scattering effects.
+
+[Figure 8: (a) L-band brightness temperatures with multiple scattering model up to fourth order versus observation angle and (b) contribution from different orders to the brightness temperatures. The model is applied to the forest area with medium aspen trees with VWC of 15 kg/m² and density of 0.24 trees/m². The medium temperature is 300 K. The soil surface has rms height of 1 cm and moisture of 0.2 m³/m³.]
+
+[Figure 9: Brightness temperatures versus observation angles with up to fourth-order multiple scattering model, $\tau-\omega$ model based on physical and empirical parameters, and the bare soil at L-band. The empirical parameters are derived from ATBD of SMAP [43]. Medium aspen trees are considered with VWC of 15 kg/m² and density of 0.24 trees/m². The medium temperature is 300 K. The soil has an rms height of 1 cm and moisture of 0.2 m³/m³. (a) Vertical polarization. (b) Horizontal polarization.]
+
+Fig. 10 shows the brightness temperature as a function of soil moisture at 40° observation angle. Brightness temperature is calculated using both the passive iterative RT theory up to fourth order and the $\tau-\omega$ model for two cases of VWC of 15 kg/m² and VWC of 1 kg/m² for both polarizations. The results for bare soil are also included for comparison. In general, scattering from the layer of vegetation decreases the sensitivity of brightness temperature to soil moisture. The $\tau-\omega$ model also predicts lower values of the brightness temperatures for thick vegetation layers such as forests.
+
+Next, we investigate the active iterative RT theory with backscattering enhancement corrections when applied to tree trunks. To emphasize the effects of multiple scattering from vegetation, we explicitly exclude the surface scattering contributions in the backscattering results to be reported. As the focus of this article is the effect of multiple scattering by the vegetation, general bistatic surface scattering is not considered.
+
+[Figure 10: Brightness temperatures versus soil moisture with up to fourth-order multiple scattering model, $\tau-\omega$ model, and for the bare soil case at 40° at L-band for VWC of 15 kg/m² and 1 kg/m². The soil has an rms height of 1 cm. (a) Vertical polarization. (b) Horizontal polarization.]
+
+[Figure 11: Backscatter contributions [m²/m²] up to 4th order for trees with VWC = 15 kg/m² and density of 0.24 stems/m² with the soil moisture of 0.2 m³/m³ and roughness of 1 cm at L-band at 40°.]
+
+To clearly depict the contribution to backscatter from different scattering orders and the effects of backscattering enhancements, in Fig. 11, we show the accumulative contribution to backscatters in bar plots for both VV and HH polarizations, both with and without cyclical corrections. The results are computed at L-band, at 40° incidence angle for VWC = 15 kg/m² and soil moisture = 0.2 m³/m³. It is evident that the backscattering enhancement almost doubles the contribution from each scattering order. The HH backscatter is also shown to be stronger than the VV due to a smaller optical thickness and a larger surface reflectivity, which leads to a larger contribution from bounces from the soil. The HH backscatter also seems to have faster convergence with respect to scattering orders compared to VV, consistent with a smaller optical thickness.
+
+Fig. 12 compares the sensitivity of backscatter to soil moisture for different VWCs: one smaller VWC case of 1 kg/m² and one larger VWC case of 15 kg/m². The L-band backscatters are compared at 40° incidence angle. For the smaller VWC case, the first-order scattering results, i.e., the DBA results, are close to the multiple scattering results, while for the large VWC case, the DBA results underestimate the backscatter by about 1.6 and 0.65 dB for VV and HH polarizations, respectively. Multiple scattering does not significantly affect the sensitivity of backscatter in dB scale to soil moisture, while increasing VWC from small to moderate ranges slightly reduces the sensitivity of backscatter to soil moisture by about 0.5 dB. The fact that the dominant double-bounce-alike terms decrease with VWC explains these.
+
+## VII. MODEL VALIDATION
+
+To validate the proposed multiple scattering model, the results of calculated brightness temperature and backscattering coefficient are compared with data acquired over a forest area during the SMAPVEX12 campaign. SMAPVEX12 was located southwest of Winnipeg, MB, Canada, and it took place between June 7 and July 19, 2012 and included airborne and field measurements [44]. The study area is characterized by changes in soil texture (changes in sand and clay percentages) and vegetation land cover, from crop with VWC of 0.25 kg/m² to large aspen trees with VWC of 25.6 kg/m². The forested area of the experiment, which is the focus of this article, includes four sampling sites of F1, F2, F3, and F5 each with a varying degree of tree cover. The main tree species included aspen trees, bur oak, and balsam poplar on soil textures ranging from clay to loamy fine sand [44], [45]. For the purpose of the proposed model validation, we used site F5 that contained medium aspen trees with a VWC of 14.102 kg/m². The structural parameters of these trees are given in Table I [46], [47].
+
+[Figure 12: Comparison of the L-band backscatter coefficients versus soil moisture, for DBA, active multiple scattering RTE without enhancement, and active multiple scattering RTE with enhancement for large and small VWCs at 40°. (a) VV polarization. (b) HH polarization.]
+
+**TABLE II**
+AVERAGED MEASURED SOIL MOISTURE (m³/m³), SOIL TEMPERATURE (K), BRIGHTNESS TEMPERATURE (K), AND BACKSCATTER COEFFICIENT (dB) FOR EACH DAY OF MEASUREMENT DURING THE SMAPVEX12 CAMPAIGN IN 2012
+
+| Date | mv | Ts | TBv | TBh | $\sigma_{VV}^0$ | $\sigma_{HH}^0$ |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 7/3/12 | 0.207 | 294.5 | 273.1 | 265.5 | -9.31 | -9.704 |
+| 7/5/12 | 0.1703 | 294.4 | 273.2 | 264.35 | -9.413 | -9.19 |
+| 7/10/12 | 0.179 | 294.7 | 273.75 | 262.3 | -9.65 | -9.76 |
+| 7/13/12 | 0.1603 | 294.6 | 276.3 | 268.4 | -10 | -9.47 |
+| 6/12/12 | 0.3065 | 288.2 | 259.85 | 248.75 | -8.63 | -9.2 |
+| 6/15/12 | 0.2795 | 288.6 | 263.1 | 248.1 | -9 | -8.85 |
+| 6/17/12 | 0.3453 | 290.5 | 259.7 | 249.6 | -8.45 | -8.93 |
+| 6/22/12 | 0.337 | 287.3 | 263.86 | 253.68 | -8.73 | -8.7 |
+| 6/23/12 | 0.283 | 287.9 | 263.68 | 254.7 | - | - |
+| 6/25/12 | 0.315 | 287.2 | 265.6 | 261.3 | -8.73 | -8.7 |
+| 6/27/12 | 0.302 | 292.6 | 270.37 | 261.2 | -9.53 | -9.7 |
+
+The soil texture varies across the site, producing significant spatial variability in moisture conditions over short distances. To capture this heterogeneity, there were nine soil moisture sampling locations within each observation area. Soil moisture and dielectric constant, measured with Stevens HydraProbes, soil temperature, and soil bulk density samples (i.e., sand, clay, and silt), have been reported for each of the nine samples in each site during measurement days.
+
+The PALS, developed at the Jet Propulsion Laboratory, collected airborne data for the development of active and passive remote sensing techniques at L-band. The PALS instrument collects coincident radar and radiometer measurements in time and space. The incidence angle of the instrument was fixed at 40° to match the observing angle of SMAP. Brightness temperature and backscatter measurements were obtained with PALS on measurement days with both low-altitude (1200 m) and high-altitude (2750 m) flights [48]. In this article, the model validation uses low-altitude measurements for higher spatial resolution of the F5 forestry area. The soil moisture and temperature of reported samples and measured brightness temperatures, using PALS instrument, of field F5 for each day of measurement, are averaged for the analysis. The range of averaged soil moisture, soil temperature, soil roughness for this field is 0.15–0.35 m³/m³, 286–296 K, and 0.776 cm respectively. In the multiple scattering model, the dielectric of the soil is calculated by the Mironov model using the reported soil texture properties.
+
+[Figure 13: Measurement fields of SMAPVEX12 campaign. Bottom boundary, soil, covered by a layer of shrubs, leaves, and dead branches [46].]
+
+Fig. 14 shows the comparison between the passive measurements and the simulated brightness temperatures in scatter plots. Blue square dots show the measurements of SMAPVEX12 for field F5 over 11 days and orange circular dots show the simulation results. For each day, the measured soil temperatures, soil moisture, and brightness temperatures are averaged. We used these parameters (Table II) and the tree parameters reported in Table I as the input for a three-layered (soil–tree–air) multiple scattering model for which the results are shown as orange circular dots. The first column of the figure shows the results of this comparison. For vertical polarization, in Fig. 14(a), the model and data match in low soil moisture conditions but when the soil moisture is increasing the model underestimates the data by 5–10 K. For horizontal polarization, in Fig. 14(g), the model overestimates the data by 15–20 K. Fig. 14(d) and (j) shows the scatter plot of the measured brightness temperature versus simulation results using the RT model. The root-mean-square error (RMSE) for the vertical and horizontal polarizations is $\approx 5$ and $\approx 22$ K, respectively.
+
+[Figure 14: Model validation for brightness temperature using SMAPVEX12 measured data for a forest field of medium aspen trees for vertical and horizontal polarizations. The vegetation parameters are given in Table I. (a) and (d) Three-layered RT model (V-pol). (b) and (e) Four-layered RT model (V-pol). (c) and (f) Three-layered RT with Q-H roughness model (V-pol). (g) and (j) Three-layered RT model (H-pol). (h) and (k) Four-layered RT model (H-pol). (i) and (l) Three-layered RT with Q-H roughness model (H-pol).]
+
+[Figure 15: Model Validation for backscatter coefficient using SMAPVEX12 measured data for a forest field of medium aspen trees for VV and HH polarizations. The vegetation parameters are given in Table I (a) and (c) Three-layered RT model (VV-pol). (b) and (d) Three-layered RT with Q-H roughness model (VV-pol). (e) and (g) Three-layered RT model (HH-pol). (f) and (h) Three-layered RT with Q-H roughness model (HH-pol).]
+
+Several studies in the literature addressed the effect of leaf litter by finding empirical parameters based on field measurements of forest leaf litter [49], [50]. In [51], the RT model is used to derive the reflectivities using the measured brightness temperature and the effective permittivity approach is used to model the permittivity of the litter layer. Fig. 13 shows the measured area of the SMAPVEX12 campaign, which indicates a layer of shrubs, leaves, and dead leaves on the soil. There is some information about this layer in the reports. However, it does not include many of the parameters required for the modeling. To show the effect of this layer, we include a homogenous 3-cm layer of moist dead leaves above the soil to alter the effective reflectivity of the bottom boundary. For simplicity, we assume flat interfaces with coherent interactions [52], [53]. The effective permittivity of this intermediate layer is approximated by Ulaby’s model for leaves [41]. The second column of Fig. 14 shows the result of this four-layered model. For H-pol only, it increases the brightness temperature and decreases the difference between model and data to less than 10 K, and the RMSE for horizontal polarization is 15 K, which shows the significance of considering the layer of shrubs and leaves over the bottom layer (soil).
+
+Another simple approach to account for the effects of the litter over soil is to apply the Q-H model [54]. The Q-H model computes the vegetation soil interface reflectivity $r_{(s,p)}$ from the reflectivities $r_{(0,p)}$ and $r_{(0,q)}$ of an assumed flat interface as follows:
+
+$$
+r_{s,p} = ((1 - Q)r_{0,p} + Qr_{0,q}) \exp(-h \cos^2\theta) \tag{28}
+$$
+
+where subscript $p$ and $q$ represent polarizations. There are two empirical parameters, $Q$ and $h$ in the model: $Q$ is the coupling coefficient representing polarization mixing due to the rough surface and volume scattering and $h$ is a dimensionless roughness, a function of frequency, polarization, geometric properties of the soil, and surface height standard deviation. When $Q = 0$, the Q-H model reduces to the coherent reflectivity predicted by the Fresnel reflectivities. It is assumed that the volume scattering within the litter layer would introduce polarization coupling and increase the effective rms height. The reported rms height in the SMAPVEX12 varies within 0.71–0.85 cm with an average of 0.776 cm. In the Q-H model results, as shown in Fig. 14, $h$ is set as 1.2 and $Q$ is set as 0.14. Interpreting $h$ strictly as $(2k_0 s)^2$ from (5), $h$ corresponds to $s$ of about 2 cm, too high given the measured roughness. We interpret this $h$ as also incorporating the matching effect of the litter. The $Q$ and $h$ values for field F5 are assumed constants with time for all the 11 data points. The Q-H model reduces the reflectivity for horizontal polarization without affecting that for the vertical polarization much. This yields the RMSEs of 6.67 and 4.46 K in the brightness temperatures for the horizontal and vertical polarizations, respectively, as shown in Fig. 14(f) and (l), improving the overall agreement with data compared to the case when the litter layer effects are not considered.
+
+**TABLE III**
+COMPARISON OF THE PROPOSED PASSIVE AND ACTIVE ITERATIVE MULTIPLE SCATTERING RTE METHOD WITH EXISTING MODELS, FOR SMALL AND LARGE OPTICAL THICKNESSES
+
+| Physical model | Small $\tau$ | large $\tau$ |
+| :--- | :---: | :---: |
+| Tau-omega ($\tau-\omega$) | $\checkmark$ | $\times$ |
+| Passive multiple scattering RTE | $\checkmark$ | $\checkmark$ |
+| Distorted born approximation (DBA) | $\checkmark$ | $\times$ |
+| Active multiple scattering RTE without enhancement | $\times$ | $\times$ |
+| Active multiple scattering RTE with enhancement | $\checkmark$ | $\checkmark$ |
+
+Fig. 15 shows the result of the comparison between the measured backscatter coefficient in the SMAPVEX12 campaign and the model prediction for the same set of parameters reported in Tables I and II. As it is shown in Fig. 15(a) and (e) for the low values of soil moisture, the model overestimates the backscatter by 1 and 2.5 dB for vertical and horizontal polarizations. By increasing the soil moisture, the mismatch is increasing by 2 and 4 dB for vertical and horizontal polarizations, respectively. The calculated RMSE [see Fig. 15(c) and (g)] is 2.39 and 4.27 dB, and by applying the Q-H roughness model, it decreases to 0.832 and 1.6 dB [see Fig. 15(d) and (h)] for vertical and horizontal polarizations, respectively.
+
+Nonetheless, even with a layer of leaf litter on the soil, the model exhibits a greater dynamic range with respect to soil moisture than the measurements. A contributing factor to this may be the assumption of vertical tree trunks, which maximizes the first-order ground–trunk interactions for a given set of geometric and moisture parameters. The trunks are not perfectly vertical, as shown in Fig. 13. Unfortunately, there is no reported information on the distribution of tree trunk angles. Including such a distribution will both reduce the backscatter and the sensitivity of backscatter to soil moisture while minimally impacting the brightness predictions.
+
+## VIII. CONCLUSION
+
+In this article, the effects of multiple scattering and backscattering enhancement on a layer of trees on top of a reflective boundary are incorporated by solving the vector RTEs with an iterative method to high orders numerically. We used the iterative RTE method as a tool to study the angular dependence of brightness temperature and the sensitivity of both brightness temperature and backscatter to the soil moisture for different VWCs. The multiple scattering solutions show distinct features compared to the $\tau-\omega$ model and the DBA. For a layer comprised of predominant trees, increasing VWCs reduces more the sensitivity of brightness temperatures to soil moisture but affects less the sensitivity of radar backscatters to soil moisture. Cyclical corrections leading to backscattering enhancement are critical in solving active RTEs. The applicability of different physical models is compared and summarized in Table III. The $\tau-\omega$ model for the brightness temperature and the DBA for backscatter are valid models only for small optical thicknesses. As the optical thickness becomes larger, these models are inaccurate physically due to the missing of multiple scattering effects. The active RT model without cyclical corrections is also invalid due to the lack of backscattering enhancement. The proposed framework, through solving RT equations iteratively and numerically, includes multiple scattering effects up to fourth-order and backscattering enhancement effects by doubling contributions from the cyclical corrections. The proposed method is applicable to both small and large VWCs and optical thicknesses. To validate the iterative RT approach, the proposed model’s results are compared with the data acquired in the SMAPVEX12 campaign and the results show relatively good agreement. The mismatch is attributed to the layer of litter over the soil and the tilt angle of tree trunks, neither of which are reported in the measurement campaign. Our results highlight the importance of the data related to these parameters. Hence, we predict that their inclusion can further enhance the accuracy of the model.
+
+## ACKNOWLEDGMENT
+
+The authors would like to thank Dr. Ruzbeh Akbar at the Massachusetts Institute of Technology (MIT) for their valuable discussions and comments about SMAPVEX12 data.
+
+## REFERENCES
+
+[1] M. Kachi, K. Naoki, M. Hori, and K. Imaoka, “AMSR2 validation results,” in *Proc. IEEE Int. Geosci. Remote Sens. Symp. (IGARSS)*, Jul. 2013, pp. 831–834.
+
+[2] Y. H. Kerr *et al.*, “The SMOS soil moisture retrieval algorithm,” *IEEE Trans. Geosci. Remote Sens.*, vol. 50, no. 5, pp. 1384–1403, May 2012.
+
+[3] F. Amelung *et al.*, “NASA-ISRO SAR (NISAR) mission science user’s handbook,” NASA Jet Propuls. Lab., Pasadena, CA, USA, Tech. Rep., Aug. 2019. [Online]. Available: https://nisar.jpl.nasa.gov/system/documents/files/26_NISAR_FINAL_9-6-19.pdf
+
+[4] D. Entekhabi *et al.*, “The Soil Moisture Active Passive (SMAP) mission,” *Proc. IEEE*, vol. 98, no. 5, pp. 704–716, May 2010.
+
+[5] J. D. Bolten, V. Lakshmi, and E. G. Njoku, “Soil moisture retrieval using the passive/active L- and S-band radar/radiometer,” *IEEE Trans. Geosci. Remote Sens.*, vol. 41, no. 12, pp. 2792–2801, Dec. 2003.
+
+[6] L. Tsang, J. A. Kong, and R. T. Shin, *Theory of Microwave Remote Sensing*. New York, NY, USA: Wiley, 1985.
+
+[7] T. J. Jackson and T. J. Schmugge, “Vegetation effects on the microwave emission of soils,” *Remote Sens. Environ.*, vol. 36, no. 3, pp. 203–212, Jun. 1991.
+
+[8] A. Monerris and T. Schmugge, “Soil moisture estimation using L-band radiometry,” in *Advances in Geoscience and Remote Sensing*, no. 21, G. Jedlovic, Ed. Rijeka, Croatia: InTech, 2009, pp. 441–462.
+
+[9] R. Bindlish, T. Jackson, R. Sun, M. Cosh, S. Yueh, and S. Dinardo, “Combined passive and active microwave observations of soil moisture during CLASIC,” *IEEE Geosci. Remote Sens. Lett.*, vol. 6, no. 4, pp. 644–648, Oct. 2009.
+
+[10] J.-P. Wigneron *et al.*, “Modelling the passive microwave signature from land surfaces: A review of recent results and application to the L-band SMOS & SMAP soil moisture retrieval algorithms,” *Remote Sens. Environ.*, vol. 192, pp. 238–262, Apr. 2017.
+
+[11] M. A. Karam, “A physical model for microwave radiometry of vegetation,” *IEEE Trans. Geosci. Remote Sens.*, vol. 35, no. 4, pp. 1045–1058, Jul. 1997.
+
+[12] M. Kurum, P. E. O’Neill, R. H. Lang, A. T. Joseph, M. H. Cosh, and T. J. Jackson, “Effective tree scattering and opacity at L-band,” *Remote Sens. Environ.*, vol. 118, pp. 1–9, Mar. 2012.
+
+[13] T.-H. Liao, S.-B. Kim, S. Tan, L. Tsang, C. Su, and T. J. Jackson, “Multiple scattering effects with cyclical correction in active remote sensing of vegetated surface using vector radiative transfer theory,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 9, no. 4, pp. 1414–1429, Apr. 2016.
+
+[14] R. H. Lang and J. S. Sighu, “Electromagnetic backscattering from a layer of vegetation: A discrete approach,” *IEEE Trans. Geosci. Remote Sens.*, vol. GE-21, no. 1, pp. 62–71, Jan. 1983.
+
+[15] N. S. Chauhan, D. M. Le Vine, and R. H. Lang, “Discrete scatter model for microwave radar and radiometer response to corn: Comparison of theory and data,” *IEEE Trans. Geosci. Remote Sens.*, vol. 32, no. 2, pp. 416–426, Mar. 1994.
+
+[16] F. T. Ulaby, K. Sarabandi, K. McDonald, M. Whitt, and M. C. Dobson, “Michigan microwave canopy scattering model,” *Int. J. Remote Sens.*, vol. 11, no. 7, pp. 1223–1253, Jul. 1990.
+
+[17] Y.-C. Lin and K. Sarabandi, “A Monte Carlo coherent scattering model for forest canopies using fractal-generated trees,” *IEEE Trans. Geosci. Remote Sens.*, vol. 37, no. 1, pp. 440–451, 1999.
+
+[18] Y.-C. Lin and K. Sarabandi, “Electromagnetic scattering model for a tree trunk above a tilted ground plane,” *IEEE Trans. Geosci. Remote Sens.*, vol. 33, no. 4, pp. 1063–1070, Jul. 1995.
+
+[19] P. F. Polatin, K. Sarabandi, and F. T. Ulaby, “Monte-Carlo simulation of electromagnetic scattering from a heterogeneous two-component medium,” *IEEE Trans. Antennas Propag.*, vol. 43, no. 10, pp. 1048–1057, 1995.
+
+[20] K. Sarabandi, P. F. Polatin, and F. T. Ulaby, “Monte Carlo simulation of scattering from a layer of vertical cylinders,” *IEEE Trans. Antennas Propag.*, vol. 41, no. 4, pp. 465–475, Apr. 1993.
+
+[21] K. Sarabandi and F. T. Ulaby, “High frequency scattering from corrugated stratified cylinders,” *IEEE Trans. Antennas Propag.*, vol. 39, no. 4, pp. 512–520, Apr. 1991.
+
+[22] K. Sarabandi and T. B. A. Senior, “Low-frequency scattering from cylindrical structures at oblique incidence,” *IEEE Trans. Geosci. Remote Sens.*, vol. 28, no. 5, pp. 879–885, Sep. 1990.
+
+[23] K. Sarabandi, T. B. Senior, and F. Ulaby, “Effect of curvature on the backscattering from a leaf,” *J. Electromagn. Waves Appl.*, vol. 2, no. 7, pp. 653–670, 1988.
+
+[24] T. B. A. Senior, K. Sarabandi, and F. T. Ulaby, “Measuring and modeling the backscattering cross section of a leaf,” *Radio Sci.*, vol. 22, no. 6, pp. 1109–1116, Nov. 1987.
+
+[25] M. Kurum, R. H. Lang, P. E. O’Neill, A. T. Joseph, T. J. Jackson, and M. H. Cosh, “A first-order radiative transfer model for microwave radiometry of forest canopies at L-band,” *IEEE Trans. Geosci. Remote Sens.*, vol. 49, no. 9, pp. 3167–3179, Sep. 2011.
+
+[26] P. Ferrazzoli and L. Guerriero, “Radar sensitivity to tree geometry and woody volume: A model analysis,” *IEEE Trans. Geosci. Remote Sens.*, vol. 33, no. 2, pp. 360–371, Mar. 1995.
+
+[27] S. Twomey, H. Jacobowitz, and H. B. Howell, “Matrix methods for multiple-scattering problems,” *J. Atmos. Sci.*, vol. 23, no. 3, pp. 289–298, May 1966.
+
+[28] S. Tan, W. Chang, L. Tsang, J. Lemmetyinen, and M. Proksch, “Modeling both active and passive microwave remote sensing of snow using dense media radiative transfer (DMRT) theory with multiple scattering and backscattering enhancement,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 8, no. 9, pp. 4418–4430, Sep. 2015.
+
+[29] L. Dente, P. Ferrazzoli, Z. Su, R. van der Velde, and L. Guerriero, “Combined use of active and passive microwave satellite data to constrain a discrete scattering model,” *Remote Sens. Environ.*, vol. 155, pp. 222–238, Dec. 2014.
+
+[30] L. Guerriero, P. Ferrazzoli, C. Vittucci, R. Rahmoune, M. Aurizzi, and A. Mattioni, “L-band passive and active signatures of vegetated soil: Simulations with a unified model,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 9, no. 6, pp. 2520–2531, Jun. 2016.
+
+[31] R. Akbar and M. Moghaddam, “A combined active–passive soil moisture estimation algorithm with adaptive regularization in support of SMAP,” *IEEE Trans. Geosci. Remote Sens.*, vol. 53, no. 6, pp. 3312–3324, Jun. 2015.
+
+[32] H. Huang, L. Tsang, E. G. Njoku, A. Colliander, K.-H. Ding, and T.-H. Liao, “Hybrid method combining generalized T matrix of single objects and Foldy-Lax equations in NMM3D microwave scattering in vegetation,” in *Proc. Prog. Electromagn. Res. Symp.-Fall (PIERS-FALL)*, Nov. 2017, pp. 3016–3023.
+
+[33] L. Tsang, J. A. Kong, and K.-H. Ding, *Scattering of Electromagnetic Waves: Theories and Applications*, vol. 27. Hoboken, NJ, USA: Wiley, 2004.
+
+[34] L. Tsang and J. A. Kong, *Scattering of Electromagnetic Waves: Advanced Topics*, vol. 26. Hoboken, NJ, USA: Wiley, 2004.
+
+[35] H. Huang *et al.*, “Modelling and validation of combined active and passive microwave remote sensing of agricultural vegetation at L-band,” *Prog. Electromagn. Res. B*, vol. 78, pp. 91–124, 2017.
+
+[36] E. G. Njoku and D. Entekhabi, “Passive microwave remote sensing of soil moisture,” *J. Hydrol.*, vol. 184, nos. 1–2, pp. 101–129, 1996.
+
+[37] M. Salim, S. Tan, and L. Tsang, “Multiple scattering solution of radiative transfer equations of active and passive configuration for forests applications,” in *Proc. IEEE Int. Conf. Comput. Electromagn. (ICCEM)*, Mar. 2019, pp. 1–3.
+
+[38] M. Salim, S. Tan, and L. Tsang, “Multiple scattering solution of passive radiative transfer equations applied to forests,” in *Proc. IEEE Int. Symp. Antennas Propag. USNC-URSI Radio Sci. Meeting*, Jul. 2019, pp. 161–162.
+
+[39] L. Tsang and A. Ishimaru, “Backscattering enhancement of random discrete scatterers,” *J. Opt. Soc. Amer. A, Opt. Image Sci.*, vol. 1, no. 8, pp. 836–839, 1984.
+
+[40] L. Tsang and A. Ishimaru, “Theory of backscattering enhancement of random discrete isotropic scatterers based on the summation of all ladder and cyclical terms,” *J. Opt. Soc. Amer. A, Opt. Image Sci.*, vol. 2, no. 8, pp. 1331–1338, 1985.
+
+[41] F. Ulaby and M. El-rayes, “Microwave dielectric spectrum of vegetation–Part II: Dual-dispersion model,” *IEEE Trans. Geosci. Remote Sens.*, vol. GE-25, no. 5, pp. 550–557, Sep. 1987.
+
+[42] V. L. Mironov, M. C. Dobson, V. H. Kaupp, S. A. Komarov, and V. N. Kleshchenko, “Generalized refractive mixing dielectric model for moist soils,” *IEEE Trans. Geosci. Remote Sens.*, vol. 42, no. 4, pp. 773–785, Apr. 2004.
+
+[43] O. Neill, P. S. Chan, E. G. Njoku, T. Jackson, and R. Bindlish, “Algorithm theoretical basis document (ATBD): L2 and L3 radiometer soil moisture (passive) data products,” SMAP Project, Rev. F, Jet Propulsion Lab., California Inst. Technol., Pasadena, CA, USA, Tech. Rep. 4, Aug. 2020.
+
+[44] H. McNairn *et al.*, “The soil moisture active passive validation experiment 2012 (SMAPVEX12): Prelaunch calibration and validation of the SMAP soil moisture algorithms,” *IEEE Trans. Geosci. Remote Sens.*, vol. 53, no. 5, pp. 2784–2801, May 2015.
+
+[45] A. Colliander *et al.*, “Comparison of airborne passive and active L-band system (PALS) brightness temperature measurements to SMOS observations during the SMAP validation experiment 2012 (SMAPVEX12),” *IEEE Geosci. Remote Sens. Lett.*, vol. 12, no. 4, pp. 801–805, Apr. 2015.
+
+[46] NASA Jet Propulsion Laboratory. (Jul. 2014). *SMAPVEX12 Validation Experiment 2012*. [Online]. Available: https://smapvex12.espaceweb.usherbrooke.ca/home.php
+
+[47] J. P. McNairn and H. G. Wiseman. (Jul. 2014). *SMAPVEX12 Soil Texture Map, Version 1, Boulder, Colorado USA. Nasa National Snow and Ice Data Center Distributed Active Archive Center*. [Online]. Available: https://doi.org/10.5067/5694JSVXBA3A
+
+[48] W. J. Wilson *et al.*, “Passive active L- and S-band (PALS) microwave sensor for ocean salinity and soil moisture measurements,” *IEEE Trans. Geosci. Remote Sens.*, vol. 39, no. 5, pp. 1039–1048, May 2001.
+
+[49] J. P. Grant, A. A. Van de Griend, M. Schwank, and J.-P. Wigneron, “Observations and modeling of a pine forest floor at L-band,” *IEEE Trans. Geosci. Remote Sens.*, vol. 47, no. 7, pp. 2024–2034, Jul. 2009.
+
+[50] M. Schwank, M. Guglielmetti, C. Matzler, and H. Fluhler, “Testing a new model for the L-band radiation of moist leaf litter,” *IEEE Trans. Geosci. Remote Sens.*, vol. 46, no. 7, pp. 1982–1994, Jul. 2008.
+
+[51] M. Kurum, P. E. O’Neill, R. H. Lang, M. H. Cosh, A. T. Joseph, and T. J. Jackson, “Impact of conifer forest litter on microwave emission at L-band,” *IEEE Trans. Geosci. Remote Sens.*, vol. 50, no. 4, pp. 1071–1084, Apr. 2012.
+
+[52] S. Tan, M. Salim, L. Tsang, J. T. Johnson, and R. D. De Roo, “Above snow vegetation effects on wideband autocorrelation radiometry,” in *Proc. IEEE Int. Geosci. Remote Sens. Symp. (IGARSS)*, Jul. 2019, pp. 4896–4899.
+
+[53] S. Tan *et al.*, “Physical models of layered polar firn brightness temperatures from 0.5 to 2 GHz,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 8, no. 7, pp. 3681–3691, Jul. 2015.
+
+[54] J. Wang and B. Choudhury, “Remote sensing of soil moisture content, over bare field at 1.4 GHz frequency,” *J. Geophys. Res. Oceans*, vol. 86, no. C6, pp. 5277–5282, 1981.
+
+**Maryam Salim** (Member, IEEE) received the B.S. degree in electrical engineering from the University of Tabriz, Tabriz, Iran, in 2011, the M.Sc. degree in electrical and communication engineering from Bilkent University, Ankara, Turkey, in 2016, and the M.S. degree from the University of Michigan, Ann Arbor, MI, USA, in 2019, where she is pursuing the Ph.D. degree in applied electromagnetics.
+In 2016, she joined the Radiation Laboratory, University of Michigan, as a Graduate Student Research Assistant. Her research interests include microwave radar and radiometric remote sensing, electromagnetic scattering, and antennas.
+
+**Shurun Tan** (Member, IEEE) received the B.E. degree in information engineering and the M.Sc. degree in electromagnetic field and microwave techniques from Southeast University, Nanjing, China, in 2009 and 2012, respectively, and the Ph.D. degree in electrical engineering from the University of Michigan, Ann Arbor, MI, USA, in December 2016.
+From December 2010 to November 2011, he was a Visiting Student with the Department of Electrical and Computer Engineering, University of Houston, Houston, TX, USA. From September 2012 to December 2014, he was a Ph.D. student with the Department of Electrical Engineering, University of Washington, Seattle, WA, USA. From January 2015 to December 2018, he was with the Radiation Laboratory and the Department of Electrical Engineering and Computer Science, University of Michigan, as a Ph.D. student, where he has been a Post-Doctoral Research Fellow since January 2017. He is an Assistant Professor with the Zhejiang University/University of Illinois at Urbana–Champaign Institute, Zhejiang University, Haining, China. He is also with the State Key Laboratory of Modern Optical Instrumentation, the Innovative Institute of Electromagnetic Information and Electronic Integration, and the College of Information Science and Electronic Engineering, Zhejiang University, Hangzhou, China. He is also an Adjunct Assistant Professor with the Department of Electrical and Computer Engineering, University of Illinois at Urbana–Champaign, Urbana, IL, USA. He is working on electromagnetic theory, and computational and applied electromagnetics. His research focus is on electromagnetic wave interactions with structures and materials, including electromagnetic scattering of random media and periodic structures, microwave remote sensing, artificial electromagnetic wave-functional materials and structures, electromagnetic sensing, electromagnetic environment, and electromagnetic compatibility, etc.
+
+**Roger D. De Roo** (Member, IEEE) received the B.S. degree in letters and engineering from the Calvin College, Grand Rapids, MI, USA, in 1986, and the B.S.E., M.S.E., and Ph.D. degrees from the University of Michigan, Ann Arbor, MI, USA, in 1986, 1989, and 1996, respectively, all in electrical engineering. His dissertation topic was on the modeling and measurement of bistatic scattering of electromagnetic waves from rough dielectric surfaces.
+From 1996 to 2000, he was a Research Fellow at the Radiation Laboratory, Department of Electrical Engineering and Computer Science (EECS), University of Michigan, investigating the modeling and simulation of millimeter-wave backscattering phenomenology of terrain at near grazing incidence. He is an Associate Research Scientist and a Lecturer with the Department of Climate and Space Sciences and Engineering (CLaSP), University of Michigan. His research interests include digital correlating radiometer technology development, radio frequency interference mitigation, inversion of geophysical parameters such as soil moisture, snow accumulation and vegetation parameters from radar and radiometric signatures of terrain, and ground-truth techniques for those geophysical parameters. He has supervised the fabrication of numerous dual-polarization microcontroller-based microwave radiometers.
+
+**Andreas Colliander** (Senior Member, IEEE) received the M.Sc. (Tech.), Lic.Sc. (Tech.), and D.Sc. (Tech.) degrees in electrical engineering from the Helsinki University of Technology (TKK; now Aalto University), Espoo, Finland, in 2002, 2005, and 2007, respectively.
+He is a Research Scientist with the Jet Propulsion Laboratory, California Institute of Technology, Pasadena, CA, USA. His research is focused on the development of microwave remote sensing techniques. He is leading the calibration and validation of the geophysical retrievals of NASA’s SMAP mission.
+
+**Kamal Sarabandi** (Fellow, IEEE) received the B.S. degree in electrical engineering from the Sharif University of Technology, Tehran, Iran, in 1980, the M.S. degree in electrical engineering from the University of Michigan, Ann Arbor, MI, USA, in 1986, and the M.S. degree in mathematics and the Ph.D. degree in electrical engineering from the University of Michigan in 1989.
+He is a member of the National Academy of Engineering (NAE), Washington, DC, USA. He is also the Director of the Radiation Laboratory and the Rufus S. Teesdale Endowed Professor of Engineering with the Department of Electrical Engineering and Computer Science, University of Michigan. Over the past 30 years, his research has been focused on applied electromagnetics and has made significant contributions to the science and technology of microwave and millimeter-wave radar remote sensing, antennas, communication channel modeling, microwave sensors, and radar systems. He has graduated 56 Ph.D. students and supervised numerous post-doctoral fellows. He has served as the Principal Investigator on many projects sponsored by the National Aeronautics and Space Administration (NASA), the Jet Propulsion Laboratory (JPL), the Army Research Office (ARO), the Office of Naval Research (ONR), the Army Research Laboratory (ARL), the National Science Foundation (NSF), the Defense Advanced Research Projects Agency (DARPA), and a large number of industries. He led the Center for Microelectronics and Sensors sponsored by the Army Research Laboratory under the Micro-Autonomous Systems and Technology (MAST) Collaborative Technology Alliance (CTA) Program from 2008 to 2018. He is now leading a newly established center in microwave sensor technology. He has published many book chapters and more than 320 articles in refereed journals on miniaturized and on-chip antennas, metamaterials, electromagnetic scattering, wireless channel modeling, random media modeling, microwave measurement techniques, radar calibration, inverse scattering problems, and microwave sensors. He has also had more than 750 articles and invited presentations in many national and international conferences and symposia on similar subjects. His research areas of interest include microwave and millimeter-wave radar remote sensing, metamaterials, electromagnetic wave propagation, and antenna miniaturization.
+Dr. Sarabandi served as a member for the NASA Advisory Council appointed by the NASA Administrator for two consecutive terms from 2006 to 2010. He was a member of the Editorial Board of the PROCEEDINGS OF THE IEEE and an Associate Editor of the IEEE TRANSACTIONS ON ANTENNAS AND PROPAGATION and the IEEE SENSORS JOURNAL. He is a member of the Administrative Committee (AdCom) of the IEEE Antennas and Propagation Society and the Commissions F and B of International Union of Radio Science (URSI). He was a recipient of the Henry Russel Award from the Regent of The University of Michigan in 1997, the 1996 EECS Department Teaching Excellence Award, the Best Paper Award at the 2006 Army Science Conference in 2008, and the IEEE GRSS Symposium Best Paper Award in 2017. He received the GAAC Distinguished Lecturer Award from the German Federal Ministry for Education, Science, and Technology in 1999, the IEEE GRSS Distinguished Achievement Award and the University of Michigan Faculty Recognition Award in 2005, the Humboldt Research Award for senior scientists from The Alexander von Humboldt Foundation of Germany in 2008, the 2010 Distinguished Faculty Achievement Award from the University of Michigan, and the Research Excellence Award, the Stephen S. Attwood Award, and the Ted Kennedy Family Faculty Team Excellence Award from the College of Engineering at the University of Michigan in 2004, 2017, and 2016, respectively, and the NASA Group Achievement Award for his contributions to NASA SMAP mission in 2017. The IEEE Board of Directors announced him as the recipient of the 2011 IEEE Judith A. Resnik Award. He was recognized by the IEEE Geoscience and Remote Sensing Society (GRSS) with its 2013 Education Award. In 2016, he was recognized as one of the top 50 Graduates of Sharif University of Technology since its establishment and was selected as a fellow of the American Association for the Advancement of Science (AAAS). He is serving as the Chair for the USNC URSI Commission F. He served as the President for the IEEE Geoscience and Remote Sensing Society (GRSS) in 2015 and 2016. He was inducted to the National Academy of Inventors as a fellow in 2019. In the past several years, joint articles presented by his students at a number of international symposia (IEEE Antennas and Propagation Symposium (APS) 1995, 1997, 2000, 2001, 2003, 2005–2007, 2016, and 2019; IEEE International Geoscience and Remote Sensing Symposium (IGARSS) 1999, 2002, 2007, 2011, and 2014, IEEE International Microwave Symposium (IMS) 2001, USNC URSI 2004–2006, 2010, 2011, and 2020; Antenna Measurement Techniques Association (AMTA) 2006, General Assembly of URSI (URSI GA) 2008 and 2014; Eastern Snow Conference 2016, Underwater Networks and Systems (WUWNet) 2019; and IEEE Microwave Theory and Techniques-Numerical Electromagnetic and Metaphysics Modeling and Optimization (MTT-NEMO) 2019) have received best paper awards.

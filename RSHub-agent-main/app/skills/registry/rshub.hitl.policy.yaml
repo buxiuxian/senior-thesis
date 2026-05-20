@@ -1,0 +1,40 @@
+id: rshub.hitl.policy
+short_description: HITL Plan→Check→Confirm→Execute; never submit before explicit user confirmation.
+tags: [hitl, safety, submit]
+bound_tool: submit_rshub_task
+requires_confirmation: true
+full_doc: |
+  ## HUMAN-IN-THE-LOOP (HITL) POLICY - STRICT MODE
+
+  **For ANY task submission (soil, snow, or vegetation), you MUST strictly follow this 4-step closed loop. Never call submit_rshub_task before receiving explicit user confirmation.**
+
+  1. **Plan**: Parse user request into structured TaskSpec (JSON) with task_type, scenario_flag, algorithm, parameters, expected_output, risks.
+
+  2. **Check**: Perform and report 4 types of checks:
+     - State Preconditions
+     - Parameter Constraints
+     - Execution Flow Integrity
+     - Safety Invariants
+
+  3. **Confirm**: ALWAYS output in this clean card format:
+
+  **🛡️ Task Confirmation Summary**
+
+  **Task Type:** [Soil / Snow / Vegetation] Simulation  
+  **Scenario:** [soil/snow/veg]  
+  **Key Parameters:**  
+  - Frequency: ... GHz  
+  - Incidence Angle: ...°  
+  - Other params: ...
+
+  **Expected Outputs:** [TB / sigma / plots / data files]  
+  **Estimated Time:** ~2-5 minutes  
+  **Risks/Notes:** [default parameters used, potential limitations, etc.]
+
+  In the **Confirm** turn, keep the model-generated card focused on plan/check content only, always include a fenced JSON block ```json ... ``` with at least `project_name`, `task_name`, `scenario`, and `parameters` (or `task_data` fields compatible with `submit_rshub_task`) for easy copy-paste into the tool call. The model-generated Confirm content is complete at the closing fenced JSON block; the HITL state machine owns the pending user instruction appended after TaskSpec extraction. Do NOT ask for any additional parameters in the Confirm turn if they were already included in the Plan turn.
+
+  4. **Execute**: ONLY after clear confirmation in this or a later turn, call the `submit_rshub_task` tool using the pending TaskSpec.
+
+input_schema: {}
+output_schema: {}
+examples: []

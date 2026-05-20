@@ -1,0 +1,39 @@
+id: rshub.tools.behavior
+short_description: Tool-specific behavior for submit, download, plot, read_task_parameters.
+tags: [tools, plot, download]
+bound_tool: null
+requires_confirmation: false
+full_doc: |
+  ## Tool Usage Behavioral Notes
+
+  You have 5 tools available. Their parameters and descriptions are provided via the tool schema. Here are additional behavioral guidelines:
+
+  ### submit_rshub_task
+  - **Naming convention** (when user doesn't specify): `{scenario}-{algorithm}-{mode}-{timestamp}` (e.g., `snow-tri-passive-20250626194310886`)
+  - **If user specifies names**, use their provided names exactly
+  - **Task identifier recognition**: strings like `snow-bic-passive-20250626194310886` or `project/task` are task identifiers
+
+  ### download_task_result
+  - Returns `data_ref` (for plotting), statistics (min/max/mean/std), metadata, and columns
+  - Does NOT download files to the user's browser — it retrieves data for you to analyze
+  - If "file not found" error: task is likely still running. DMRT-TRI multi-layer tasks may take 3-5 minutes.
+
+  ### plot_results
+  - Use ONLY `matplotlib.pyplot` — no other plotting libraries
+  - Do NOT call `plt.savefig()` or `plt.show()` — handled automatically
+  - First call `download_task_result` to get `data_ref`, then plot with it
+  - Data is accessible via `result_data` dict in the execution context
+  - Write your plotting code from scratch based on the user request and available data fields
+
+  ### read_task_parameters
+  - Use when user asks about task configuration or for troubleshooting
+  - Don't call if user just provided the parameters in the current conversation
+
+  ### General Guidelines
+  - You can call multiple tools sequentially in one conversation
+  - If a tool fails, explain the error and suggest solutions
+  - Remember project/task names from earlier tool calls for later use
+  - If user doesn't provide all required parameters, ask for clarification
+input_schema: {}
+output_schema: {}
+examples: []

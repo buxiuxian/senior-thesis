@@ -1,0 +1,111 @@
+id: rshub.domain.model_parameters
+short_description: Algorithm mapping and DMRT/QMS/BIC/TRI/VPRT/NMM3D parameter tables for task construction.
+tags: [domain, parameters, soil, snow, vegetation]
+bound_tool: null
+requires_confirmation: false
+full_doc: |
+  ## Model Parameters Quick Reference
+
+  The tool schema contains parameter types and descriptions. Below are domain-specific details not in the schema.
+
+  ### Algorithm Mapping
+
+  | Scenario | Algorithm | output_var (Active) | output_var (Passive) |
+  |----------|-----------|--------------------|--------------------|
+  | Soil     | vie       | sigma              | tb                 |
+  | Snow     | qms       | sigma              | tb                 |
+  | Snow     | bic       | sigma              | tb                 |
+  | Snow     | tri       | sigma              | tb                 |
+  | Vegetation | rt      | N/A (not supported)| tb                 |
+
+  ### DMRT-QMS Snow Parameters (per-layer arrays)
+
+  | Parameter | Type | Description |
+  |-----------|------|-------------|
+  | depth | array(cm) | Layer thickness |
+  | rho | array(g/cm3) | Layer density |
+  | dia | array(cm) | Grain diameter |
+  | tau | array | Stickiness parameter |
+  | Tsnow | array(K) | Layer temperature |
+  | Tg | number(K) | Ground temperature, default 270 |
+  | mv | number | Soil moisture, default 0.15 |
+  | clayfrac | number | Clay fraction, default 0.3 |
+  | epsr_ground_r | array | Real permittivity ([] for auto) |
+  | epsr_ground_i | array | Imaginary permittivity ([] for auto) |
+  | surf_model_setting | array | Active: ['OH', rms_cm, corr_ratio]; Passive: ['QH', Q_value, H_value]. CRITICAL: Model name ('QH'/'OH') is string, but Q/H/rms/corr parameters MUST be numbers (e.g., ['QH', 1, 10] NOT ['QH', '1', '10']) |
+
+  ### DMRT-BIC Snow Parameters (per-layer arrays)
+
+  | Parameter | Type | Description |
+  |-----------|------|-------------|
+  | depth | array(cm) | Layer thickness |
+  | rho | array(g/cm3) | Layer density |
+  | kc | array(micrometers) | Inverse grain size in MICROMETERS (um). LUT range: 5000-15000 (step 2000). Example: [8000, 10000, 6000, 5000] for 4 layers |
+  | zp | array | Size distribution, LUT range: 0.6-1.6 (step 0.2) |
+  | Tsnow | array(K) | Layer temperature |
+  | Tg | number(K) | Ground temperature, default 270 |
+  | mv | number | Soil moisture, default 0.15 |
+  | clayfrac | number | Clay fraction, default 0.3 |
+  | epsr_ground_r | array | Real permittivity ([] for auto) |
+  | epsr_ground_i | array | Imaginary permittivity ([] for auto) |
+  | surf_model_setting | array | Same format as QMS. Model name is string, but parameters MUST be numbers (e.g., ['QH', 1, 10] NOT ['QH', '1', '10']) |
+  | lut_flag | number | Always set to 1 |
+
+  **BIC LUT frequency support**: 9.6, 13.3, 17.2, 18.7, 37 GHz. Closest LUT entry used.
+
+  ### DMRT-TRI Snow Parameters (per-layer arrays)
+
+  | Parameter | Type | Description |
+  |-----------|------|-------------|
+  | depth | array(cm) | Layer thickness |
+  | rho | array(g/cm3) | Layer density |
+  | kc | array(micrometers) | Inverse grain size in MICROMETERS (um). LUT range: 5000-15000 (step 2000). Example: [8000, 10000, 6000, 5000] for 4 layers |
+  | zp | array | Size distribution, LUT range: 0.6-1.6 (step 0.2) |
+  | film | array | Film percentage of total water |
+  | wet | array(%) | Wetness (water content) |
+  | Tsnow | array(K) | Layer temperature |
+  | Tg | number(K) | Ground temperature, default 270 |
+  | mv | number | Soil moisture, default 0.4 |
+  | clayfrac | number | Clay fraction, default 0.3 |
+  | surf_model_setting | array | Same format as BIC/QMS. Model name is string, but parameters MUST be numbers (e.g., ['QH', 1, 10] NOT ['QH', '1', '10']) |
+
+  **Note**: DMRT-TRI is computationally intensive. Multi-layer results may take 1-5 minutes.
+
+  ### Vegetation (VPRT) Parameters
+
+  | Parameter | Type | Description |
+  |-----------|------|-------------|
+  | fGHz | number | Frequency in GHz |
+  | veg_height | number(m) | Vegetation height, default 8 |
+  | Tveg | number(K) | Vegetation temperature, default 300 |
+  | scatters | array | Scatterer layers: [type, VM, D, L, betar_min, betar_max, dist_min, density, dist_max]. type: 1=cylinder, 0=disc |
+  | sm | number | Soil moisture, default 0.1 |
+  | clay | number | Clay fraction, default 0.19 |
+  | rmsh | number(m) | RMS height, default 0.01 |
+  | corlength | number(m) | Correlation length, default 0.1 |
+  | rough_type | number | 1=Gaussian, 2=Exponential, default 2 |
+  | Tgnd | number(K) | Ground temperature, default 300 |
+  | Flag_coupling | number | 1=volume-surface coupling, 0=volume only, default 1 |
+
+  ### Soil (NMM3D VIE) Parameters
+
+  | Parameter | Type | Description |
+  |-----------|------|-------------|
+  | fGHz | number | Frequency in GHz |
+  | angle | number(deg) | Incidence angle |
+  | Lx, Ly, Lz | number(m) | Computational domain size, default 0.36, 0.36, 0.05 |
+  | xr, yr, zr | number(m) | Start edges, default -0.18, -0.18, 0 |
+  | delta_d | number(m) | Discretization, default 0.01 |
+  | soilType | number | 1=Gaussian, 2=Exponential, default 2 |
+  | rmsh | number(m) | RMS height, default 0.01 |
+  | cLx, cLy | number(m) | Correlation lengths, default 0.1 |
+  | layerZaxis | number(m) | Soil layer height, default 0.1 |
+  | Tg | number(K) | Soil temperature, default 273.15 |
+  | epsr_re | number | Real permittivity, default 5.2 |
+  | epsr_im | number | Imaginary permittivity, default 0.46 |
+  | Tsub | number(K) | Substrate temperature, default 295.15 |
+  | epsr_sub_re | number | Substrate real permittivity, default 5.2 |
+  | epsr_sub_im | number | Substrate imaginary permittivity, default 0.46 |
+input_schema: {}
+output_schema: {}
+examples: []

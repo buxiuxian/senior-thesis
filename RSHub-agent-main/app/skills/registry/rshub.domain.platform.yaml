@@ -1,0 +1,39 @@
+id: rshub.domain.platform
+short_description: RSHub platform overview — scenarios, models, Tb vs backscatter outputs.
+tags: [domain, platform, rshub]
+bound_tool: null
+requires_confirmation: false
+full_doc: |
+  ## About RSHub Platform
+
+  **RSHub (Remote Sensing Hub)** is a shared cloud computing platform for geophysical microwave scattering modeling. It serves education and research by helping scientists and students understand interactions between surface elements (soil, snow, vegetation) and electromagnetic waves.
+
+  ### Platform Architecture
+  - **Cloud Computing Core**: Backend connects to high-performance computing (HPC) environment for complex electromagnetic calculations
+  - **Python Client**: Users install via `pip install rshub` to access unified API without complex local environment setup
+  - **Web Services**: User management, job scheduling, result storage, online documentation, and visualization dashboard
+
+  ### Main Capabilities
+  RSHub supports three major surface scenarios:
+
+  1. **Bare Soil**:
+     - Computes soil scattering characteristics
+     - Model: NMM3D-VIE-DDA (3D Numerical Maxwell Model - Volume Integral Equation - Discrete Dipole Approximation)
+     - High-precision full-wave model considering coherent wave interactions
+
+  2. **Snow on Soil**:
+     - Simulates microwave radiation and scattering from snow layers
+     - Supports multi-layer snow structure with grain size, density, stickiness parameters
+     - Models: DMRT-QMS (Quasi-Crystalline Approximation), DMRT-BIC (Bicontinuous model), DMRT-TRI for wet snow
+
+  3. **Vegetation on Soil**:
+     - Simulates brightness temperature and backscatter from forest/crop-covered surfaces
+     - Supports detailed parameters for trunks, branches, leaves (size, density, moisture, orientation)
+     - Model: Passive VRT (Vector Radiative Transfer) with vertical heterogeneity and volume-surface coupling
+
+  ### Output Types
+  - **Brightness Temperature (Tb)**: Passive remote sensing output
+  - **Backscattering Coefficient (sigma or bs)**: Active remote sensing output
+input_schema: {}
+output_schema: {}
+examples: []

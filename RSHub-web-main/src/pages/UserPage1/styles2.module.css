@@ -1,0 +1,682 @@
+.features {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  min-height: 91vh;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.featureSvg {
+  height: 200px;
+  width: 200px;
+}
+
+.divider {
+  height: 1px;
+  margin-top: 50px;
+  width: 80vw;
+  max-width: 800px;
+  background-color: #A3D4D1;
+  color: #A3D4D1;
+  font-size: 15vw;
+}
+
+.center_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.subhead {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: bold;
+}
+
+.text_center {
+  text-align: center;
+}
+
+.wrapper{
+  min-height: 87vh;
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(-15vh);
+  animation: fadeinAnimation 0.5s ease-in forwards;
+  margin: 2rem auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+@keyframes fadeinAnimation {
+  from {
+    opacity: 0;
+    transform: translateY(-15vh);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.UserWrap{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: white;
+  color: rgb(64, 64, 64);
+  text-align: center;
+  min-height: 87vh;
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 20px;
+  transition: height 0.5s ease-in, transform 0.5s ease-in;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.Upper {
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  padding-top: 15px;
+  width: 100%;
+  max-width: 1000px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.Upper h1 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 1rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.2;
+}
+
+.Upper div {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin-bottom: 0.5rem;
+}
+
+.Lower {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: 78%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.TabsWrap {
+  display: flex;
+  flex-direction: row;
+  font-size: large;
+  width: 100%;
+  max-width: 1000px;
+  height: 10%;
+  min-height: 50px;
+  background-color: transparent;
+  flex-wrap: wrap;
+}
+
+.ATabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: bold;
+  margin-left: 10px;
+  padding: 10px;
+  color: green;
+  white-space: nowrap;
+}
+
+.DTabs:hover {
+  color: green;
+}
+
+.DTabs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: bold;
+  margin-left: 10px;
+  padding: 10px;
+  white-space: nowrap;
+}
+
+.ActiveTabs {
+  height: 2.2px;
+  width: 140%;
+  transform: translateY(0.2em);
+  transition: transform 0.2s ease-in;
+  background-color: aqua;
+}
+
+.DeactiveTabs {
+  height: 2.2px;
+  width: 140%;
+  transform: translateY(3em);
+  transition: transform 0.2s ease-in;
+  background-color: aqua;
+}
+
+.ProfileTabA {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+  transition: display 0.5s ease-in;
+}
+
+.ProfileTabD {
+  flex-direction: column;
+  justify-content: center;
+  display: none;
+  transition: display 0.5s ease-in;
+}
+
+.ProjectTabA {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+  transition: display 0.5s ease-in;
+}
+
+.ProjectTabD {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  display: none;
+  transition: display 0.5s ease-in;
+}
+
+.UserInfoRow {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  margin: 20px auto;
+  background-color: #f1f6fa;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.SmallSectionWrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+.SSW1 {
+  font-size: 17px;
+  font-weight: 600;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.SSW2 {
+  font-size: 17px;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.SSWD {
+  width: 100%;
+  height: 0.5px;
+  background-color: #ddd;
+  margin: 1rem 0;
+}
+
+.UserProjects{
+  width: 100%;
+  max-width: 1000px;
+  padding-bottom: 1rem;
+  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.token{
+  color: gray;
+  font-size: medium;
+  margin-bottom: 1vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.ProjectStatusC {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  height: 50px;
+}
+
+.ProjectStatDeact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  width: 20%;
+  height: 50px;
+  border-style: solid;
+  border-color: rgb(217, 217, 217);
+  border-width: 1px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  background-color: #f1f6fa;
+}
+
+.ProjectStatDeact:hover {
+  color: #6DA4AA;
+}
+
+.ProjectStatAct {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  width: 20%;
+  height: 50px;
+  border-style: solid;
+  color: #6DA4AA;
+  border-color: #C34E17;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-width: 1px;
+  background-color: #f1f6fa;
+}
+
+.ProjectListC {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  background-color: #f1f6fa;
+  border-radius: 10px;
+  margin: 0 auto;
+}
+
+.Table {
+  width: 100%;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.TableHeader {
+  display: flex;
+  flex-direction: row;
+  height: 46px;
+  width: 100%;
+  min-width: 600px;
+}
+
+.HeaderType1 {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: gray;
+  width: 20%;
+}
+
+.HeaderType2 {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: gray;
+  width: 24%;
+}
+
+.HeaderType3 {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: gray;
+  width: 16%;
+  box-sizing: border-box;
+  padding-left: 1%;
+  padding-right: 1%;
+}
+
+.HeaderType4 {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: gray;
+  width: 12%;
+}
+
+.Tdiv {
+  width: 100%;
+  height: 2px;
+  margin-bottom: 5px;
+  background-color: rgb(222, 222, 222);
+}
+
+.TableContentA {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 600px;
+}
+
+.TableContentD {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 600px;
+  display: none;
+}
+
+.ContentWrap {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 100%;
+  min-width: 600px;
+}
+
+.ContentType1 {
+  display: flex;
+  font-size: 1rem;
+  width: 20%;
+}
+
+.ContentType2 {
+  display: flex;
+  font-size: 1rem;
+  width: 30%;
+  padding-bottom: 0.5rem;
+}
+
+.ContentType3 {
+  display: flex;
+  font-size: 1rem;
+  width: 20%;
+  text-align: left;
+  box-sizing: border-box;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-bottom: 0.5rem;
+}
+
+.ContentType4 {
+  display: flex;
+  font-size: 1rem;
+  width: 15%;
+  padding-bottom: 0.5rem;
+}
+
+.DownloadType2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: start;
+  font-size: 1rem;
+  width: 15%;
+  padding-bottom: 0.5rem;
+}
+
+.DownloadType2:hover {
+  color: #6DA4AA;
+}
+
+.DownloadError {
+  color: red;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: start;
+  font-size: 1rem;
+}
+
+/* 超大屏幕优化 */
+@media (min-width: 1920px) {
+  .wrapper {
+    max-width: 1600px;
+  }
+  
+  .UserWrap {
+    max-width: 1400px;
+  }
+  
+  .Upper,
+  .Lower,
+  .TabsWrap {
+    max-width: 1200px;
+  }
+  
+  .UserInfoRow {
+    max-width: 1000px;
+  }
+  
+  .UserProjects {
+    max-width: 1200px;
+  }
+  
+  .ProjectStatusC,
+  .ProjectListC {
+    max-width: 1000px;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1400px) {
+  .wrapper {
+    max-width: 95vw;
+    margin: 1rem auto;
+  }
+  
+  .UserWrap {
+    max-width: 1100px;
+    padding: 1.5rem;
+  }
+  
+  .Upper,
+  .Lower,
+  .TabsWrap {
+    max-width: 950px;
+  }
+  
+  .UserInfoRow {
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .wrapper {
+    max-width: 95vw;
+  }
+  
+  .UserWrap {
+    max-width: 1000px;
+    padding: 1.5rem;
+  }
+  
+  .Upper,
+  .Lower,
+  .TabsWrap {
+    max-width: 900px;
+  }
+  
+  .UserInfoRow {
+    max-width: 750px;
+  }
+  
+  .UserProjects {
+    max-width: 900px;
+  }
+  
+  .ProjectStatusC,
+  .ProjectListC {
+    max-width: 750px;
+  }
+}
+
+@media (max-width: 768px) {
+  .features {
+    padding: 0.5rem;
+  }
+  
+  .wrapper {
+    max-width: 100vw;
+    margin: 0.5rem auto;
+  }
+  
+  .UserWrap {
+    max-width: 100vw;
+    padding: 1rem;
+  }
+  
+  .Upper,
+  .Lower,
+  .TabsWrap {
+    max-width: 100vw;
+  }
+  
+  .TabsWrap {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .ATabs,
+  .DTabs {
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .UserInfoRow {
+    max-width: 95vw;
+    margin: 10px;
+  }
+  
+  .SmallSectionWrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .SSW1 {
+    min-width: auto;
+    font-weight: 700;
+  }
+  
+  .SSW2 {
+    text-align: left;
+    padding-left: 1rem;
+  }
+  
+  .UserProjects {
+    max-width: 100%;
+  }
+  
+  .ProjectStatusC,
+  .ProjectListC {
+    max-width: 100%;
+  }
+  
+  .HeaderType1,
+  .HeaderType2,
+  .HeaderType3,
+  .HeaderType4 {
+    font-size: 1rem;
+  }
+  
+  .ContentType1,
+  .ContentType2,
+  .ContentType3,
+  .ContentType4,
+  .DownloadType2 {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .features {
+    padding: 0.25rem;
+  }
+  
+  .UserWrap {
+    padding: 0.25rem;
+  }
+  
+  .Upper {
+    padding-top: 10px;
+  }
+  
+  .UserInfoRow {
+    margin: 5px;
+    padding: 0.5rem;
+  }
+}
+
+/* 确保文字在缩放时不会被遮挡 */
+.UserWrap h1,
+.UserWrap div,
+.ATabs,
+.DTabs {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 针对高DPI屏幕的优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .UserWrap {
+    border-radius: 15px;
+  }
+}

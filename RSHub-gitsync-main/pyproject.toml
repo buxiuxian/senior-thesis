@@ -1,0 +1,10 @@
+[project]
+name = "rshub-gitsync"
+version = "0.1.0"
+description = "Standalone gh+git sync workspace for RSHub monorepo"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.uv]
+package = false

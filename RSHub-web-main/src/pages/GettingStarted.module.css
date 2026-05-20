@@ -1,0 +1,600 @@
+.agentPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+}
+
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.mainContent {
+  background: #ffffff;
+  padding: 2rem 0;
+  max-width: 100%;
+  min-height: 1260px;
+}
+
+.splitGrid {
+  height: 1260px;
+  min-height: 1260px;
+  max-height: 1260px;
+  max-width: 1600px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.leftPanel,
+.rightPanel {
+  height: 1260px;
+  min-height: 1260px;
+  max-height: 1260px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.leftPanel {
+  border-right: 1px solid #e8e8e8;
+}
+
+.panelHeader {
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+.panelTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+}
+
+.panelSubtitle {
+  font-size: 0.9rem;
+  color: #5f6368;
+  margin: 0;
+}
+
+.chatWrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.taskListWrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Feature cards in hero section */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.featureCard {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.featureCard:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px);
+}
+
+.featureCard h3 {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.featureCard p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.qaSection {
+  background: #2a2a2a;
+  color: #e8e8e8;
+  padding: 60px 20px;
+}
+
+.qaContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.qaTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #f6a845;
+}
+
+.qaSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #cccccc;
+}
+
+.qaPlaceholder {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 1rem 0;
+  }
+  
+  .splitGrid {
+    height: auto;
+    min-height: auto;
+    max-height: none;
+  }
+  
+  .leftPanel,
+  .rightPanel {
+    height: 900px;
+    min-height: 900px;
+    max-height: 900px;
+    padding: 1.5rem;
+  }
+  
+  .leftPanel {
+    border-right: none;
+    border-bottom: 1px solid #e8e8e8;
+  }
+}
+
+/* Page header section - Golden gradient */
+.heroSection {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: white;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(45deg, #ffffff 0%, #f0f8ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  opacity: 0.95;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 功能特性网格 */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.featureCard {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.featureCard:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.featureCard h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.featureCard p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 聊天区域 */
+.chatSection {
+  padding: 4rem 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.chatContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chatWrapper {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+}
+
+.chatHeader {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.chatHeader h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.userGreeting {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+/* 登录提示 */
+.loginPrompt {
+  background: white;
+  border-radius: 20px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+}
+
+.loginPromptContent {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.loginIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.loginPrompt h3 {
+  color: #f6a845;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.loginPrompt p {
+  color: #6c757d;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.loginButton {
+  display: inline-block;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(253, 160, 133, 0.4);
+}
+
+.loginButton:hover {
+  color: white;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(253, 160, 133, 0.5);
+}
+
+/* 使用指南区域 */
+.guideSection {
+  padding: 4rem 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.guideContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.guideTitle {
+  text-align: center;
+  color: #f6a845;
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.guideGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.guideStep {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.guideStep:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 1.5rem auto;
+  box-shadow: 0 4px 15px rgba(253, 160, 133, 0.4);
+}
+
+.guideStep h3 {
+  color: #f6a845;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.guideStep p {
+  color: #6c757d;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 使用技巧区域 */
+.tipsSection {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+}
+
+.tipsSection h3 {
+  color: #f6a845;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.tipsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tipsList li {
+  position: relative;
+  padding: 0.75rem 0;
+  color: #495057;
+  line-height: 1.6;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.tipsList li:last-child {
+  border-bottom: none;
+}
+
+/* 灯泡样式已移除 */
+
+/* 响应式设计 */
+@media (max-width: 992px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .guideGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 40px 15px;
+  }
+  
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .featureCard {
+    padding: 1.5rem;
+  }
+  
+  .chatSection,
+  .guideSection {
+    padding: 2rem 15px;
+  }
+  
+  .chatHeader {
+    padding: 1.5rem;
+  }
+  
+  .loginPrompt {
+    padding: 2rem 1rem;
+  }
+  
+  .guideStep {
+    padding: 1.5rem;
+  }
+  
+  .tipsSection {
+    padding: 1.5rem;
+  }
+  
+  /* 移动端列表项样式已统一 */
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 1.8rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 0.9rem;
+  }
+  
+  .featureIcon {
+    font-size: 2.5rem;
+  }
+  
+  .stepNumber {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .guideTitle {
+    font-size: 2rem;
+  }
+}
+
+/* 深色模式支持 */
+[data-theme='dark'] .agentPage {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #333333 100%);
+}
+
+[data-theme='dark'] .chatSection {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+}
+
+[data-theme='dark'] .chatWrapper {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .loginPrompt {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .loginPrompt p {
+  color: #b0b0b0;
+}
+
+[data-theme='dark'] .guideSection {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+[data-theme='dark'] .guideStep {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .guideStep p {
+  color: #b0b0b0;
+}
+
+[data-theme='dark'] .tipsSection {
+  background: #2d2d2d;
+  border-color: #404040;
+}
+
+[data-theme='dark'] .tipsList li {
+  color: #e0e0e0;
+  border-color: #404040;
+} 

@@ -1,0 +1,26 @@
+# Enable or disable startup sync
+GIT_SYNC_ENABLED=true
+
+# Optional explicit monorepo git root path
+# Leave empty to auto-detect from current directory and script parents
+GIT_SYNC_REPO_PATH=
+
+# Remote and branch
+GIT_SYNC_REMOTE=origin
+GIT_SYNC_BRANCH=main
+
+# Command timeout in seconds
+GIT_SYNC_TIMEOUT_SECONDS=30
+
+# Require 'gh auth status' check before sync
+GIT_SYNC_REQUIRE_GH_AUTH=true
+
+# Enable AI commit message generation through RSHub-agent
+GIT_SYNC_AI_COMMIT_ENABLED=true
+
+# Max staged diff chars sent to agent prompt
+GIT_SYNC_AGENT_DIFF_MAX_CHARS=12000
+
+# Disable prompts for add/commit/push confirmations
+# true = never prompt (safe skip when manual confirmation is required)
+GIT_SYNC_NON_INTERACTIVE=false

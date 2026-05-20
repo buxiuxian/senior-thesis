@@ -1,0 +1,28 @@
+id: rshub.literature.papers_index
+short_description: Local papers 1–8 index; use fetch_paper_fulltext(paper_id) for full text.
+tags: [literature, papers, dmrt, nmm3d]
+bound_tool: fetch_paper_fulltext
+requires_confirmation: false
+full_doc: |
+  ## Scientific Papers Database
+
+  **Paper 1: DMRT-BIC Model** - Zhu, Tsang, Xu. Bicontinuous random media model for dense snow aggregates. Frequency: 5-19 GHz. Key params: mean grain size, aggregation parameter b, volume fraction.
+
+  **Paper 2: DMRT-QMS Model** - Tsang, Pan, Liang et al. QCA/DMRT with sticky particle model for active microwave. Frequency: 10-17.5 GHz. Key params: grain diameter, fractional volume, stickiness tau.
+
+  **Paper 3: DMRT-TRI Wet Snow Model** - Du, Lv, Cao, Shi, Tan. Tri-continuous random medium for wet snow with ice, water film, air, and water droplet phases. Uses DDA. Frequency: Ku/Ka-band (37 GHz). Key params: cutting levels alpha/beta/gamma, wetness, film-to-droplet ratio, inverse grain size zeta.
+
+  **Paper 4: Vegetation VPRT Model** - Chen, Tan. Multiple-scattering passive RT model for vegetation with vertical heterogeneity. Frequency: L-band. Key params: vegetation height, scatterer layers (trunk/branch/leaf), soil moisture, albedo-tau parameterization. Validated with SMAPVEX12.
+
+  **Paper 5: NMM3D Soil Model** - Huang, Tsang, Njoku, Chen. Full-wave NMM3D for randomly rough soil surfaces at L-band (1.26/1.41 GHz). Key params: rms height, correlation length, soil permittivity, 40-degree incidence. For SMAP mission.
+
+  **Paper 6: NMM3D Snow/DDA Model** - Tan, Zhu, Tsang, Nghiem. Full-wave NMM3D for snowpack on half-space using DDA in bicontinuous media with periodic boundary conditions. Frequency: Ku-band. Key params: snow depth, bicontinuous medium parameters, half-space permittivity.
+
+  **Paper 7: DMRT Active+Passive Snow** - Tan, Chang, Tsang, Lemmetyinen, Proksch. DMRT with cyclical corrections for combined active/passive snow remote sensing. Frequency: X/Ku/Ka-band. Key params: QCA-Mie sticky spheres or bicontinuous media. Validated with NoSREx 2010-2011.
+
+  **Paper 8: RT Forest Active+Passive** - Salim, Tan, De Roo, Colliander, Sarabandi. Unified active/passive RT for forests with multiple scattering and backscattering enhancement. Frequency: L-band. Key params: vegetation water content, scatterer geometry, soil moisture. Validated with SMAPVEX12 PALS.
+
+  Use `fetch_paper_fulltext` with paper_id 1-8 when users ask for equations, validation details, methodology, or citations.
+input_schema: {}
+output_schema: {}
+examples: []

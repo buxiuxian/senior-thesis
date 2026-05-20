@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Kill process on port 8000",
+      "type": "shell",
+      "command": "$listenerPids = @(Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique); $agentPids = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -match 'RSHub-agent-main\\start.py|uvicorn\\s+app.main:app' } | Select-Object -ExpandProperty ProcessId); $pids = @($listenerPids + $agentPids | Where-Object { $_ -and $_ -ne $PID } | Sort-Object -Unique); if (-not $pids) { Write-Host 'Port 8000 is free'; exit 0 }; foreach ($procId in $pids) { try { Stop-Process -Id $procId -Force -ErrorAction Stop; Write-Host \"Stopped PID ${procId}\" } catch { Write-Host \"Failed to stop PID ${procId}: $($_.Exception.Message)\" } }; $remain = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue; if ($remain) { Write-Host 'Warning: port 8000 still occupied after cleanup' } else { Write-Host 'Port 8000 cleanup complete' }",
+      "problemMatcher": []
+    },
+    {
+      "label": "Kill process on port 3000",
+      "type": "shell",
+      "command": "$listenerPids = @(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique); $webPids = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -match 'RSHub-web-main|docusaurus\\s+start' } | Select-Object -ExpandProperty ProcessId); $pids = @($listenerPids + $webPids | Where-Object { $_ -and $_ -ne $PID } | Sort-Object -Unique); if (-not $pids) { Write-Host 'Port 3000 is free'; exit 0 }; foreach ($procId in $pids) { try { Stop-Process -Id $procId -Force -ErrorAction Stop; Write-Host \"Stopped PID ${procId}\" } catch { Write-Host \"Failed to stop PID ${procId}: $($_.Exception.Message)\" } }; $remain = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if ($remain) { Write-Host 'Warning: port 3000 still occupied after cleanup' } else { Write-Host 'Port 3000 cleanup complete' }",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start frontend dev server",
+      "type": "shell",
+      "command": "Start-Process powershell -ArgumentList '-NoExit','-Command','Set-Location ''${workspaceFolder}/RSHub-web-main''; npm start'; Write-Host 'Frontend startup command launched'",
+      "problemMatcher": []
+    },
+    {
+      "label": "Open frontend in browser",
+      "type": "shell",
+      "command": "$url = 'http://localhost:3000'; $deadline = (Get-Date).AddSeconds(90); $ready = $false; while ((Get-Date) -lt $deadline) { try { $resp = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 2; if ($resp.StatusCode -ge 200) { $ready = $true; break } } catch { }; Start-Sleep -Milliseconds 700 }; if (-not $ready) { Write-Host 'Frontend not ready after 90s'; exit 1 }; Start-Process $url; Write-Host 'Opened http://localhost:3000'",
+      "problemMatcher": []
+    },
+    {
+      "label": "Prepare FullStack Debug",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Kill process on port 8000",
+        "Kill process on port 3000",
+        "Start frontend dev server"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

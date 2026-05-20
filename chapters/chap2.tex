@@ -1,0 +1,144 @@
+\chapter{Literature Review}
+
+\setstretch{2}
+{\fontspec{Times New Roman}\fontsize{12pt}{14pt}\selectfont
+	
+	\section{LLM-driven Agent Architectures}
+	
+	\subsection{Multi-Agent Architectures}
+	Multi-agent frameworks are designed to decompose complex tasks into specialized sub-tasks handled by individual agents, allowing parallel processing and improved efficiency [1][36][35]. For example, GeoLLM-Squad [1] uses domain-specific agents for different sensor modalities, demonstrating high task planning accuracy in urban monitoring and forestry datasets. GeoLLM-Engine [36] integrates graph reasoning across agents, optimizing token usage and coordination. EarthGPT-X [35] illustrates the flexibility of multi-agent systems in handling multi-source remote sensing data. Despite the advantages, multi-agent systems often face increased communication overhead and require careful synchronization to prevent conflicts. This implies that while multi-agent designs excel in parallelism, their complexity may limit scalability in smaller-scale tasks.
+	
+	\subsection{Single-Agent Architectures}
+	Single-agent systems consolidate capabilities into one modular agent. RS-Agent [3] demonstrates that a single agent, when equipped with a layered skill architecture, can efficiently manage task decomposition, dynamic skill routing, and multi-step execution. EarthMarker [26] shows that region- and point-level prompt designs allow single agents to process high-resolution imagery effectively. SkyMoE [27] introduces a mixture-of-experts model, which, despite being a single agent, internally routes sub-tasks to specialized experts, blending advantages of both paradigms. Recent implementations in remote sensing indicate that modular single-agent designs, when combined with skill layering, provide a favorable trade-off between architectural simplicity and task performance.
+	
+	\subsection{Comparative Analysis}
+	Overall, multi-agent systems are suitable for highly parallel, heterogeneous tasks but suffer from coordination and memory overhead [32][37]. Single-agent systems, enhanced with modular skill architecture and dynamic routing, reduce operational complexity and allow faster integration into existing workflows [50]. Table~\ref{tab:agent-architecture} summarizes key properties and practical implications.
+	
+	\begin{table}[h!]
+		\centering
+		\footnotesize
+		\caption{Comparison of Multi-Agent and Single-Agent Architectures}
+		\label{tab:agent-architecture}
+		\begin{tabular}{lcccc}
+			\hline
+			System & Architecture & Parallelism & Memory & Notes \\
+			\hline
+			GeoLLM-Squad [1] & Multi-agent & High & Medium & Domain-specific agents \\
+			RS-Agent [3] & Single-agent & Medium & Low & Modular single-agent \\
+			SkyMoE [27] & Multi-agent & High & High & Mixture-of-experts, multi-modal \\
+			EarthMarker [26] & Single-agent & Medium & Medium & Region-/point-level prompts \\
+			EarthGPT-X [35] & Multi-agent & High & High & Flexible multi-source analysis \\
+			Tree-GPT [37] & Single-agent & Medium & Medium & Forest image understanding \\
+			MineAgent [32] & Single-agent & Medium & Medium & Mineral exploration analysis \\
+			Earth-Agent [50] & Single-agent & Medium & Medium & Comprehensive Earth observation \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\section{Human-in-the-Loop (HITL) in Remote Sensing}
+	
+\subsection{HITL Workflow Mechanisms}
+Human-in-the-loop (HITL) integrates domain expertise into automated workflows to improve decision safety [14][36][47]. HITL is particularly useful in multi-step remote sensing tasks, such as parameter tuning for snow, soil, and vegetation models. A structured Plan → Check → Confirm → Execute process helps limit error propagation and allows intervention when unexpected conditions arise.
+	
+	\subsection{HITL Advantages}
+	HITL increases task reliability and user confidence. ThinkGeo [48] demonstrates that tool-augmented HITL agents outperform fully automated systems in multi-modal geospatial reasoning tasks. Empirical findings reported in related implementations further suggest that even partial supervision can significantly improve multi-step workflow accuracy.
+	
+	\subsection{Empirical Observations}
+	HITL checkpoints reduce failure rates and improve execution efficiency. Systems such as RingMo-Agent [38], Earth-Agent [40][50], and EarthMind [42] incorporate optional HITL steps, providing flexible oversight without compromising overall agent autonomy.
+	
+	\begin{table}[h!]
+		\centering
+		\footnotesize
+		\caption{HITL Framework Key Steps}
+		\label{tab:hitl-steps}
+		\begin{tabular}{l p{8cm} p{4cm}}
+			\hline
+			Step & Description & Benefit \\
+			\hline
+			Plan & Parse user request into structured task spec & Ensure task completeness \\
+			Check & Verify parameters and constraints & Prevent execution errors \\
+			Confirm & Obtain human approval & Increase reliability \\
+			Execute & Run task after confirmation & Maintain correctness and reproducibility \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\section{Retrieval-Augmented Generation (RAG) Approaches}
+	
+	\subsection{Principles of RAG}
+	RAG enables LLM agents to dynamically query external knowledge sources to improve output accuracy and reduce hallucination [12][13][29][31][36][37][49]. It is particularly effective for long-context multi-step workflows where LLM context windows are limited.
+	
+	\subsection{Applications in Remote Sensing}
+	GEE GPT [29], PolSAM [30], GeoLLaVA-8K [31], DeepResearcher [36], IM-RAG [37], Auto-RAG [40], and PaperQA [45] illustrate practical RAG implementations. EmbodiedRAG [49] demonstrates how vector-grounded retrieval facilitates scalable multi-step planning in three-dimensional task graphs.
+	
+\subsection{Practical Considerations}
+RAG can improve context relevance when prompts become long or heterogeneous. Practical integration with layered skill mechanisms is therefore a natural direction for reducing redundant context injection [26][27][30][47][48].
+	
+	\begin{figure}[h!]
+		\centering
+		\begin{tikzpicture}[
+			node distance=1.5cm,
+			box/.style={rectangle, draw, rounded corners, minimum width=5cm, minimum height=0.8cm, align=center, fill=#1!20},
+			arrow/.style={-{Stealth[scale=1.0]}, thick}
+			]
+			
+			% 节点定义（竖直排列）
+			\node[box=blue] (layer1) {Layer 1\\Skill Catalog\\(Lightweight)};
+			\node[box=green, below=of layer1] (layer2) {Layer 2\\Full Skill Documents\\(On-demand)};
+			\node[box=orange, below=of layer2] (rag) {RAG-enhanced\\Selection};
+			\node[box=red, below=of rag] (task) {Task Execution};
+			
+			% 箭头
+			\draw[arrow] (layer1) -- (layer2);
+			\draw[arrow] (layer2) -- (rag);
+			\draw[arrow] (rag) -- (task);
+			
+			% 可选说明
+			\node[left=0.5cm of layer1] {Lightweight retrieval, minimal token usage};
+			\node[left=0.5cm of layer2] {Detailed skill info, precise injection};
+			\node[left=0.5cm of rag] {Dynamic retrieval of relevant knowledge};
+			\node[left=0.5cm of task] {Execution of the selected task};
+			
+		\end{tikzpicture}
+		\caption{Conceptual diagram of RAG integration with Layered Skill architecture. Layer 1 provides lightweight skill catalog, Layer 2 loads full skill documents on demand, RAG enhances selection before task execution.}
+		\label{fig:rag-layered-tikz-vertical}
+	\end{figure}
+	
+	\section{Skill Architecture and Layered Loading}
+	
+	\subsection{Layer 1: Skill Catalog}
+	Layer 1 contains lightweight metadata for skill retrieval and intent matching [5][7][26]. Its design allows rapid routing decisions and reduces unnecessary token consumption.
+	
+	\subsection{Layer 2: Full Skill Documents}
+	Layer 2 loads full skill documentation on-demand, providing detailed guidance and schema for precise execution [5][7][26][38][40].
+	
+	\subsection{Modular Expansion and Insights}
+	Adding new skills (e.g., snow, soil, vegetation) maintains workflow consistency. RingMo-Agent [38], Earth-Agent [40][50], EarthMind [42], and Earth-Agent [50] demonstrate the effectiveness of modular expansions in real-world scenarios. Adaptive fine-tuning [49] improves task-specific skill performance and generalization.
+	
+	\section{Multi-Modal Remote Sensing \& PolSAR Techniques}
+	
+	\subsection{Integration Challenges}
+	Combining optical, SAR, and polarimetric data presents challenges including alignment, noise management, and multi-resolution fusion [30][33][32].
+	
+	\subsection{Application Cases}
+	PolSAM [30], SkySense [33], MineAgent [32], Tree-GPT [37], EarthMind [42], and Earth-Agent [50] demonstrate multi-granular and multi-sensor analysis in applied geospatial tasks.
+	
+	\subsection{Benchmark Evaluations}
+	GeoAnalystBench [35], DeepResearcher [36], EarthMind [34], and EarthMind [32] provide performance benchmarks for spatial analysis workflows and scientific assessments.
+	
+	\subsection{Summary and Literature Gaps}
+	
+	Through the comprehensive review of LLM-driven agent architectures, HITL mechanisms, RAG approaches, and modular Layered Skill frameworks [1]-[50], it is evident that significant progress has been made in automating multi-step remote sensing workflows. Multi-agent systems provide parallelism and task specialization, whereas single-agent systems offer modularity and ease of integration [3][26][27]. HITL strategies ensure task correctness and reduce error propagation [14][36][47][48], while retrieval-augmented generation enhances context-aware decision-making in complex multi-modal tasks [12][13][29][31][36][37][49]. Layered Skill architectures, as implemented in RS-Agent and RSHub-agent, allow dynamic loading of knowledge, reducing token overflow and improving workflow accuracy [5][7][26][38][40].
+	
+	Despite these advances, several gaps remain. First, although HITL improves correctness, it still depends on explicit user confirmation, which may introduce interaction latency. Second, while layered skill architecture mitigates token overflow, multi-task scheduling and adaptive priority handling can be further optimized for larger concurrent workloads. Third, synchronization automation has moved beyond a fully manual process, but its long-run maintenance loop (continuous monitoring, impact analysis, and regression validation) is still incomplete.
+	
+	Based on these identified gaps, the following three optimization directions are proposed:
+	\begin{enumerate}
+		\item \textbf{HITL Process Optimization:} Streamline the Plan→Check→Confirm→Execute workflow to reduce manual interventions while preserving output accuracy, potentially incorporating partial automation and adaptive confirmation strategies.
+		\item \textbf{Skill Architecture Enhancement:} Introduce advanced dynamic scheduling and multi-task management mechanisms within the Layered Skill system to further optimize token usage, execution efficiency, and modular expansion.
+		\item \textbf{Extension of Git/PyPI Synchronization:} Extend the current synchronization workflow into a full maintenance pipeline covering monitoring, impact analysis, patch recommendation, PR generation, and regression testing.
+	\end{enumerate}
+	
+	These directions address current operational limits and provide a roadmap for stronger scalability, reliability, and maintainability of RSHub-agent in practical remote sensing applications.
+	
+}

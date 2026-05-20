@@ -1,0 +1,386 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Prevent text selection on UI elements but allow on content */
+button,
+.navbar,
+.navbar__item,
+.navbar__link,
+.navbar__brand,
+.dropdown,
+.sidebar,
+.menu,
+.tabs,
+.breadcrumbs,
+h1, h2, h3, h4, h5, h6 {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Allow text selection in content areas */
+p,
+li,
+td,
+pre,
+code,
+.markdown,
+article,
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Prevent cursor change on non-interactive elements */
+button,
+a,
+.clickable {
+  cursor: pointer;
+}
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* 隐藏自定义白色导航栏 */
+nav[class*="navbar_navbar"] {
+  display: none !important;
+}
+
+/* 但显示Docusaurus的默认导航栏 */
+.navbar.navbar--fixed-top {
+  display: flex !important;
+}
+
+/* 移除为白色导航栏预留的空间 */
+body {
+  padding-top: 0 !important;
+}
+
+/* 用户下拉菜单动画效果 */
+.user-dropdown__menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.user-dropdown__menu--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* 确保下拉菜单在hover时显示 */
+.user-dropdown:hover .user-dropdown__menu {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}
+
+/* 确认对话框样式和动画 */
+.confirm-dialog-overlay {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.confirm-dialog-content {
+  animation: slideIn 0.3s ease-out;
+  transform-origin: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 确认对话框按钮hover效果 */
+.confirm-dialog-content button {
+  transition: all 0.2s ease;
+}
+
+.confirm-dialog-content button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.confirm-dialog-content button:active {
+  transform: translateY(0);
+}
+
+/* 深色模式下的特殊样式调整 */
+[data-theme='dark'] .user-dropdown .navbar__link {
+  color: var(--ifm-navbar-link-color);
+}
+
+[data-theme='dark'] .user-dropdown .navbar__link:hover {
+  color: var(--ifm-navbar-link-hover-color);
+}
+
+[data-theme='dark'] .user-dropdown__menu {
+  background-color: var(--ifm-dropdown-background-color);
+  border-color: var(--ifm-color-emphasis-300);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+[data-theme='dark'] .user-dropdown__menu .dropdown__link {
+  color: var(--ifm-dropdown-link-color);
+}
+
+[data-theme='dark'] .user-dropdown__menu .dropdown__link:hover {
+  background-color: var(--ifm-dropdown-hover-background-color);
+  color: var(--ifm-dropdown-link-color);
+}
+
+/* 深色模式下的确认对话框样式 */
+[data-theme='dark'] .confirm-dialog-content {
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='dark'] .confirm-dialog-content button:first-of-type {
+  border-color: var(--ifm-color-emphasis-300);
+  color: var(--ifm-font-color-base);
+}
+
+[data-theme='dark'] .confirm-dialog-content button:first-of-type:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .dropdown--right .navbar__link b {
+    display: none; /* 在移动端隐藏用户名 */
+  }
+  
+  /* 移动端下拉菜单位置调整 */
+  .user-dropdown__menu {
+    right: -1rem;
+    min-width: 8rem;
+  }
+  
+  /* 移动端确认对话框调整 */
+  .confirm-dialog-content {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .confirm-dialog-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .confirm-dialog-content div {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .confirm-dialog-content button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* 全局响应式设计优化 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* 响应式容器 */
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+/* 确保图片响应式 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 改进表格在小屏幕上的显示 */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* 优化代码块的显示 */
+pre {
+  overflow-x: auto;
+}
+
+/* Getting Started navbar button - Golden gradient */
+.navbar-agent-link {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  margin: 0 8px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(246, 211, 101, 0.4) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.navbar-agent-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.navbar-agent-link:hover {
+  color: white !important;
+  text-decoration: none !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 15px rgba(246, 211, 101, 0.6) !important;
+  background: linear-gradient(135deg, #ffd89b 0%, #ffb199 100%) !important;
+}
+
+.navbar-agent-link:hover::before {
+  left: 100%;
+}
+
+.navbar-agent-link:active {
+  transform: translateY(0px) !important;
+  box-shadow: 0 2px 8px rgba(246, 211, 101, 0.5) !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .navbar-agent-link {
+    margin: 4px 0 !important;
+    padding: 6px 12px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Dark mode */
+[data-theme='dark'] .navbar-agent-link {
+  background: linear-gradient(135deg, #ffd89b 0%, #ffb199 100%) !important;
+  box-shadow: 0 2px 8px rgba(255, 216, 155, 0.5) !important;
+}
+
+[data-theme='dark'] .navbar-agent-link:hover {
+  background: linear-gradient(135deg, #ffe4b5 0%, #ffc5ad 100%) !important;
+  box-shadow: 0 4px 15px rgba(255, 216, 155, 0.7) !important;
+}
+
+/* Bold Scenarios and Acknowledgements links */
+a.navbar__link[href="/docs/Scenarios"],
+a.navbar__link[href="/Acknowledgements"] {
+  font-weight: 700 !important;
+}
+
+/* 针对超小屏幕的优化 */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding: 0 0.5rem;
+  }
+}
+
+/* 改进链接的可访问性 */
+a:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}

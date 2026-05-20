@@ -1,0 +1,634 @@
+# Modeling Active Microwave Remote Sensing of Snow Using Dense Media Radiative Transfer (DMRT) Theory With Multiple-Scattering Effects
+
+**Leung Tsang**, *Fellow, IEEE*, **Jin Pan**, **Ding Liang**, *Student Member, IEEE*, **Zhongxin Li**, **Donald W. Cline**, and **Yunhua Tan**
+
+**Abstract—Dense media radiative transfer (DMRT) theory is used to study the multiple-scattering effects in active microwave remote sensing. Simplified DMRT phase matrices are obtained in the 1–2 frame. The simplified expressions facilitate solutions of the DMRT equations and comparisons with other phase matrices. First-order, second-order, and full multiple-scattering solutions of the DMRT equations are obtained. To solve the DMRT equation, we decompose the diffuse intensities into Fourier series in the azimuthal direction. Each harmonic is solved by the eigenquadrature approach. The model is applied to the active microwave remote sensing of terrestrial snow. Full multiple-scattering effects are important as the optical thickness for snow at frequencies above 10 GHz often exceed unity. The results are illustrated as a function of frequency, incidence angle, and snow depth. The results show that cross polarization for the case of densely packed spheres can be significant and can be merely 6 to 8 dB below copolarization. The magnitudes of the cross polarization are consistent with the experimental observations. The results show that the active 13.5-GHz backscattering coefficients still have significant sensitivity to snow thickness even for snow thickness exceeding 1 m.**
+
+**Index Terms—Active microwave remote sensing, dense media, snow.**
+
+## I. INTRODUCTION
+
+THE SCATTERING problem by random discrete scatterers has been applied to active and passive microwave remote sensing [1]–[3]. To calculate the scattering problem by many particles, the classical theory assumes independent scattering in which the scattering intensity is set equal to the sum of scattering intensities from each particle [4], [5]. For the case of scattering by spheres much smaller than the wavelength, the classical theory has the following features in the results: 1) the extinction is proportional to the fractional volume; 2) the scattering coefficient is proportional to the frequency to the fourth power; and 3) the phase matrix is that of the Rayleigh phase matrix that has mean cosine of the scattering equal to zero. The classical approach ignores the coherent wave interaction among the particles. To take into account the collective scattering effects, quasi-crystalline approximation (QCA) can be used in the Dyson equation for the coherent field, and the correlated ladder approximation is used for the Bethe Salpeter equation for the incoherent field [6], [7]. The QCA and correlated ladder analytic approximations lead to the dense media radiative transfer (DMRT) theory. The pair distribution functions of the Percus–Yevick approximations are used to describe the correlations of particle positions. An advantage of the sticky particle model is the few number of parameters needed. The physical input parameters for QCA/DMRT in this paper are the single grain size, fractional volume, and stickiness parameter $\tau$. No particle size distribution is used in this paper. However, in the sticky particle model, the particles have an attractive force that makes them adhere to form aggregates [3].
+
+With the advent of computers, large-scale 3-D electromagnetic problems can be solved by numerical solutions of Maxwell equations. We have used numerical approaches to solve wave scattering by thousands of particles that are densely packed together. The approach is named numerical Maxwell model of 3-D simulations (NMM3D) [8]. The results show good agreement with those obtained by the QCA/DMRT for particle densities up to 25% by volume. QCA/DMRT and NMM3D have very different physical features from classical independent scattering, namely: 1) the extinction saturates at high fractional volume; 2) the scattering coefficient has weaker frequency dependence than the fourth power in spite of the smallness in size of the particles; and 3) the mean cosine of the phase matrix is not equal to zero, and the phase matrix shows more forward scattering.
+
+All the past multiple-scattering results of DMRT were for passive remote sensing and were applied to Special Sensor Microwave/Imager (SSM/I) and Advanced Microwave Scanning Radiometer (AMSR) data. With the recent interests in developing synthetic aperture radar at 10 and 17 GHz for potential penetration up to 5 m of snow, it becomes important to obtain results of DMRT for active remote sensing.
+
+In this paper, we study multiple scattering in active remote sensing by using the QCA/DMRT theory. In our earlier work, the DMRT phase matrix was complicated in form [6, pp. 301–307]. In this paper, the phase matrices are considerably simplified by using addition theorems for vector spherical harmonics and vector spherical wave functions. With these simplified expressions, it is easier to code the DMRT phase matrix. The simplified expressions also facilitate solutions of the DMRT equations and comparisons with other phase matrices. We decompose the diffuse intensities into Fourier series in the azimuthal direction. Each harmonic is solved by the eigenquadrature approach. The solution includes full multiple-scattering effects within DMRT. We also derived analytic expressions for the first-order and second-order solutions. Comparisons are made between the full multiple-scattering solutions and the first-order and second-order solutions. The model is applied to the active microwave remote sensing of terrestrial snow. Full multiple-scattering effects are important as the optical thickness for snow often exceed unity above 10 GHz. The results are illustrated as a function of frequency, snow depth, and grain size. We show that even at snow depths of more than 1 m, the active 13.4-GHz backscattering coefficients still have significant sensitivity to snow thickness. Cross polarization is often attributed to first-order scattering by nonspherical particles [9]. However, the first-order theory is valid only for small optical thickness. An intrinsic problem with nonspherical particle theory is that it will introduce more parameters, e.g., aspect ratios, orientation distributions, etc. All these parameters for nonspherical particles are difficult to obtain in real life snow. In dense media, because the extinction rate is large, the optical thickness is appreciable at 13.4 and 17.5 GHz. This paper shows that the cross polarization of multiple scattering by spheres in dense media can be significant and can be only 6–8 dB below copolarization.
+
+In Section II, we summarize the equations for the effective propagation constant, extinction coefficient, and scattering coefficient. In Section III, we give the new simplified form of the phase matrix for QCA/DMRT in the 1–2 frame. We also compare the QCA/DMRT phase matrices with other common phase matrices that have been used to study snow. The results of the phase matrix are illustrated numerically and compared with classical independent Mie theory. In Section IV, we describe the multiple-scattering solutions of active remote sensing in DMRT. The first-order and second-order solutions of DMRT are given in Appendix II. Numerical results of bistatic scattering coefficients and backscattering coefficients are illustrated in Section V. In Section VI, results are compared with QuikSCAT data taken at Fraser, CO [Cold Land Processes Field Experiment (CLPX)].
+
+## II. EFFECTIVE PROPAGATION CONSTANT AND EXTINCTION COEFFICIENT
+
+We summarize the equations of the effective propagation constant, extinction coefficient, and absorption coefficient. The parameters are single particle diameters $b$, fractional volume $f$, complex permittivity of particles, and stickiness parameter $\tau$. Let the background media be air.
+
+In QCA/DMRT, the Lorentz–Lorenz (L–L) law and the Ewald–Oseen (E–O) theorem are used to calculate the effective propagation constant in snow $K$ and the average multipole amplitudes $X^{(M)}$ and $X^{(N)}$. Let the equations be truncated at multipole $N_{\max}$. The choice of maximum multipole is $N_{\max} = [kb] + 1$, where $[kb]$ means the nearest integer less than $kb$.
+
+L–L law is a system of equations of dimension $2N_{\max}$ for $X^{(M)}$ and $X^{(N)}$. In the microwave remote sensing of snow, $N_{\max}$ is at most 3, so the dimension of L–L law is at most 6. $k$ is the wavenumber of air.
+
+The L–L law, as given in [6, eqs. (6.1.46a) and (6.1.46b)], is
+
+$$
+X^{(M)}_v = -2\pi n_0 \sum_{n=1}^{N_{\max}} \sum_{p=|n-v|}^{|n+v|} (2n + 1)
+$$
+$$
+\times [L_p(k, K/b) + M_p(k, K/b)]
+$$
+$$
+\times \left\{ T^{(M)}_n X^{(M)}_n a(1, n/-1, v/p) \times A(n, v, p) \right.
+$$
+$$
+\left. + \ T^{(N)}_n X^{(N)}_n a(1, n/-1, v/p, p - 1)B(n, v, p) \right\} \tag{1a}
+$$
+
+$$
+X^{(N)}_v = -2\pi n_0 \sum_{n=1}^{N_{\max}} \sum_{p=|n-v|}^{|n+v|} (2n + 1)
+$$
+$$
+\times [L_p(k, K/b) + M_p(k, K/b)]
+$$
+$$
+\times \left\{ T^{(M)}_n X^{(M)}_n a(1, n/-1, v/p, p - 1) \times B(n, v, p) \right.
+$$
+$$
+\left. + \ T^{(N)}_n X^{(N)}_n a(1, n/-1, v/p)A(n, v, p) \right\}
+$$
+$$
+v = 1, 2, \dots, N_{\max} \tag{1b}
+$$
+
+where $M_p$ and $L_p$, as given in [6, eqs. (6.1.34) and (6.1.39)], are
+
+$$
+M_p(k, K/b) = \int_{b}^{\infty} dr \ r^2 [g(r) - 1] h_p(kr)j_p(Kr) \tag{2a}
+$$
+
+$$
+L_p(k, K/b) = -\frac{b^2}{(K^2 - k^2)} \times [k h'_p(kb)j_p(Kb) - K h_p(kb)j'_b(Kb)]. \tag{2b}
+$$
+
+In (1a) and (1b), $n_0$ is the particle number density, so that $f = n_0 \pi b^3/6$ is the fractional volume. Note that the summation of $p$ is only from $|n - v|$ to $|n + v|$. $A(n, \nu, p)$ and $B(n, \nu, p)$ are given in [6, eqs. (6.1.44a) and (6.1.44b)], while $a(1, n/-1, \nu/p)$ and $a(1, n/-1, \nu/p, p - 1)$ are given in [3, eqs. (10.4.14) and (10.4.15)]. $T^{(M)}_n$ and $T^{(N)}_n$ are T matrix coefficients that are given in [2, eqs. (1.6.14b) and (1.6.15b)].
+
+$g(r)$ in (2a) is the pair distribution function. The pair function for sticky particles is given in Appendix I.
+
+To solve the L–L law, we note that (1a) and (1b) form a system of $2N_{\max}$ simultaneous homogeneous equations for $2N_{\max}$ unknown amplitudes: $X^{(M)}_1, X^{(M)}_2, \dots, X^{(M)}_{N_{\max}}$, and $X^{(N)}_1, X^{(N)}_2, \dots, X^{(N)}_{N_{\max}}$. The determinant is of dimension $(2N_{\max}) \times (2N_{\max})$ and is required to vanish, yielding an equation for the effective propagation constant $K$, which is solved numerically. After $K$ is solved, we replace one of the $2N_{\max}$ equations of the L–L law by the E–O theorem, which is a single equation given in [6, eq. (6.1.49)] as
+
+[Figure 1: Orthogonal system for polarization of 1–2 system.]
+
+$$
+K - k = -\frac{\pi i n_0}{k^2} \sum_{n=1}^{N_{\max}} \left( T^{(M)}_n X^{(M)}_n + T^{(N)}_n X^{(N)}_n \right) (2n + 1) \tag{3}
+$$
+
+and then we solve the system of the $2N_{\max}$ equations to calculate the multipole amplitude $X^{(M)}_{\nu}$ and $X^{(N)}_{\nu}$, $\nu = 1, 2, \dots, N_{\max}$. Next, the absorption coefficient is calculated by
+
+$$
+\kappa_a = \frac{k}{K_r} \frac{2\pi}{k^2|1 - R|^2} n_0 \cdot \sum_{n=1}^{N_{\max}} (2n + 1)
+$$
+$$
+\times \left[ \left| X^{(M)}_n \right|^2 \left( -\text{Re}T^{(M)}_n - \left| T^{(M)}_n \right|^2 \right) \right.
+$$
+$$
+\left. + \left| X^{(N)}_n \right|^2 \left( -\text{Re}T^{(N)}_n - \left| T^{(N)}_n \right|^2 \right) \right] \tag{4}
+$$
+
+where $K_r = \text{Re}(K)$, and
+
+$$
+R = \frac{\pi i n_0}{k^2(k + K_r)} \sum_{n=1}^{N_{\max}} (-1)^n \left( -T^{(M)}_n X^{(M)}_n + T^{(N)}_n X^{(N)}_n \right) (2n + 1). \tag{5}
+$$
+
+The real part of the effective dielectric constant of snow is calculated as $\varepsilon_{\text{eff}} = (K_r/k)^2$.
+
+## III. QCA/DMRT PHASE MATRIX AND COMPARISONS
+
+The quantities $K$, $X^{(M)}$, and $X^{(N)}$ from the L–L law and E–O theorem are next used to calculate the phase matrix $\bar{P}$. The previous expressions for phase matrices in [6, pp. 301–307] are complicated. Recently, we were able to simplify the expressions considerably by applying vector additional theorems to vector spherical harmonics and vector spherical wave equations in [6, eqs. (6.4.25)–(6.4.31)]. The supplied expressions are given in Appendix I.
+
+The phase matrix is conveniently expressed in a 1–2 frame, as shown in Fig. 1. The 1–2 scattering plane contains the incident direction $\hat{k}_i$ and the scattered direction $\hat{k}_s$. Let the angle between $\hat{k}_i$ and $\hat{k}_s$ be $\Theta$. The polarization unit vectors $\hat{1}_i = \hat{1}_s$ are perpendicular to the scattering plane. Then, polarization $\hat{2}_i$ is perpendicular to both $\hat{k}_i$ and $\hat{1}_i$, while polarization $\hat{2}_s$ is perpendicular to both $\hat{k}_s$ and $\hat{1}_s$. The expressions for these unit vectors are given in [2, eqs. (1.1.34)–(1.1.36)].
+
+In QCA/DMRT phase matrix, we first calculate
+
+$$
+f_{11}(\Theta) = -\frac{i}{(1 - R)} \sqrt{\frac{1}{k K_r}} \cdot \sum_{n=1}^{N_{\max}} \frac{2n + 1}{n(n + 1)}
+$$
+$$
+\times \left[ T^{(M)}_n X^{(M)}_n \tau_n(\cos \Theta) + T^{(N)}_n X^{(N)}_n \pi_n(\cos \Theta) \right] \tag{6a}
+$$
+
+$$
+f_{22}(\Theta) = -\frac{i}{(1 - R)} \sqrt{\frac{1}{k K_r}} \cdot \sum_{n=1}^{N_{\max}} \frac{2n + 1}{n(n + 1)}
+$$
+$$
+\times \left[ T^{(M)}_n X^{(M)}_n \pi_n(\cos \Theta) + T^{(N)}_n X^{(N)}_n \tau_n(\cos \Theta) \right] \tag{6b}
+$$
+
+where $\pi_n(\cos \Theta)$ and $\tau_n(\cos \Theta)$ are functions defined in [10].
+
+The phase matrix relates the scattered wave Stokes parameters to the incident wave Stokes parameters as
+
+$$
+\begin{bmatrix}
+I_{1s} \\
+I_{2s} \\
+U_{12s} \\
+V_{12s}
+\end{bmatrix}
+=
+\begin{bmatrix}
+P_{11}(\Theta) & 0 & 0 & 0 \\
+0 & P_{22}(\Theta) & 0 & 0 \\
+0 & 0 & P_{33}(\Theta) & P_{34}(\Theta) \\
+0 & 0 & P_{43}(\Theta) & P_{44}(\Theta)
+\end{bmatrix}
+\begin{bmatrix}
+I_{1i} \\
+I_{2i} \\
+U_{12i} \\
+V_{12i}
+\end{bmatrix}. \tag{7}
+$$
+
+Note that because spheres are used, the cross polarization in the QCA-DMRT phase matrix represented by $P_{12}(\Theta)$ and $P_{21}(\Theta)$ is zero.
+
+The phase matrix components are
+
+$$
+P_{11}(\Theta) = |f_{11}(\Theta)|^2 q(\Theta) \tag{8a}
+$$
+$$
+P_{22}(\Theta) = |f_{22}(\Theta)|^2 q(\Theta) \tag{8b}
+$$
+$$
+P_{33}(\Theta) = \text{Re} (f_{11}(\Theta) \cdot f^*_{22}(\Theta)) q(\Theta) \tag{9a}
+$$
+$$
+P_{44}(\Theta) = P_{33}(\Theta) \tag{9b}
+$$
+$$
+P_{34}(\Theta) = -\text{Im} (f_{11}(\Theta) \cdot f^*_{22}(\Theta)) q(\Theta) \tag{9c}
+$$
+$$
+P_{43}(\Theta) = -P_{34}(\Theta). \tag{9d}
+$$
+
+Not that $f_{11}(\Theta)$ and $f_{22}(\Theta)$ are not the scattering amplitudes. In the phase matrix expression, there is an additional factor of $q(\Theta)$. In the 1–2 frame, $q(\Theta) = n_0(1 + n_0(2\pi)^3 H(\Theta))$.
+
+The structure factor $H(\Theta)$ is the Fourier transform of the pair distribution function $g(\bar{r})$ minus 1, i.e.,
+
+$$
+H(\Theta) = \frac{1}{(2\pi)^3} \int_{-\infty}^{\infty} d\bar{r} \ (g(\bar{r}) - 1) e^{-i\bar{p} \cdot \bar{r}}
+$$
+$$
+= \frac{1}{2\pi^2 p} \int_{0}^{\infty} dr \ r \ (g(r) - 1) \sin pr \tag{10}
+$$
+
+where
+
+$$
+p = \sqrt{\text{Re}(K)^2 + k^2 - 2k\text{Re}(K) \cos(\Theta)}. \tag{11}
+$$
+
+The scattering coefficient $\kappa_s$ is then calculated by
+
+$$
+\kappa_s = \pi \int_{0}^{\pi} d\Theta \ (P_{11}(\Theta) + P_{22}(\Theta)) \sin \Theta \tag{12}
+$$
+
+and the extinction coefficient is $\kappa_e = \kappa_s + \kappa_a$.
+
+We next compare the QCA/DMRT phase matrix with other phase matrices. It is often more convenient to compare the phase matrix that is normalized by the scattering coefficient $P^N_{ij} = P_{ij}/\kappa_s$.
+
+### A. Classical Mie Phase Matrix
+
+In the classical Mie phase matrix, the scattering amplitudes are
+
+$$
+f_{11}(\Theta) = -\frac{i}{k} \sum_{n=1}^{\infty} \frac{2n + 1}{n(n + 1)}
+$$
+$$
+\times \left[ T^{(M)}_n \tau_n(\cos \Theta) + T^{(N)}_n \pi_n(\cos \Theta) \right] \tag{13a}
+$$
+
+$$
+f_{22}(\Theta) = -\frac{i}{k} \sum_{n=1}^{\infty} \frac{2n + 1}{n(n + 1)}
+$$
+$$
+\times \left[ T^{(M)}_n \pi_n(\cos \Theta) + T^{(N)}_n \tau_n(\cos \Theta) \right]. \tag{13b}
+$$
+
+The phase matrix components are
+
+$$
+P_{11}(\Theta) = |f_{11}(\Theta)|^2 n_0 \tag{14a}
+$$
+$$
+P_{22}(\Theta) = |f_{22}(\Theta)|^2 n_0. \tag{14b}
+$$
+
+Note that (6a) and (6b) of QCA-DMRT look similar to (13a) and (13b) of classical Mie except that QCA-DMRT has the effective propagation constant $K$, the average multipole amplitudes $X_n$'s from the L–L law and E–O theorem, and the structure factor $q(\Theta)$.
+
+### B. Rayleigh Phase Matrix
+
+The classical Rayleigh is based on independent intrinsic dipole scattering. The normalized phase matrix components are $P^N_{11}(\Theta) = 3/8\pi$ and $P^N_{22}(\Theta) = 3 \cos^2 \Theta/8\pi$.
+
+Because the grain size is small in snow, classical Mie is close to classical Rayleigh in microwave remote sensing using the physical parameters of grain size.
+
+### C. Strong Fluctuation Theory (SFT) Phase Matrix
+
+In the microwave emission model of layered snowpacks (MEMLS) model, which is based on SFT [11], the bistatic scattering coefficient is proportional to $\sin^2 \chi$, where $\chi$ is the angle between the incident electric field and the scattered direction. For the case of scattering from $\hat{1}_i \to \hat{1}_s$, $\chi = 90^\circ$, so that $\sin^2 \chi = 1$. For the case of scattering from $\hat{2}_i \to \hat{2}_s$, $\chi = 90^\circ - \Theta$, so that $\sin^2 \chi = \cos^2 \Theta$. Hence, the normalized phase matrix of SFT is identical to that of the Rayleigh phase matrix. Also, since the correlation length is close to grain size, which is small, scattering is proportional to frequency of the fourth power.
+
+### D. HUT Phase Matrix
+
+The radiative transfer equation in Helsinki University of Technology (HUT) is [12]
+
+$$
+\frac{\partial T_B(d', \theta)}{\partial d'} = \kappa_a \sec \theta T_s + (q\kappa_s - \kappa_e) \sec \theta T_B(d', \theta). \tag{15}
+$$
+
+Hence, the HUT phase matrix corresponds to forward scattering while scattering in other directions are ignored. The forward scattering in HUT corresponds to a Dirac delta function in the phase matrix. Hence, the normalized phase matrix is $P^N_{11}(\Theta) = P^N_{22}(\Theta) = q\delta(\cos \Theta - 1)/2\pi$. Note that $q$ is taken as 0.96. This corresponds to 96% of the incident power being scattered in the forward direction.
+
+### E. Former DMRT Phase Matrix [1]
+
+The former version of DMRT utilizes the nonsticky particle model [1]. The code of this former version is available from http://ceta.mit.edu/emwave/. Because the grain sizes are small and nonsticky, the resulting phase matrix was the Rayleigh phase matrix. The nonstickiness also results in a frequency dependence of the fourth power. In this present version of the QCA_DMRT_Sticky model [7], the Sticky pair distribution function is used. Since the grains stick to form aggregates that are larger than the individual grain, higher-order multipoles are used as indicated in (1) and (6).
+
+In Fig. 2, we compare the scattering coefficient between QCA-DMRT and classical Mie theory as a function of frequency for a grain diameter of 1.4 mm. Other parameters are fractional volume = 25%, ice dielectric constant = $3.15 + 0.001i$, and stickiness parameter = 0.1. We note that the classical Mie result is similar to Rayleigh scattering because of the small grain size. The plot is close to a straight line on a log-log scale, indicating a frequency dependence of close to the fourth power. The QCA result is larger than the classical result at low frequency and is smaller than classical Mie scattering at high frequency. Thus, the frequency dependence of scattering coefficient in QCA is weaker than that of classical Mie scattering.
+
+In Figs. 3–5, we compare the QCA phase matrix with the classical Mie scattering phase matrix using the same particle size of 1.4 mm as a function of $\Theta$ at 13.4, 17.5, and 37 GHz, respectively. The classical Mie phase matrix is close to that of the dipole pattern with $P_{11}$ close to a constant and $P_{22}$ close to a dependence of $\cos^2(\Theta)$. The figures show that for the same grain size, QCA predicts more forward scattering than classical Mie scattering. Also, forward scattering increases as frequency increases. The procedure to transform from 1–2 frame to principal frame to be used in DMRT is as follows. Let $\alpha_i$ be the angle that rotates from $\hat{v}_i$, incident vertical polarization, anticlockwise to $\hat{1}_i$, and $\alpha_s$ is the angle that rotates from $\hat{v}_s$, scattered vertical polarization, anticlockwise to $\hat{1}_s$. The transformation matrix from the 1–2 frame to the principal frame is a rotation about the axis and can be found in [5, pp. 35–36]. In the principal frame, $(\theta_i, \phi_i)$ is the incident direction, and $(\theta_s, \phi_s)$ is the scattered direction. $\bar{\bar{P}}(\theta, \phi; \theta', \phi')$ is the bistatic scattering cross section per unit volume of space, denoting scattering from direction $(\theta', \phi')$ into direction $(\theta, \phi)$. The transformation formula is
+
+[Figure 2: (a) scattering coefficient vs frequency. (b) extinction coefficient vs fractional volume.]
+
+$$
+\bar{\bar{P}}(\theta_s, \phi_s; \theta_i, \phi_i) =
+\begin{bmatrix}
+\cos^2 \alpha_s & \sin^2 \alpha_s & -\frac{\sin 2\alpha_s}{2} & 0 \\
+\sin^2 \alpha_s & \cos^2 \alpha_s & \frac{\sin 2\alpha_s}{2} & 0 \\
+\sin 2\alpha_s & -\sin 2\alpha_s & \cos 2\alpha_s & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+P_{11}(\Theta) & 0 & 0 & 0 \\
+0 & P_{22}(\Theta) & 0 & 0 \\
+0 & 0 & P_{33}(\Theta) & P_{34}(\Theta) \\
+0 & 0 & P_{43}(\Theta) & P_{44}(\Theta)
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+\cos^2 \alpha_i & \sin^2 \alpha_i & \frac{\sin 2\alpha_i}{2} & 0 \\
+\sin^2 \alpha_i & \cos^2 \alpha_i & -\frac{\sin 2\alpha_i}{2} & 0 \\
+-\sin 2\alpha_i & \sin 2\alpha_i & \cos 2\alpha_i & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}. \tag{16}
+$$
+
+[Figure 3: Normalized phase matrix as a function of Θ with b = 1.4 mm and frequency = 13.4 GHz.]
+
+## IV. DMRT EQUATIONS AND MULTIPLE-SCATTERING SOLUTIONS
+
+Consider a snow layer above ground, as shown in Fig. 6. The snow layer thickness is $d$. Region 0 is air, region 1 is snow, and region 2 is ground.
+
+The DMRT equations are
+
+$$
+\cos \theta \frac{d\bar{I}(\theta, \phi, z)}{dz} = -\kappa_e \cdot \bar{I}(\theta, \phi, z) + \bar{S}(\theta, \phi, z) \tag{17a}
+$$
+$$
+-\cos \theta \frac{d\bar{I}(\pi - \theta, \phi, z)}{dz} = -\kappa_e \cdot \bar{I}(\pi - \theta, \phi, z) + \bar{W}(\theta, \phi, z) \tag{17b}
+$$
+
+$$
+\bar{S}(\theta, \phi, z) = \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\theta, \phi; \theta', \phi')
+$$
+$$
+\times \bar{I}(\theta', \phi', z) + \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\theta, \phi; \pi - \theta', \phi')
+$$
+$$
+\times \bar{I}(\pi - \theta', \phi', z) \tag{18a}
+$$
+
+$$
+\bar{W}(\theta, \phi, z) = \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\pi - \theta, \phi; \theta', \phi')
+$$
+$$
+\times \bar{I}(\theta', \phi', z) + \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\pi - \theta, \phi; \pi - \theta', \phi')
+$$
+$$
+\times \bar{I}(\pi - \theta', \phi', z) \tag{18b}
+$$
+
+where $\bar{I}(\theta, \phi, z)$ is the specific intensity.
+
+[Figure 4: Normalized phase matrix as a function of Θ with b = 1.4 mm and frequency = 17.5 GHz.]
+
+[Figure 5: Normalized phase matrix as a function of Θ with b = 1.4 mm and frequency = 37 GHz.]
+
+[Figure 6: Active microwave remote sensing.]
+
+The boundary conditions are listed as follows. At $z = 0$
+
+$$
+\bar{I}(\pi - \theta, \phi, z = 0) = \bar{\bar{R}}_{10}(\theta)\bar{I}(\theta, \phi, z = 0)
+$$
+$$
++ \bar{\bar{T}}_{01}(\theta_0)\bar{I}_0 \delta(\cos \theta_0 - \cos \theta_{0inc}) \delta(\phi - \phi_{inc}). \tag{19a}
+$$
+
+At $z = -d$ we have
+
+$$
+\bar{I}(\theta, \phi, z = -d) = \bar{\bar{R}}_{12}(\theta)\bar{I}(\pi - \theta, \phi, z = -d). \tag{19b}
+$$
+
+$\theta_0$ is in the air region. The angle is related to the snow region by Snell’s law $\sin \theta_{0inc} = n_1 \sin \theta_{inc}/n_0$, and $\bar{\bar{R}}_{10}(\theta)$ and $\bar{\bar{R}}_{12}(\theta)$ are the reflectivity matrix on the snow–air boundary and snow–ground boundary, respectively. $\bar{\bar{T}}_{01}(\theta_0)$ is the transmissivity from air to snow. The Fresnel reflectivity matrix $\bar{\bar{R}}_{10}(\theta)$, $\bar{\bar{R}}_{12}(\theta)$ and the transmissivity matrix $\bar{\bar{T}}_{01}(\theta_0)$ are found in [1] and [2]. In the calculation of the reflectivity and transmissivity matrices, we use the air permittivity in region 0, the ground permittivity in region 2, and the effective dielectric constant calculated in (3).
+
+We decompose the specific intensity as a sum of the reduced intensity $\bar{I}^{(0)}$ and diffuse intensity $\bar{I}^{(D)}$: $\bar{I} = \bar{I}^{(0)} + \bar{I}^{(D)}$. The solution for the reduced intensity is
+
+$$
+\bar{I}^{(0)}(\theta, \phi, z) = \bar{\bar{R}}_{12}(\theta) \left[ \bar{\bar{I}} - \bar{\bar{R}}_{10}(\theta)\bar{\bar{R}}_{12}(\theta) \exp(-2\kappa_e \sec \theta d) \right]^{-1}
+$$
+$$
+\times \bar{t}_{01}(\theta_0) \bar{I}_0 \delta(\cos \theta_0 - \cos \theta_{0inc}) \delta(\phi - \phi_{inc})
+$$
+$$
+\times \exp(-\kappa_e \sec \theta (z + 2d)) \tag{20a}
+$$
+
+$$
+\bar{I}^{(0)}(\pi - \theta, \phi, z) = \left[ \bar{\bar{I}} - \bar{\bar{R}}_{10}(\theta)\bar{\bar{R}}_{12}(\theta) \exp(-2\kappa_e \sec \theta d) \right]^{-1}
+$$
+$$
+\times \bar{t}_{01}(\theta_0) \bar{I}_0 \delta(\cos \theta_0 - \cos \theta_{0inc})
+$$
+$$
+\times \delta(\phi - \phi_{inc}) \exp(\kappa_e \sec \theta z). \tag{20b}
+$$
+
+The equations for diffuse intensity are
+
+$$
+\cos \theta \frac{d\bar{I}^{(D)}(\theta, \phi, z)}{dz} = -\kappa_e \bar{I}^{(D)}(\theta, \phi, z)
+$$
+$$
++ \bar{\bar{P}}(\theta, \phi; \theta_{inc}, \phi_{inc})\bar{M}^{(0)}(\theta_{inc})
+$$
+$$
+\times \exp(-\kappa_e \sec \theta_{inc}(z + 2d))
+$$
+$$
++ \bar{\bar{P}}(\theta, \phi; \pi - \theta_{inc}, \phi_{inc})
+$$
+$$
+\times \bar{N}^{(0)}(\theta_{inc}) \exp(\kappa_e \sec \theta_{inc} z)
+$$
+$$
++ \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\theta, \phi; \theta', \phi')
+$$
+$$
+\times \bar{I}^{(D)}(\theta', \phi', z)
+$$
+$$
++ \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\theta, \phi; \pi - \theta', \phi')
+$$
+$$
+\times \bar{I}^{(D)}(\pi - \theta', \phi', z) \tag{21a}
+$$
+
+$$
+-\cos \theta \frac{d\bar{I}^{(D)}(\pi - \theta, \phi, z)}{dz} = -\kappa_e \bar{I}^{(D)}(\pi - \theta, \phi, z)
+$$
+$$
++ \bar{\bar{P}}(\pi - \theta, \phi; \theta_{inc}, \phi_{inc})\bar{M}^{(0)}(\theta_{inc})
+$$
+$$
+\times \exp(-\kappa_e \sec \theta_{inc}(z + 2d))
+$$
+$$
++ \bar{\bar{P}}(\pi - \theta, \phi; \pi - \theta_{inc}, \phi_{inc})
+$$
+$$
+\times \bar{N}^{(0)}(\theta_{inc}) \exp(\kappa_e \sec \theta_{inc} z)
+$$
+$$
++ \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\pi - \theta, \phi; \theta', \phi') \bar{I}^{(D)}(\theta', \phi', z)
+$$
+$$
++ \int_{0}^{\pi/2} d\theta' \sin \theta' \int_{0}^{2\pi} d\phi' \bar{\bar{P}}(\pi - \theta, \phi; \pi - \theta', \phi')
+$$
+$$
+\times \bar{I}^{(D)}(\pi - \theta', \phi', z) \tag{21b}
+$$
+
+where
+
+$$
+\bar{M}^{(0)}(\theta_{inc}) = \bar{\bar{R}}_{12}(\theta_{inc})
+$$
+$$
+\times \left[ \bar{\bar{I}} - \bar{\bar{R}}_{10}(\theta_{inc})\bar{\bar{R}}_{12}(\theta_{inc}) \exp(-2\kappa_e \sec \theta_{inc} d) \right]^{-1}
+$$
+$$
+\cdot \bar{\bar{T}}_{01}(\theta_{0inc})\bar{I}_0 \frac{\varepsilon_0 \cos \theta_{0inc}}{\varepsilon_1 \cos \theta_{inc}} \tag{22a}
+$$
+
+$$
+\bar{N}^{(0)}(\theta_{inc}) = \left[ \bar{\bar{I}} - \bar{\bar{R}}_{10}(\theta_{inc})\bar{\bar{R}}_{12}(\theta_{inc}) \exp(-2\kappa_e \sec \theta_{inc} d) \right]^{-1}
+$$
+$$
+\cdot \bar{\bar{T}}_{01}(\theta_{0inc})\bar{I}_0 \frac{\varepsilon_0 \cos \theta_{0inc}}{\varepsilon_1 \cos \theta_{inc}}. \tag{22b}
+$$
+
+The boundary conditions for diffuse intensity are the same as in (19a) and (19b) except that the second term in (18a) is absent.
+
+The first-order and second-order analytic solutions of the diffuse intensity are given in Appendix II.
+
+The diffuse intensity equations are solved numerically, giving full multiple-scattering solutions. We make Fourier expansions of the diffuse specific intensity and the phase matrix. The Fourier expansions have been truncated at $M_{\max}$, where $M_{\max} = 4N_{\max}$. We have
+
+$$
+\bar{I}^{(D)}(\theta, \phi, z) = \bar{I}^{(D)}_0(\theta, z) + \sum_{m=1}^{M_{\max}} \bar{I}^{(D)}_{mc}(\theta, z) \cos m(\phi - \phi_{inc})
+$$
+$$
++ \sum_{m=1}^{M_{\max}} \bar{I}^{(D)}_{ms}(\theta, z) \sin m(\phi - \phi_{inc}) \tag{23a}
+$$
+
+$$
+\bar{\bar{P}}(\theta, \phi; \theta', \phi') = \bar{\bar{P}}_0(\theta, \theta') + \sum_{m=1}^{M_{\max}} \bar{\bar{P}}_{mc}(\theta, \theta') \cos m(\phi - \phi')
+$$
+$$
++ \sum_{m=1}^{M_{\max}} \bar{\bar{P}}_{ms}(\theta, \theta') \sin m(\phi - \phi'). \tag{23b}
+$$
+
+The zeroth harmonic obeys the equation
+
+$$
+\cos \theta \frac{d\bar{I}^{(D)}_0}{dz}(\theta, z) = -\kappa_e \bar{I}^{(D)}_0(\theta, z) + \bar{\bar{P}}_0(\theta, \theta_i)\bar{M}^{(0)}(\theta_{inc}) \bar{I}_0
+$$
+$$
+\times \exp(-\kappa_e \sec \theta_i (z + 2d)) + \bar{\bar{P}}_0(\theta, \pi - \theta_i)
+$$
+$$
+\times \bar{N}^{(0)}(\theta_{inc}) \bar{I}_0 \exp(\kappa_e \sec \theta_i z)
+$$
+$$
++ 2\pi \int_{0}^{\pi} d\theta' \sin \theta' \bar{\bar{P}}_0(\theta, \theta') \bar{I}^{(D)}_0(\theta', z). \tag{24}
+$$
+
+For $m = 1, 2, \dots, M_{\max}$, the cosine terms $\bar{I}^{(D)}_{mc}$ and the sine terms $\bar{I}^{(D)}_{ms}$ are coupled. The equations are
+
+$$
+\cos \theta \frac{d\bar{I}^{(D)}_{mc}}{dz}(\theta, z) = -\kappa_e \bar{I}^{(D)}_{mc}(\theta, z) + \bar{\bar{P}}_{mc}(\theta, \theta_i)\bar{M}^{(0)}(\theta_{inc})
+$$
+$$
+\times \exp(-\kappa_e \sec \theta_i (z + 2d))
+$$
+$$
++ \bar{\bar{P}}_{mc}(\theta, \pi - \theta_i) \bar{N}^{(0)}(\theta_{inc}) \exp(\kappa_e \sec \theta_i z)
+$$
+$$
++ \pi \int_{0}^{\pi} d\theta' \sin \theta' \bar{\bar{P}}_{mc}(\theta, \theta') \bar{I}^{(D)}_{mc}(\theta', z)
+$$
+$$
+- \pi \int_{0}^{\pi} d\theta' \sin \theta' \bar{\bar{P}}_{ms}(\theta, \theta') \bar{I}^{(D)}_{ms}(\theta', z) \tag{25a}
+$$
+
+$$
+\cos \theta \frac{d\bar{I}^{(D)}_{ms}}{dz}(\theta, z) = -\kappa_e \bar{I}^{(D)}_{ms}(\theta, z) + \bar{\bar{P}}_{ms}(\theta, \theta_i)\bar{M}^{(0)}(\theta_{inc})
+$$
+$$
+\times \exp(-\kappa_e \sec \theta_i (z + 2d))
+$$
+$$
++ \bar{\bar{P}}_{ms}(\theta, \pi - \theta_i) \bar{N}^{(0)}(\theta_{inc}) \exp(\kappa_e \sec \theta_i z)
+$$
+$$
++ \pi \int_{0}^{\pi} d\theta' \sin \theta' \bar{\bar{P}}_{mc}(\theta, \theta') \bar{I}^{(D)}_{ms}(\theta', z)
+$$
+$$
+- \pi \int_{0}^{\pi} d\theta' \sin \theta' \bar{\bar{P}}_{ms}(\theta, \theta') \bar{I}^{(D)}_{mc}(\theta', z). \tag{25b}
+$$
+
+The zeroth harmonic equations and the $m$th harmonic equations can be converted to a system of equations by discretizing with quadrature angles $\theta_i$, where $i = 1, 2, \dots, 2n$, and $\mu_i = \cos \theta_i$, and $\mu_i$'s are the $2n$ zeros of the Legendre polynomial $P_{2n}(\mu)$.
+
+The solution consists of particular solution and homogeneous solutions. The homogeneous system is solved by eigenanalysis. To avoid secular solution of the particular solution, we choose $\theta_{inc}$ not to coincide with any of the quadrature angles. That is, $\theta_{inc} \neq \theta_i, i = 1, 2, \dots, n$. The systems of equations are then solved, and the Stokes vectors are calculated in the directions of the quadrature angles. Then, the final solution in the backscattering direction of $\theta_{0inc}$ is obtained by interpolating from the solutions at the quadrature angles.
+
+After the equations are solved, the transmitted intensity in the zeroth region is
+
+$$
+\bar{I}^{(D)}_0(\theta_0, \phi) = \bar{\bar{T}}_{10}(\theta) \cdot \bar{I}^{(D)}(\theta, \phi, z = 0) \tag{26}
+$$
+
+where $\theta_0$ and $\theta$ are related by Snell’s law.
+
+## V. RESULTS AND DISCUSSION
+
+We illustrate the results of bistatic scattering coefficients and backscattering coefficients.
+
+The bistatic scattering coefficient is
+
+$$
+\gamma_{\beta\alpha}(\theta_0, \phi; \theta_{0inc}, \phi_{inc}) = 4\pi \frac{\cos \theta_0 I^{(D)}_{0\beta}(\theta_0, \phi)}{\cos \theta_{0inc} I_{0inc\alpha}} \tag{27}
+$$
+
+where $\beta$ is the scattered wave polarization and $\alpha$ is incident polarization.
+
+The backscattering coefficient is
+
+$$
+\sigma_{\beta\alpha}(\theta_{0inc}, \phi_{inc}) = \gamma_{\beta\alpha}(\theta_{0inc}, \phi_{inc} + \pi, \theta_{0inc}, \phi_{inc}) \cos(\theta_{0inc}). \tag{28}
+$$
+
+In the simulation, the ice grain relative permittivity is $3.15 + 0.001i$, the stickiness parameter is 0.1, and the fractional volume is 25%. The other parameters are in the figure captions. Results are illustrated at 10, 13.4, and 17.5 GHz. Results are that of full multiple scattering unless specified otherwise. Optical thickness is the product of extinction coefficient and depth. Multiple-scattering effects become important when the optical thickness exceeds unity. Thus, optical thickness is a function of snow depth, grain size, and frequency. Thus, 1 m of snow can be optically thick or optically thin depending on frequency and grain size. The theoretical results are illustrated for frozen ground with relative permittivity of $3.2 + i0.002$. This choice reduces the surface reflection. In this paper, we have not included the rough surface scattering effects so that the magnitude of volume scattering effects can be clearly illustrated. QCA/DMRT are in good agreement with the numerical solutions of Maxwell equations up to 25% by volume fraction.
+
+[Figure 7: VV like-polarization bistatic scattering coefficient with grain size = 1.4 mm, frequency = 17.5 GHz, incident angle = 54°, and snow depth = 100 cm.]
+
+However, numerical solutions of Maxwell equations require intensive CPU with many interesting cases still not computed. Thus, in the meantime, we still use QCA/DMRT for dense media theory.
+
+In all the results, only the diffuse intensities are plotted and shown. The plotted results do not include the reduced intensities.
+
+In Figs. 7–9, we plot the bistatic scattering coefficients VV, HH, and HV, respectively, in the plane of incidence at 17.5 GHz for a snow depth of 100 cm. The backward scattering angle is denoted by a negative angle. We compare the bistatic scattering coefficient between the full multiple-scattering solutions and the first-order and second-order solutions. This is a strong multiple-scattering case because of the appreciable optical thickness as the computed QCA-DMRT is $\kappa_e d = 2.06$. We note that the multiple-scattering solutions are 5 dB above the sum of the first-order and second-order solutions. The cross polarization is significant and is about 4–5 dB below like polarization. We note that the VV result in Fig. 7 has a strong angular dependence while the HH bistatic result has a monotonic angular dependence. This is due to the strong angular dependence in $P_{22}(\Theta)$ that dominates the VV bistatic scattering. Single bistatic scattering has close to dipole pattern for VV but not HH. However, multiple scattering smears out these maxima. When the albedo is close to 1, multiple scattering can cause many decibels above single- and second-order theory [4].
+
+In Figs. 10–12, we compare the backscattering coefficient between the full multiple-scattering solutions and the first-order and second-order solutions. For backscattering, VV and HH have similar angular dependence and comparable magnitudes. Since the optical thickness is large, the multiple-scattering solutions are 4 dB higher than the sum of the first-order and second-order solutions. We have a strong cross polarization result that is only 4–5 dB below the like-polarization result.
+
+[Figure 8: HH like-polarization bistatic scattering coefficient with grain size = 1.4 mm, frequency = 17.5 GHz, incident angle = 54°, and snow depth = 100 cm.]
+
+[Figure 9: HV cross-polarization bistatic scattering coefficient grain size = 1.4 mm, frequency = 17.5 GHz, incident angle = 54°, and snow depth = 100 cm. First-order solution is zero.]
+
+[Figure 10: VV like-polarization backscattering coefficient as a function of backscattering angle with grain size = 1.4 mm, frequency = 17.5 GHz, and snow depth = 100 cm.]
+
+[Figure 11: HH like-polarization backscattering coefficient as a function of backscattering angle with grain size = 1.4 mm, frequency = 17.5 GHz, and snow depth = 100 cm.]
+
+In Fig. 13, we plot the backscattering coefficients for the three frequencies of 10, 13.4, and 17 GHz using grain sizes of 1.4 and 0.85 mm. The figure shows that the backscattering coefficient increases as the frequency increases. The VV backscattering coefficient at 13.4 GHz is 4 dB higher than that at 10 GHz and 1 dB lower than that at 17.5 GHz when the grain size is 1.4 mm. The relative magnitude of VV polarization to HV polarization decreases as the frequency increases. For 10 GHz at 0.85 mm, HV is 14 dB below VV while at 17.5 GHz HV is 8 dB below VV.
+
+In Fig. 14, we plot the backscattering coefficients as a function of snow depth for different grain sizes. The results show that the active backscattering coefficients at 13.4 GHz still have significant sensitivity to snow thickness at a snow depth of more than 1 m for a grain size of 0.85 mm. However, scattering can saturate for larger grain size. Also, for the same grain size, cross polarization shows a stronger dependence on snow depth than like polarization. The difference between VV like-polarization and HV cross polarization decreases as the grain size increases from 0.85 to 1.4 mm.
+
+In Fig. 15, we show the backscattering coefficient as a function of snow depth for multiple-scattering solution and first-order solution. The results show that the first-order solution saturates when the optical thickness exceeds unity. However, the multiple-scattering solution still shows strong dependence on snow depth even when the optical thickness exceeds unity. This is because there is little microwave absorption in snow, and the albedo is close to unity.
+
+[Figure 12: HV cross-polarization backscattering coefficient as a function of scattering angle with grain size = 1.4 mm, frequency = 17.5 GHz, and snow depth = 100 cm.]
+
+[Figure 13: Backscattering coefficient at 10, 13.4, and 17.5 GHz with different particle sizes, snow depth = 100 cm, and incident angle = 54°.]
+
+[Figure 14: Backscattering coefficient as a function of snow depth at different particle sizes, frequency = 13.4 GHz, and incident angle = 54°.]
+
+[Figure 15: Backscattering coefficient as a function of snow depth. Frequency = 13.4 GHz. Grain size = 1.4 mm.]
+
+## VI. COMPARISON WITH QUIKSCAT DATA
+
+The emphasis of this paper is on theoretical results. Nevertheless, it is important to make some comparisons with QuikSCAT data to show that the results are consistent with measurements. To match real-life data extensively is a complicated task and required a separate paper. In this section, we match the QuikSCAT data at Fraser as a function of time over a snow season. It is important to note that QuikSCAT has a 25-km pixel size and that the terrain is complex near Fraser. There are tress, varying snow depth/type and terrain slope, rough surfaces, vegetation, bare surfaces and snow covers, and mixed targets within the QuikSCAT 20- to 30-km footprint. These features can be critical scattering sources. Nevertheless, an effort has been made to match one set of the QuikSCAT data using the simple model of a snow layer and including multiple-scattering effects. We will show that the computed magnitudes of backscattering coefficients are reasonable. Also, the trends of grain size used to match the data are consistent with grain growth.
+
+### A. Given Data
+
+Active microwave observations of backscattering coefficients from the 13.4-GHz QuikSCAT sensor at Fraser, CO (CLPX), were given as a function of time over the 2003–2004 snow season. The QuikSCAT observations were gridded to a 25-km grid for comparison purposes. Daily backscatter values are shown (points) and are smoothed with a running median (thin line). Because the location of QuikSCAT footprints varies from orbit to orbit, we used a nearest-neighbor approach to determine the observed backscattering for the Fraser area from QuikSCAT footprints within or near the area. Inner beam footprints from ascending orbits were used.
+
+### B. Given National Snow Analyses (NSA) Snow Model Analyses
+
+The thick line in Fig. 16 shows the mean of the estimated snow water equivalent (SWE) from the NSA. The snow depth is also given by NSA and shown in Fig. 17. The dashed line in Fig. 17 shows the mean snow depth of NSA. The solid thick line is the smoothed snow depth. The gridded NSA products are produced operationally in near real time and are based on assimilation of SWE, snow depth, and snow cover observations into a snow energy and mass balance model that is forced by numerical weather analyses [13]. The NSA products consist of merged snow observations and snow model results at 1 × 1 km² spatial resolution. The spatial means of SWE, snow depth, and snow density were calculated from the approximately 900 1-km²-resolution NSA grid cells corresponding to the Fraser area. Time series of NSA-derived snow depth and snow density were generated for a 30 × 30 km² region near Fraser, CO. Using the NSA outputs of SWE and snow depth, we calculate the fractional volume $f$ as
+
+$$
+f = \frac{swe \cdot \rho_{\text{water}}}{d_{\text{snow}} \cdot \rho_{\text{ice}}} \tag{29}
+$$
+
+where $\rho_{\text{ice}} = 0.95 \text{ g/cm}^3$ is the ice density, and $\rho_{\text{water}} = 1 \text{ g/cm}^3$ is the water density. Thus, the snow depth and the fractional volumes are outputs from the NSA snow hydrological model.
+
+### C. Parameters in the QCA/DMRT Model
+
+The snow depth $d$ and the fractional volume as a function of time are as dictated by the NSA snow model output in Section VI-B. They are used as input to QCA/DMRT. In the DMRT, we also use the ice grain dielectric constant = $3.15 + 0.001i$, stickiness parameter = 0.1, and ground dielectric constant = $3.2 + 0.002i$, which are the values used in the previous section.
+
+The remaining parameter input for QCA/DMRT is the grain size. The chosen grain size as a function of time is shown in Fig. 17. The grain sizes are chosen such that the backscattering computed by QCA/DMRT can match the QuikSCAT data.
+
+### D. Comparison Between QCA/DMRT and QuikSCAT
+
+The computed result of QCA/DMRT as a function of time is shown in Fig. 16. We see that the QCA/DMRT backscattering matches well with the QuikSCAT data. Also from Fig. 17, the grain size, chosen to give the match in backscattering, grows as a function of time. The important outcome of this exercise is that both the magnitudes and the seasonal variation of grain size and fractional volume that were necessary to achieve a close fit between the QCA/DMRT simulated and observed backscattering coefficients are realistic. In the mountain snowpacks of the Fraser area, grain sizes typically increase during the course of the season through snow metamorphism processes. During the 2003–2004 seasons, grain size observations from monthly snow pits at one site within the Fraser area support both the trend and the magnitude of the grain size determined here. In March, snow melting occurred, and there was a decrease of SWE. Nevertheless, backscattering was reasonably high, probably due to refreezing. Thus, the dry snow QCA/DMRT model is still applied. These results of comparisons with data suggest that QCA/DMRT/Sticky can be a useful tool for explaining active microwave response to snow and for developing algorithms to retrieve snow properties.
+
+[Figure 16: Comparison between the QCA/DMRT backscattering coefficient as a function of time over the 2003–2004 snow season and active microwave observations from the 13.4 GHz QuikSCAT sensor at Fraser, CO (CLPX).]
+
+[Figure 17: Grain size and snow depth used in QCA/DMRT.]
+
+## REFERENCES
+
+[1] L. Tsang, J. A. Kong, and R. Shin, *Theory of Microwave Remote Sensing*. New York: Wiley, 1985.
+[2] L. Tsang, J. A. Kong, and K. H. Ding, *Scattering of Electromagnetic Waves*, vol. 1. Hoboken, NJ: Wiley, 2000.
+[3] L. Tsang, J. A. Kong, K. H. Ding, and C. O. Ao, *Scattering of Electromagnetic Waves*, vol. 2. Hoboken, NJ: Wiley, 2001.
+[4] S. Chandrasekar, *Radiative Transfer*. New York: Dover, 1960.
+[5] A. Ishimaru, *Wave Propagation and Scattering in Random Media*. New York: Academic, 1978.
+[6] L. Tsang and J. A. Kong, *Scattering of Electromagnetic Waves*, vol. 3. Hoboken, NJ: Wiley, 2001.
+[7] L. Tsang, C.-T. Chen, A. T. C. Chang, J. Guo, and K.-H. Ding, “Dense media radiative transfer theory based on quasicrystalline approximation with applications to passive microwave remote sensing of snow,” *Radio Sci.*, vol. 35, no. 3, pp. 731–749, 2000.
+[8] C.-T. Chen, L. Tsang, J. Guo, A. T. C. Chang, and K. H. Ding, “Frequency dependence of scattering and extinction of dense media based on three-dimensional simulations of Maxwell’s equations with applications to snow,” *IEEE Trans. Geosci. Remote Sens.*, vol. 41, no. 8, pp. 1844–1852, Aug. 2003.
+[9] L. Tsang, M. C. Kubacsi, and J. A. Kong, “Radiative transfer theory for active remote sensing of a layer of ellipsoidal scatterers,” *Radio Sci.*, vol. 16, no. 3, pp. 321–329, 1981.
+[10] H. C. Van de Hulst, *Light Scattering by Small Particles*. New York: Dover, 1957.
+[11] C. Mätzler, “Improved born approximation for scattering of radiation in a granular media,” *J. Appl. Phys.*, vol. 83, no. 11, pp. 6111–6117, Jun. 1998.
+[12] J. T. Pullianinen, J. Grandell, and M. T. Hallikainen, “HUT snow emission model and its applicability to snow water equivalent retrieval,” *IEEE Trans. Geosci. Remote Sens.*, vol. 37, no. 3, pp. 1378–1390, May 1999.
+[13] T. Carroll, D. Cline, G. Fall, A. Nilsson, L. Li, and A. Rost, “NOHRSC operations and the simulation of snow cover properties for the coterminous U.S.,” in *Proc. 69th Western Snow Conf.*, 2001, pp. 1–10.
+
+**Leung Tsang** (S’73–M’75–SM’85–F’90) received the S.B., S.M., and Ph.D. degrees from the Massachusetts Institute of Technology, Cambridge.
+He is a Professor and the Associate Chairman for Education with the Department of Electrical Engineering, University of Washington, Seattle, where he has taught since 1983. Between 2001 and 2004, while on leave, he was the Chair Professor and Assistant Head with the Department of Electronic Engineering, City University of Hong Kong, Kowloon. He is the author of four books, namely *Theory of Microwave Remote Sensing*, *Scattering of Electromagnetic Waves, Vol. 1: Theory and Applications*, *Scattering of Electromagnetic Waves, Vol. 2: Numerical Simulations*, and *Scattering of Electromagnetic Waves, Vol. 3: Advanced Topics*. His current research interests include remote sensing and geoscience applications, multiple scattering of waves, signal integrity, computational electromagnetics, and wireless communications.
+Dr. Tsang has been the President of the IEEE Geoscience and Remote Sensing Society (GRSS) since January 2006. He was the Editor-in-Chief of the IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING from 1996 to 2001. He was the General Chairman of the 1998 IEEE International Geoscience and Remote Sensing Symposium. He received the IEEE GRSS Outstanding Service Award in 2000. He was the recipient of the IEEE Third Millennium Medal in 2000. He is a Fellow of the Optical Society of America.
+
+**Jin Pan** is a Professor with the Department of Microwave Engineering, University of Electronic Science and Technology of China, Chengdu, China.
+
+**Ding Liang** (S’07) received the B.Eng. degree in electrical engineering from Wuhan University, Wuhan, China. She is currently working toward the Ph.D. degree at the University of Washington, Seattle, WA.
+She is currently with the Department of Electrical Engineering, University of Washington. Her current research interests include theoretical and numerical studies of electromagnetic wave propagation and scattering in random media and remote sensing.
+
+**Zhongxin Li** is an Associate Professor with the College of Electrical Engineering, Zhejiang University, Hangzhou, China.
+
+**Donald W. Cline** received the Ph.D. degree from the University of Colorado at Boulder.
+He is currently with the National Operational Hydrologic Remote Sensing Center, Hydrologic Services Division, Office of Climate, Water, and Weather Services, National Weather Service, National Oceanic Atmospheric Administration, Chanhassen, MN.
+
+**Yunhua Tan** is with the Department of Electronic Engineering, City University of Hong Kong, Kowloon, Hong Kong.

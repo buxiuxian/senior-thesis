@@ -1,0 +1,386 @@
+# Modeling Both Active and Passive Microwave Remote Sensing of Snow Using Dense Media Radiative Transfer (DMRT) Theory With Multiple Scattering and Backscattering Enhancement
+
+**Shurun Tan**, *Student Member, IEEE*, **Wenmo Chang**, *Student Member, IEEE*, **Leung Tsang**, *Fellow, IEEE*, **Juha Lemmetyinen**, and **Martin Proksch**
+
+**Abstract—In this paper, we incorporate the cyclical terms in dense media radiative transfer (DMRT) theory to model combined active and passive microwave remote sensing of snow over the same scene. The inclusion of cyclical terms is crucial if the DMRT is used to model both the active and passive contributions with the same model parameters. This is a necessity when setting out on a joint active/passive retrieval. Previously, the DMRT model has been applied to active and passive separately, and in each case with a separate set of model parameters. The traditional DMRT theory only includes the ladder terms of the Feynman diagrams. The cyclical terms are important in multiple volume scattering and volume–surface interactions. This leads to backscattering enhancement which represents itself as a narrow peak centered at backward direction. This effect is of less significance in passive remote sensing since emissivity is relating to the angular integral of bistatic scattering coefficients. The inclusion of cyclical terms in first-order radiative transfer (RT) accounts for the enhancement of the double bounce contribution and makes the results the same as that of distorted Born approximation in volume–surface interactions. In this paper, we develop the methodology of cyclical corrections within the framework of DMRT beyond first order to all orders of multiple scattering. The active DMRT equation is solved using a numerical iterative approach followed by cyclical corrections. Both quasi-crystalline approximation (QCA)–Mie theory with sticky spheres and bicontinuous media scattering model are used to illustrate the results. The cyclical correlation introduces around 1 dB increase in backscatter with a moderate snowpack optical thickness of ~0.2. The bicontinuous/DMRT model is next applied to compare with data acquired in the Nordic Snow Radar Experiment (NoSREx) campaign in the snow season of 2010–2011. The model results are validated against coincidental active and passive measurements using the same set of physical parameters of snow in all frequency and polarization channels. Results show good agreement in multiple active and passive channels.**
+
+*Index Terms*—Active and passive remote sensing, backscattering enhancement, bicontinuous medium, cyclical correction, dense medium radiative transfer (DMRT), distorted Born approximation, iterative approach, multiple scattering, Nordic Snow Radar Experiment (NoSREx), quasi-crystalline approximation (QCA), terrestrial snow.
+
+## I. INTRODUCTION
+
+SNOW remote sensing community has demonstrated strong interests in combining active and passive observation to effectively retrieve snowpack information. The combined active and passive remote sensing of snowpack takes advantage of the high-resolution polarimetric synthetic aperture radar (SAR) while providing a link back to the pervasive passive data archives. In Europe, the Cold Regions Hydrology High-Resolution Observatory (CoReH2O) satellite mission was proposed to the European Space Agency (ESA) and went through 4 years of assessment studies (Phase-0, 2005–2009) and 4 years of feasibility studies (Phase-A, 2009–2013) [1], [2]. Both scatterometer and radiometer systems were deployed in the validation campaign of Nordic Snow Radar Experiment (NoSREx), aiming to collect a common database of backscattering and emission properties of snow-covered terrain [3], [4]. In the United States, the snow and cold land processes (SCLP) satellite mission was recommended to National Aeronautics and Space Administration (NASA) for implementation in the Earth Science Decadal Study report in 2007 [5], and has undergone extensive ground-based and airborne field measurement campaign [6]. The SCLP is a combined active and passive mission. Within SCLP, the microwave instruments include both X- and Ku-band SARs (with VV- and VH-polarizations) and K- and Ka-band radiometers. Studies were taken to integrate all antennas on the same platform [7]. In China, the Global Water Cycle Observation Mission (WCOM) [8] is being considered to provide synergetic observations of the global water cycle, and in particular, the properties of snow cover. WCOM is also a combined active and passive mission, with scatterometers operating at X- and Ku-band and radiometers operating at Ku- and Ka-band.
+
+The analysis and retrieval of snowpack using active and passive microwave measurements would benefit from a physical scattering model that could accurately predict both backscatter and brightness temperature measured from the same set of snowpack physical parameters. There are models applicable to passive remote sensing such as the empirical model developed by Helsinki University of Technology (HUT) [9], [10], the semiempirical microwave emission model of layered snowpacks (MEMLS) based on six-flux theory [11], and the dense media radiative transfer (DMRT) models using any of several physical scattering models. These models include 1) quasicrystalline approximation with coherent potential (QCA-CP) [12]–[14]; 2) QCA–Mie theory with sticky spheres [14]–[16]; or 3) the bicontinuous media/discrete dipole approximation (DDA) scattering model [17]–[19]. The DMRT theory has been applied to both passive [15], [20] and active [16], [18], [19] remote sensing by solving DMRT equations using the eigenquadrature method [16], and the MEMLS model has also been extended to a bistatic scattering model using Chandrasekhar’s H-functions recently [21]. Models differ in the approaches to model the collective scattering effects and multiple scattering effects inside a dense random media. MEMLS and HUT are more empirical using measured data to adjust the scattering coefficients as a function of frequency and correlation length/grain size, while the DMRT models are physically based and use parameters physically measurable [31]. However, none of the above models have included important physics related to backscattering enhancements, and as a result, different parameterizations are required in order to match the active and passive model results to their respective measured quantities.
+
+Without including backscattering enhancement, there is often the case of finding good agreement with the active measurements while the model predicted brightness temperatures are lower than the measured brightness. One could describe the multiple scattering processes inside a dense media using Feynman diagram which diagrammatically symbolizes the integral equations recursively. The constructive interference in the backscattering direction is rigorously based on the cyclical terms of the Feynman diagrams and could not be modeled by the traditional radiative transfer (RT) theory [13], [14], [22], [23]. The RT theory only includes the ladder terms of the Feynman diagrams. Such constructive interference does not occur in other directions. Backscattering enhancement is also exhibited in the double bounce term in the distorted Born approximation [24].
+
+In this paper, we model both the backscattering enhancement effects and the multiple scattering effects under the framework of the DMRT theory. Specifically, the DMRT equations are cast into two coupled integral equations and solved iteratively. In the iterative solver, each term corresponds to a physical scattering path. A numerical iterative approach is adopted to keep track of all the scattering paths. The iteration is carried out numerically to higher order until convergence is achieved. In each order, we do not sum the terms but keep them separate so that we can keep track of the scattering process in each term. Using the iterative approach, the cyclical terms are identified and their contributions are included in the total radar backscattering. In the iterative approach, the contribution from each term is computed straightforward by an angular integral of the product of phase matrix and one term in the lower order, followed by a z-integral, and thus, the computation is robust to the phase matrix pattern, making it more stable than the eigen-quadrature method [16].
+
+In this paper, the DMRT equation is solved with two reflective boundaries as in the case of terrestrial snowpack scattering. Thus, there are multiple interactions between volume scattering and surface scattering. In Section II, we review the enhancement caused by coherent interference of cyclical paths in the content of double bounce scattering by comparing the results of RT and distorted Born approximation. In Section III, we describe the iterative procedure of solving RT equation with cyclical corrections. Both QCA with sticky spheres and bicontinuous/DDA scattering model are used to account for the dense medium scattering effects. The two models show weaker dependence of scattering coefficients on grain size and frequency than the classical theory of third power and fourth power, respectively. The sticky QCA model is applied in Section IV where we compare the results of the iterative approach to the eigenquadrature approach. Cases are illustrated when the inclusion of cyclical terms is important. The bicontinuous/DDA model is then applied in Section V to the ground data acquired in the NoSREx campaign in the snow season of 2010–2011 by the Finnish Meteorological Institute (FMI) [3], [4]. The same sets of snowpack parameters are applied to the active and passive models. Results show good agreement with multiple channel observations of both scatterometer (X- to Ku-band) and radiometer (X- to Ka-band) data. This is the first paper that compares model predictions with active and passive measurements over the same scene. In previous modeling studies, active and passive data were neither coincidental nor concurrent.
+
+## II. DOUBLE BOUNCE SCATTERING: RT AND DISTORTED BORN APPROXIMATION
+
+We consider the double bounce backscattering from one scatterer inside a layer of random particles with thickness $d$ above ground. The double bounce backscattering comprises scattering by the particle and scattering by the ground. The scattering by the particle can occur before ground scattering or after ground scattering. Thus, it can be from a forward path (scattering by the particle before reflection of the ground) and a reverse path (scattering by the particle after reflection of the ground) as depicted in Fig. 1. The scattered fields of the two paths are exactly in phase in the backscattering direction. RT theory sums the contribution from the two paths in an incoherent manner. Considering the co-polarized backscatter and ignoring the top boundary reflection, the power of each path is proportional to $e^{-2\tau} r (\theta_i)|f|^2$, yielding a total of $2e^{-2\tau} r (\theta_i)|f|^2$, where $f$ is the scattering amplitude of the scatterer in the double bounce direction, $r (\theta_i)$ is the reflectivity at the bottom boundary in the angle of incidence, and $\tau$ is the optical thickness of the layer in the direction of wave propagation. On the other hand, if one applies the distorted Born approximation [24], the two scattered fields are added coherently, resulting to a total power of $|R (\theta_i) fe^{2ik_zd} + R (\theta_i) fe^{2ik_zd}|^2 = e^{-2\tau} |R (\theta_i) f + R (\theta_i) f|^2$, where $R (\theta_i)$ is the Fresnel reflection coefficient at the bottom boundary and $k_z$ is the z-component of the effective wavenumber in the random media. Note that $R(\theta_i)^2 = r (\theta_i)$ and $\tau = 2\text{Im}\{k_z\}d$. The in-phase condition leads to the total power of $4e^{-2\tau} r (\theta_i)|f|^2$ in backscatter, which is twice as much as the RT results. The difference of a factor of 2 between RT theory and distorted Born approximation is well known and leads to backscattering enhancement [24]. However, one can still use RT theory by inserting a factor of 2 in the cyclical terms. The backscatter doubling associated with cyclical paths is the cyclical correction to RT theory.
+
+![Fig. 1. Cyclical paths associated with double bounce scattering: in the solid path volume scattering occurs before surface scattering. In the dashed path, surface scattering occurs before volume scattering.](fig1)
+
+![Fig. 2. Active remote sensing of a snow layer.](fig2)
+
+## III. NUMERICAL ITERATIVE APPROACH WITH CYCLICAL CORRECTION
+
+In this section, we develop the methodology of cyclical correction beyond the first order to all orders of multiple scattering. We confine our analysis to a standard two-layer configuration, i.e., a snow layer with thickness $d$ above ground, as shown in Fig. 2. Solving the active DMRT equation using an iterative approach is a standard procedure performed by casting the differential equations into integral form and treating phase matrix as small arguments [25]. Here, we only focus on the cyclical correction to the cyclical terms and the resulting backscattering enhancement. The key results of the iterative approach are given in Appendix A for completeness.
+
+The advantage of the iterative approach is that each term in the expression corresponds to a physical interpretable scattering path and their contributions are separable. In each order of iteration, we do not sum the terms but keep them separate so that we can keep track of the scattering mechanism for each term. A scattering path describes the intensity flow in terms of scattering and reflection. The direction of energy flow is naturally grouped into upwelling and downwelling, as implied by (A2.a) and (A2.b), or its explicit form of first order in (A6.a) and (A6.b). We separate $\bar{S}^{(n)} (\theta, \phi, z)$ and $\bar{W}^{(n)} (\theta, \phi, z)$ into upward and downward component depending on the direction of the lower order specific intensity flow being collected
+
+$$
+\bar{S}^{(n)}_u (\theta, \phi, z) = \int_0^{2\pi} d\phi' \int_0^{\pi/2} d\theta' \sin \theta' \bar{\bar{P}} (\theta, \phi; \theta', \phi') \cdot \bar{I}^{(n-1)} (\theta', \phi', z) \tag{1a}
+$$
+$$
+\bar{S}^{(n)}_d (\theta, \phi, z) = \int_0^{2\pi} d\phi' \int_0^{\pi/2} d\theta' \sin \theta' \bar{\bar{P}} (\theta, \phi; \pi - \theta', \phi') \cdot \bar{I}^{(n-1)} (\pi - \theta', \phi', z) \tag{1b}
+$$
+$$
+\bar{W}^{(n)}_u (\theta, \phi, z) = \int_0^{2\pi} d\phi' \int_0^{\pi/2} d\theta' \sin \theta' \bar{\bar{P}} (\pi - \theta, \phi; \theta', \phi') \cdot \bar{I}^{(n-1)} (\theta', \phi', z) \tag{1c}
+$$
+$$
+\bar{W}^{(n)}_d (\theta, \phi, z) = \int_0^{2\pi} d\phi' \int_0^{\pi/2} d\theta' \sin \theta' \bar{\bar{P}} (\pi - \theta, \phi; \pi - \theta', \phi') \cdot \bar{I}^{(n-1)} (\pi - \theta', \phi', z). \tag{1d}
+$$
+
+Note $\bar{S}^{(n)}_u$, $\bar{S}^{(n)}_d$, $\bar{W}^{(n)}_u$, and $\bar{W}^{(n)}_d$ denote all four possibilities of transition in energy flow direction due to scattering by particle once. Substituting the decomposition of $\bar{S}^{(n)} (\theta, \phi, z) = \bar{S}^{(n)}_u (\theta, \phi, z) + \bar{S}^{(n)}_d (\theta, \phi, z)$ and $\bar{W}^{(n)} (\theta, \phi, z) = \bar{W}^{(n)}_u (\theta, \phi, z) + \bar{W}^{(n)}_d (\theta, \phi, z)$ into (A5.a) and (A5.b), where (A5.a) and (A5.b) are naturally grouped into four parts, respectively. $\bar{I}^{(n)} (\theta, \phi, z) = \bar{I}^{(n)}_{Su} (\theta, \phi, z) + \bar{I}^{(n)}_{Sd} (\theta, \phi, z) + \bar{I}^{(n)}_{Wu} (\theta, \phi, z) + \bar{I}^{(n)}_{Wd} (\theta, \phi, z)$ and $\bar{I}^{(n)} (\pi - \theta, \phi, z) = \bar{I}^{(n)}_{Su} (\pi - \theta, \phi, z) + \bar{I}^{(n)}_{Sd} (\pi - \theta, \phi, z) + \bar{I}^{(n)}_{Wu} (\pi - \theta, \phi, z) + \bar{I}^{(n)}_{Wd} (\pi - \theta, \phi, z)$, where the second subscript of “u” (upward) and “d” (downward) denotes the direction of energy flow before scattering, and the first subscript of “S” (upward) and “W” (downward) denotes the direction of energy flow after scattering, respectively. The terms in the right-hand side are defined as follows:
+
+$$
+\bar{I}^{(n)}_{Su}(\theta, \phi, z)= \exp(-\kappa_e(z+2d) \sec \theta)\bar{\bar{R}}_{12}(\theta)\bar{\bar{Z}}^{-1}(\theta) \times \bar{\bar{R}}_{10}(\theta)\bar{S}^{(n)}_{cu} (\theta, \phi) + \bar{S}^{(n)}_{zu} (\theta, \phi, z) \tag{2a}
+$$
+$$
+\bar{I}^{(n)}_{Sd}(\theta, \phi, z)= \exp(-\kappa_e(z+2d) \sec \theta)\bar{\bar{R}}_{12}(\theta)\bar{\bar{Z}}^{-1}(\theta) \times \bar{\bar{R}}_{10}(\theta)\bar{S}^{(n)}_{cd} (\theta, \phi) + \bar{S}^{(n)}_{zd} (\theta, \phi, z) \tag{2b}
+$$
+$$
+\bar{I}^{(n)}_{Wu}(\theta, \phi, z)= \exp(-\kappa_e(z+d) \sec \theta)\bar{\bar{R}}_{12}(\theta) \times \bar{\bar{Z}}^{-1}(\theta)\bar{W}^{(n)}_{cu} (\theta, \phi) \tag{2c}
+$$
+$$
+\bar{I}^{(n)}_{Wd}(\theta, \phi, z)= \exp(-\kappa_e(z+d) \sec \theta)\bar{\bar{R}}_{12}(\theta) \times \bar{\bar{Z}}^{-1}(\theta)\bar{W}^{(n)}_{cd} (\theta, \phi) \tag{2d}
+$$
+$$
+\bar{I}^{(n)}_{Su}(\pi - \theta, \phi, z)= \exp(\kappa_e z \sec \theta)\bar{\bar{Z}}^{-1}(\theta)\bar{\bar{R}}_{10}(\theta)\bar{S}^{(n)}_{cu} (\theta, \phi) \tag{2e}
+$$
+$$
+\bar{I}^{(n)}_{Sd}(\pi - \theta, \phi, z)= \exp(\kappa_e z \sec \theta)\bar{\bar{Z}}^{-1}(\theta)\bar{\bar{R}}_{10}(\theta)\bar{S}^{(n)}_{cd} (\theta, \phi) \tag{2f}
+$$
+$$
+\bar{I}^{(n)}_{Wu}(\pi - \theta, \phi, z)= \exp(\kappa_e (z - d) \sec \theta)\bar{\bar{Z}}^{-1}(\theta)\bar{\bar{R}}_{10}(\theta) \times \bar{\bar{R}}_{12}(\theta)\bar{W}^{(n)}_{cu} (\theta, \phi) + \bar{W}^{(n)}_{zu} (\theta, \phi, z) \tag{2g}
+$$
+$$
+\bar{I}^{(n)}_{Wd}(\pi - \theta, \phi, z)= \exp(\kappa_e (z - d) \sec \theta)\bar{\bar{Z}}^{-1}(\theta)\bar{\bar{R}}_{10}(\theta) \times \bar{\bar{R}}_{12}(\theta)\bar{W}^{(n)}_{cd} (\theta, \phi) + \bar{W}^{(n)}_{zd} (\theta, \phi, z) \tag{2h}
+$$
+
+where $\bar{S}^{(n)}_{cu}$, $\bar{S}^{(n)}_{cd}$, $\bar{S}^{(n)}_{zu}$, $\bar{S}^{(n)}_{zd}$, $\bar{W}^{(n)}_{cu}$, $\bar{W}^{(n)}_{cd}$, $\bar{W}^{(n)}_{zu}$, and $\bar{W}^{(n)}_{zd}$ are defined similar to $\bar{S}^{(n)}_{c}$, $\bar{S}^{(n)}_{z}$, $\bar{W}^{(n)}_{c}$, and $\bar{W}^{(n)}_{z}$ in (A5.a) and (A5.b) by introducing a new subscript u/d in $\bar{S}^{(n)}$ and $\bar{W}^{(n)}$. It immediately follows that each term in $\bar{I}^{(n-1)} (\theta, \phi, z)$ contributes to two terms in $\bar{I}^{(n)} (\theta, \phi, z)$ and two terms in $\bar{I}^{(n)} (\pi - \theta, \phi, z)$ through $\bar{S}^{(n)}_u$ and $\bar{W}^{(n)}_u$, and each term in $\bar{I}^{(n-1)} (\pi - \theta, \phi, z)$ contributes to another two terms in $\bar{I}^{(n)} (\theta, \phi, z)$ and two terms in $\bar{I}^{(n)} (\pi - \theta, \phi, z)$ through $\bar{S}^{(n)}_d$ and $\bar{W}^{(n)}_d$. A simple deduction results in a total of $4^n$ separated terms in $\bar{I}^{(n)} (\theta, \phi, z)$ as a result of two reflective boundaries, which greatly increases the number of scattering paths. All these terms could be separated through the bridging connection of $\bar{S}^{(n)}_u$, $\bar{S}^{(n)}_d$, $\bar{W}^{(n)}_u$, and $\bar{W}^{(n)}_d$.
+
+In Fig. 3, several scattering terms are illustrated. Each term is depicted by a scattering path in backscattering direction. In general, for each of these paths, if the energy flow direction is reversed, it corresponds to another distinct scattering and reflection process. In the backscattering direction, if this also holds, it is a cyclical term, as shown in Fig. 3(c) and (d). A cyclical term is special that in the backscattering direction, the two scattering fields of the two reverse scattering processes are identical for co-polarization, both in magnitude and phase. The coherent addition of fields gains a factor of two comparing to the incoherent addition of intensity. However, there are also noncyclical terms, as shown in Fig. 3(a) and (b). If the noncyclical path is reversed, it is still itself, representing the same physical scattering process in backscattering direction. It is possible to determine whether a term is cyclical by examining the scattering paths of propagation. A close examination reveals that only two noncyclical terms exist, as given in Fig. 3(a) and (b). These two terms are the direct volume backscattering illustrated in Fig. 3(a) and the reflection followed by the backward scattering followed by reflection illustrated in Fig. 3(b) in first-order scattering. Both these terms involve the backward volume scattering in first order. This is true because for any higher order scattering, the scattering events of the succeeding scatterers could always reverse the sequence to form a physically unique dual scattering path even in the backscattering direction.
+
+![Fig. 3. Illustration of scattering terms. (a) Noncyclical term in first-order backward volume scattering. (b) Noncyclical term in first-order volume scattering with two bounces from the bottom surface before and after the volume scattering. (c) Dual cyclical terms in first-order volume–surface double bounce scattering. (d) Dual cyclical terms in second-order volume scattering with one bounce from the top surface in connection of the two volume scattering and another bounce from the bottom surface before or after the volume scattering.](fig3)
+
+The cyclical correction of the RT results involves the identification of cyclical terms and the inclusion of a factor of two for the contribution from these terms. Let us use $\sigma_{cyc}$ to denote contribution to backscattering from cyclical terms, and use $\sigma_{noncyc}$ to denote contribution from noncyclical terms, then
+
+$$
+\sigma = \sigma_{cyc} + \sigma_{noncyc} \tag{3a}
+$$
+$$
+\sigma_{cor} = 2\sigma_{cyc} + \sigma_{noncyc} = 2\sigma - \sigma_{noncyc} \tag{3b}
+$$
+
+where $\sigma$ is the total volume backscattering without the cyclical correction and $\sigma_{cor}$ is the corrected total volume backscattering. This cyclical correction only applies to copolarization volume backscattering.
+
+The numerical procedure to evaluate the angular integrals in (A2.a) and (A2.b) and z-integrals in (A4.a) and (A4.b) is detailed in Appendix B, as well as the criterion to the choice of numerical parameters.
+
+## IV. SIGNIFICANCE OF CYCLICAL CORRECTION IN PREDICTION OF BACKSCATTERING COEFFICIENTS
+
+In this section, we illustrate the results of the iterative approach with the scattering model of QCA for sticky spheres. We first show that the results of the iterative approach of DMRT agree with the results of the eigen-quadrature approach [16] without the cyclical correction, and then discuss the importance of the inclusion of cyclical terms under various snow conditions.
+
+We consider a snowpack with thickness $d = 100\text{cm}$, snow fractional volume 25%, and ice particle grain diameter 1.4 mm. The radar incidence angle is $54^\circ$, and frequency 17.5 GHz. The ice permittivity is set to be $3.15 + 0.001i$, and flat ground permittivity $3.2 + 0.002i$. The QCA stickiness parameter is 0.1. The resulting optical thickness $\tau$ is 1.98, and scattering albedo $\varpi$ is 0.98. We carry out the numerical iteration up to the 20th order. There are good agreements in the bistatic scattering pattern of the two approaches as shown in Fig. 4. Cyclical correction is not included in the bistatic scattering coefficient. The contribution to backscattering from different orders with and without cyclical correction is shown in Fig. 5. Note that with QCA phase matrix, there is no cross-pol in first-order backscattering. So the accumulation bar diagram for cross-pol starts from the second order. We only apply cyclical correction to copolarized components. The rate that the scattering order converges depends on the optical thickness and scattering albedo. In this case, contributions from the first 10 orders are sufficient. The cyclical correction to first-order scattering is minor, since the two double bounce terms are small compared to volume scattering term. The cyclical correction to all the other orders doubles their contribution. Calculations were repeated for X-band (9.6 GHz) with similar conclusions. X-band results show less effects of multiple scattering and enhancement.
+
+![Fig. 4. Comparison of bistatic scattering coefficient between the eigen-analysis approach and iterative approach with grain size 1.4 mm, frequency 17.5 GHz, incidence angle 54°, and snow depth 100 cm. The iterative approach has been computed up to 20th order. HV means V-pol transmission and H-pol receiving.](fig4)
+
+![Fig. 5. Contribution to volume backscattering with/without cyclical correction from each scattering order at 17.5 GHz. Sections of bars depict the relative effect of scattering orders from left (first order for copol and second order for cross-pol) to right (20th order). HV means V-pol transmission and H-pol receiving.](fig5)
+
+Backscatter at $54^\circ$ incidence angle with the snow grain diameter 1.0 mm, volume fraction 25%, stickiness parameter of 0.1, and snow–ground roughness with rms height of 3 mm and correlation length of 21 mm (the frozen ground permittivity is set as $5 + i1.5$) is calculated for a shallow snowpack of depth 50 cm and a thick snow pack of 100 cm at X-band (9.6 GHz) and Ku-band (17.25 GHz), respectively. The surface scattering from the snow–ground interface is interpolated from a precomputed NMM3D lookup table [26], [27] including attenuation by the snow layer. The backscatter results are decomposed into surface scattering and volume scattering and compared in Table I. It is shown that at X-band with shallow snowpack, the surface scattering is of the same order as volume scattering, and the backscattering enhancement is of less importance. At Ku-band with thick snowpack, the volume scattering dominates, and the cyclical correction brings significant increase in the total backscatter. The conclusion is that backscattering enhancement with significant optical thickness will cause a difference of 3-dB enhancement. For a moderate optical thickness of 0.2, there will be ~1 dB increase in backscatter.
+
+## V. VALIDATION AGAINST THE NOSREX CAMPAIGN OF COINCIDENTAL ACTIVE AND PASSIVE MEASUREMENT OVER THE SAME SCENE
+
+The FMI has hosted the NoSREx campaign [3], [4] under an ESA contract for four successive winter seasons since November 2009 through May 2013. The NoSREx campaign was conducted near the town of Sodankylä in northern Finland, about 100 km north of the Arctic Circle. The objective of the campaign was to provide a continuous time series of coincidental active and passive microwave observations of snow cover, as part of phase A studies for the proposed ESA CoReH2O mission. The main site for NoSREx activities was located at FMI Arctic Research Centre (FMI-ARC), known as the intensive observation area (IOA). The IOA hosted three experimental microwave instruments: 1) SnowScat; 2) Elbara-II; and 3) SodRad. SnowScat is a frequency scanning scatterometer operating from X- to Ku-band (10.2, 13.3, and 16.7 GHz), Elbara-II is a radiometer operating at L-band (1.4 GHz), and SodRad is another radiometer operating from X- to W-band (10.65, 18.7, 36.5, and 90 GHz). All these three microwave instruments are installed on tower platforms, providing backscatter and brightness temperatures measurements at four incidence angles ($30^\circ$, $40^\circ$, $50^\circ$, and $60^\circ$). The consolidated backscatter data set of SnowScat is averaged over the full azimuth scan range. *In situ* measurements at IOA consist of manual snowpit measurements as well as extensive automated measurements on snow ground and meteorological parameters. The measurement sectors of the microwave instruments are located in a forest clearing. The location of the instruments, the approximate field of view of the instruments, and the location of manual snowpit observations are depicted in Fig. 6.
+
+### TABLE I
+### COMPARISON OF CONTRIBUTION TO BACKSCATTER $\sigma_{VV}$ (DB)
+
+| Frequency | Depth | $\sigma_{surf}$ | $\sigma_{vol}$ | $\sigma_{vol}^{cor}$ | $\sigma_{tot}$ | $\sigma_{tot}^{cor}$ | $\tau_d / \cos \theta$ |
+|---|---|---|---|---|---|---|---|
+| 9.6 GHz | 50 cm | –16.22 | –13.86 | –13.05 | –11.87 | –11.34 | 0.0921 |
+| | 100 cm | –17.02 | –10.80 | –9.74 | –9.87 | –8.99 | 0.1842 |
+| 17.25 GHz | 50 cm | –18.18 | –6.06 | –4.22 | –5.80 | –4.05 | 0.6724 |
+| | 100 cm | –24.02 | –3.74 | –1.56 | –3.70 | –1.53 | 1.3449 |
+
+The last column shows the optical thickness of the snow layer in the direction of wave incidence inside the snow media.
+
+![Fig. 6. Schematic of NoSREx measurement setup including SnowScat scatterometer and SodRad and Elbara-II radiometer systems. Approximate locations of SnowScat and SodRad 36.5-GHz receiver footprints at 30°, 40°, 50°, and 60° incidence angles are depicted. At each incidence angle, SnowScat measured 17 discrete look directions over an arc spanning 96° over the test field. SnowScat was mounted at the height of 9.1 m, while SodRad receivers were at a height of approximately 4.5 m from the ground surface. Approximate location of snowpit measurements is also indicated. A destructive snowpit measurement was made on March 1, 2012, with both SnowScat and SodRad measuring the same spot on the test field; the location of the pit coincided with SodRad measurements at 50° incidence angle.](fig6)
+
+Weekly snowpit measurements included the measurement of the snow temperature profile, measured using a digital thermometer at 10-cm vertical resolution, the snow density profile, measured using a manual scale at a 5-cm vertical resolution, as well as bulk snow density and snow water equivalent (SWE), using a large manual scale. Snow stratigraphy (layering) was identified visually and by use of a manual aid based on changes in snow hardness. The snow grain size and type were identified following Fierz et al. [28]. However, snow grain size was also analyzed in postprocessing from macrophotography, giving an approximate grain size for each layer at the precision of 1/4-mm. A total of 31 snowpit measurements were made during the season of 2010–2011; 20 of these were made in dry snow conditions, between November 10, 2010 and March 29, 2011. Fig. 7 depicts the manually measured SWE, bulk snow density, and snow grain size. The grain size values represent the average of measured grain size values over the snowpack, weighted by the respective depth of each layer. The average grain size (of depth–weight values) in the dry snow period was 1.4 mm, with a standard deviation of 0.2 mm. The large standard deviation reflects observer errors which originate from the highly subjective measurement methodology. Nevertheless, the mean grain size reflects snowpack metamorphism and average conditions: the initial rise in mean grain size between November 2010 and January 2011 reflects an increase in snow grain size due to snow faceting and rounding depending on the temperature gradient inside the snowpack. On the other hand, the slightly decreasing trend between January and March 2011 reflects the increase of fine-grained snow through precipitation, decreasing the average grain size. Snow metamorphism continued in older snow layers also during this period.
+
+Automated data from the site include measurements of air temperature, soil temperature at 2 cm depth, soil moisture at 2 and 10 cm depths, as well as snow depth. All automated data were recorded every 10 min. Fig. 8 shows the measured snow depth (a), air and soil temperature (b), and soil moisture (c) at the site during 2010–2011. The first snowfall of the season occurred on October 29, 2010. Temperatures on the following days remained above freezing point (up to +3 °C) causing some initial melt of the fresh snowpack. However, from November 10 onwards, temperatures remained below zero until March 2, 2011, when temperatures rose to +1.7 °C. Similar short periods of above-zero temperatures were experienced on several occasions in March. Initial cold temperatures in November, combined with a relatively shallow snowpack of < 20 cm resulted in a rapid freezing of the soil. Low values of measured volumetric soil moisture (< 0.05 m³/m³) after mid-November in Fig. 8(c) reflect the low permittivity of frozen soil measured by the soil moisture probes. Major precipitation events (10 cm or over increase in snow depth) were experienced on December 8, January 17, and March 14. Sustained periods of snowfall lasting several days occurred between December 30, 2010 and January 8, 2011 as well as between January 31 and February 8, 2011. A maximum snow depth of 80 cm (ca. 170 mm in SWE) was reached in March.
+
+![Fig. 7. Manually measured (a) bulk snow density, (b) SWE, and (c) snow grain size at the IOA site during 2010–2011. The grain size values represent the average of measured grain size values over the snowpack, weighted by the respective depth of each layer.](fig7)
+
+![Fig. 8. Automated measurement of (a) snow depth, (b) air and soil temperature, and (c) soil moisture at the IOA site during 2010–2011.](fig8)
+
+In this section, the SnowScat backscatter observation at three frequencies ranging from X- to Ku-band (10.2, 13.3, and 16.7 GHz) and the SodRad brightness temperature observation at three frequencies ranging from X- to Ka-band (10.65, 18.7, and 36.5 GHz) are selected to compare with model predictions. Five representative dates (January 12, January 18, February 1, February 8, and March 1) with backscatter, brightness temperature observations, and snowpit measurements collected during the winter season of 2010–2011 are chosen. It is noted from Figs. 7 and 8 that during this period, the snow density remains stable, the SWE keeps increasing, and the air temperature remains below 0 °C. Thus, the main uncertainty inside the snowpack is the stratigraphy and snow grain morphology. Brightness temperature and backscatter collected at 40° incidence angle are used. The microwave observation data as plotted in Figs. 9–11 show positive correlation of backscatter with SWE at the two Ku-band channels of 13.3 and 16.7 GHz in both copol and cross-pol. There is around 2-dB dynamic range in radar backscatter at 16.7 GHz for SWE increasing from 73.5 to 114 mm. Data also imply that there is a general negative correlation of brightness temperature ($T_b$) with SWE except for the abnormal increase of $T_b$ at 10.65 GHz with the largest SWE as shown in Fig. 10. The sensitivity of brightness temperature to SWE is best at 36.5 GHz with ~10 K decrease in V-pol and ~15 K decrease in H-pol, for the same change in SWE. The same bicontinuous media parameter is chosen to represent snow and applied to both active and passive models for all the six microwave channels. The bulk density, snowpack thickness, and the ground temperature are taken directly from measurements. The snow temperatures are taken as the temperature at 10 cm above ground. The ground is assumed to be rough with rms height of 1 mm and exponential correlation length of 4 mm. The ground relative permittivity is set to be $3.0 + 0.001i$ relative to the effective permittivity of snow. The surface backscattering of copolarization and cross-polarization is taken from a prebuilt lookup table based on numerical solution of Maxwell equations in 3-D (NMM3D) [26], [27]. The rough surface backscattering is next attenuated by the snow layer. In the passive DMRT code [20], the ground is assumed to be smooth. The vertical copolarization backscatter is plotted versus SWE and compared against measurements in Fig. 9. The brightness temperature is plotted against SWE in Fig. 10(a)–(c) for three different passive frequencies, respectively. The single set of physical parameters used in data matching is shown in Table II. The results show that one set of physical parameters when put in the physical bicontinuous DMRT model with cyclical corrections can match microwave measurements in all six channels, for both active and passive. Without the cyclical corrections to DMRT, matching the backscatter would have the model predictions of brightness temperature lower than measurements. The statistics of the comparison between model and data is shown in Tables III and IV for backscatter and brightness temperature, respectively. The copol backscatter has an rms error less than 0.5 dB in all frequency channels. Without cyclical correction, the model prediction of backscatter will be further lower by ~0.5 dB at 13.3 GHz, and by ~1 dB at 16.7 GHz. It is also noted that the V-pol brightness temperature has a better comparison than H-pol in terms of rms error, which is possibly due to the sensitivity to reflections in H-polarization between snow layers. Note in Fig. 10(a), the H-pol brightness temperature measurement at X-band of 10.65 GHz seems unstable with respect to the increase in SWE, partially responsible for the worsened RMSE. The abnormal behavior of high $T_{bh}$ with the largest SWE is still under investigation. A possible reason includes undetected changes in snow stratigraphy of the lowest snow layers, which are not apparent in the available *in situ* information. These would affect the horizontally polarized brightness temperature due to changes in the effective incidence angle at the snow–ground interface. These changes would be more apparent at low frequencies due to the low extinction of snow; similar variations in H-pol behavior were apparent also at L-band.
+
+![Fig. 9. Backscatter against SWE for vertical copol at 10.2, 13.3, and 16.7 GHz.](fig9)
+
+![Fig. 10. Brightness temperature against SWE at (a) 10.65, (b) 18.7, and (c) 36.5 GHz.](fig10)
+
+![Fig. 11. Backscatter against SWE for cross-pol $\sigma_{hv}$ at 10.2, 13.3, and 16.7 GHz.](fig11)
+
+In Fig. 11, the corresponding cross-pol backscatter $\sigma_{hv}$ is also plotted versus SWE and compared against measurements for the sake of completeness. The cross-pol enhancement mechanism is complicated and can be modeled using the wave approach. However, here an intuitive correction to cross-pol by adding a factor of two to all the higher order backscattering contributions above the first order is applied. Since the cross-pol phase matrix of bicontinuous media fluctuates around a certain level with respect to the angle $\Theta$ between the incidence direction and scattering direction [16]–[18], we use the cross-polarized phase matrix that is an average over the angle $\Theta$. The modified phase matrix is then put into the active iterative DMRT code to estimate the cross-pol. The results of cross-pol are within 2 dB of the measurement and follow the increasing trend against SWE for all three frequencies. The statistics for comparison of cross-pol backscatter is also given in Table III. It should be noted that the model simulations are in good agreement with experimental data at 13.3 GHz but underestimate the measurements at 10.2 and 16.7 GHz. The discrepancy between model and data may be due to the inaccuracy in cross-pol phase matrix calculation. The comparison of cross-pol is to illustrate that bicontinuous media/DDA approach has the potential capability to predict cross-pol correctly. The cross-pol is presently studied using the wave approach.
+
+### TABLE II
+### SNOWPACK PROPERTIES AND BICONTINUOUS MEDIA PARAMETERS
+
+| | Snow Depth (cm) | Density (g / cc) | $\langle \zeta \rangle$ ($m^{-1}$) | $b$ | Snow temperature (°C) | Ground temperature (°C) |
+|---|---|---|---|---|---|---|
+| Jan. 12 | 44.3 | 0.163 | 10000 | 2.0 | –4.0 | –3.5 |
+| Jan. 18 | 51.7 | 0.152 | 10000 | 1.2 | –5.0 | –4.3 |
+| Feb. 01 | 54.3 | 0.180 | 9000 | 1.5 | –5.2 | –4.6 |
+| Feb. 08 | 68.7 | 0.143 | 11000 | 1.0 | –8.2 | –6.4 |
+| Mar. 01 | 60.7 | 0.193 | 11000 | 2.0 | –4.8 | –4.5 |
+
+### TABLE III
+### STATISTICS OF COMPARISON BETWEEN MODEL PREDICTION AND MEASUREMENT FOR COPOL AND CROSS-POL BACKSCATTER
+
+| $\sigma$ (dB) | VV | HV |
+|---|---|---|
+| Frequency | 10.2 GHz | 13.3 GHz | 16.7 GHz | 10.2 GHz | 13.3 GHz | 16.7 GHz |
+| Bias | –0.034 | –0.278 | –0.154 | –1.514 | 0.426 | 1.634 |
+| RMS | 0.1807 | 0.397 | 0.4493 | 1.5206 | 0.4978 | 1.6402 |
+
+### TABLE IV
+### STATISTICS OF COMPARISON BETWEEN MODEL PREDICTION AND MEASUREMENT FOR V-POL AND H-POL BRIGHTNESS TEMPERATURE
+
+| Tb (K) | V | H |
+|---|---|---|---|---|---|---|
+| Frequency | 10.65 GHz | 18.7 GHz | 36.5 GHz | 10.65 GHz | 18.7 GHz | 36.5 GHz |
+| Bias | –0.9 | –0.66 | –0.32 | –0.58 | –5.7 | 3.14 |
+| RMS | 1.7782 | 0.9788 | 2.6054 | 5.5859 | 5.7621 | 4.1797 |
+
+The parameterization of the bicontinuous media to represent snow is a problem of continual investigation. The bicontinuous media uses two parameters, the mean wavenumber $\langle \zeta \rangle$ and the parameter $b$. A larger $\langle \zeta \rangle$ leads to a smaller mean grain size, and a larger $b$ leads to more uniform distribution in grain size. Both parameters control the correlation function. Thus, if the correlation function of snow is measured accurately, then the bicontinuous parameters can be determined [29]–[31]. In this work, $\langle \zeta \rangle$ and $b$ are manually tuned to match both the backscatter and brightness temperature in multiple channels, with the model derived correlation length and specific surface area (SSA) falling within the range of measurements [19], [29]–[31].
+
+## VI. CONCLUSION
+
+The classical RT theory does not include the cyclical terms in the Feynman diagram. When DMRT is applied to active or passive remote sensing of snowpack separately, this omission does not cause serious problems as model parameters can always be adjusted to fit observational active and passive data separately. However, when both active and passive remote sensing of snowpack are being modeled simultaneously over the same scene, one must take into account backscattering enhancement effects originating from these cyclical terms. With this new approach, we show in this paper that backscattering enhancement effects are important for moderate snowpack optical thickness, and could increase backscatter up to approximately 3 dB without decreasing brightness temperature. For a moderate optical thickness of 0.2, there will be a ~1 dB increase in backscatter due to the cyclical correction. The bicontinuous media scattering model, when combined with DMRT with cyclical correction, are in good agreement with both passive and active observations from the NoSREx campaign for multiple channels.
+
+## APPENDIX A
+## DMRT AND ITERATIVE APPROACH
+
+In this appendix, we formulate the iterative approach to solve DMRT equations.
+
+Consider the active remote sensing of a snow layer with thickness $d$ above ground, as shown in Fig. 2. Region 0 is air, region 1 is snow, and region 2 is ground. The vector DMRT equations governing the specific intensity $\bar{I} (\theta, \phi, z)$ are [24]
+
+$$
+\cos \theta \frac{d\bar{I} (\theta, \phi, z)}{dz} = -\kappa_e \cdot \bar{I} (\theta, \phi, z) + \bar{S} (\theta, \phi, z) \tag{A1.a}
+$$
+$$
+-\cos \theta \frac{d\bar{I} (\theta, \phi, z)}{dz} = -\kappa_e \cdot \bar{I} (\pi - \theta, \phi, z) + \bar{W} (\theta, \phi, z) \tag{A1.b}
+$$
+
+where $\kappa_e$ is the extinction coefficient. The source terms $\bar{S} (\theta, \phi, z)$ and $\bar{W} (\theta, \phi, z)$ are related to the specific intensity by phase matrix $\bar{\bar{P}}$
+
+$$
+\bar{S} (\theta, \phi, z) = \int_0^{2\pi} d\phi' \int_0^{\pi/2} d\theta' \sin \theta' \\ \times \left[ \bar{\bar{P}} (\theta, \phi; \theta', \phi') \cdot \bar{I} (\theta', \phi', z) \\ + \bar{\bar{P}} (\theta, \phi; \pi - \theta', \phi') \cdot \bar{I} (\pi - \theta', \phi', z) \right] \tag{A2.a}
+$$
+
+$$
+\bar{W} (\theta, \phi, z) = \int_0^{2\pi} d\phi' \int_0^{\pi/2} d\theta' \sin \theta' \\ \times \left[ \bar{\bar{P}} (\pi - \theta, \phi; \theta', \phi') \cdot \bar{I} (\theta', \phi', z) \\ + \bar{\bar{P}} (\pi - \theta, \phi; \pi - \theta', \phi') \cdot \bar{I} (\pi - \theta', \phi', z) \right]. \tag{A2.b}
+$$
+
+The top reflective boundary condition at $z = 0$
+
+$$
+\bar{I} (\pi - \theta, \phi, z = 0) = \bar{\bar{R}}_{10} (\theta) \bar{I} (\theta, \phi, z = 0) \\ + \bar{\bar{T}}_{01} (\theta_0) \bar{I}_0 \delta (\cos \theta_0 - \cos \theta_{0inc}) \\ \delta (\phi - \phi_{inc}) \tag{A3.a}
+$$
+
+and the bottom reflective boundary condition at $z = -d$
+
+$$
+\bar{I} (\theta, \phi, z = -d) = \bar{\bar{R}}_{12} (\theta) \bar{I} (\pi - \theta, \phi, z = -d). \tag{A3.b}
+$$
+
+The angle in air region $\theta_0$ is related to the angle in snow region $\theta$ by Snell’s law, $n_0 \sin \theta_0 = n_1 \sin \theta$, where $n_1 = \sqrt{\varepsilon_1 / \varepsilon_0}$ and $\varepsilon_1$ is the real part of the effective dielectric constant of snow. The incidence angle in air region $\theta_{0inc}$ is also related to angle $\theta_{inc}$ in snow region by Snell’s law. $\bar{\bar{R}}_{10} (\theta)$ and $\bar{\bar{R}}_{12} (\theta)$ are the reflective matrix on the snow–air boundary and the snow–ground boundary. $\bar{\bar{T}}_{01} (\theta_0)$ is the transmissivity matrix from air to snow [24].
+
+When the bottom boundary is rough with rms height $h$, the coherent reflectivity $\bar{\bar{R}}_{12} (\theta)$ is multiplied by an attenuation factor $K_F^2$ following Kirchhoff approximation, where $K_F = \exp \left( -2(n_1 k \cos \theta h)^2 \right)$. $k$ is the wave number in free space.
+
+To facilitate the iterative approach, the DMRT equations are cast into two coupled integral equations [24]
+
+$$
+\bar{I} (\theta, \phi, z) = \exp (-\kappa_e (z + 2d) \sec \theta) \bar{\bar{R}}_{12} (\theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{T}}_{01} (\theta_0) \bar{I}_0 \delta (\cos \theta_0 - \cos \theta_{0inc}) \\ \times \delta (\phi - \phi_{inc}) + \sec \theta \exp (-\kappa_e (z + 2d) \sec \theta) \\ \times \bar{\bar{R}}_{12} (\theta) \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{R}}_{10} (\theta) \int_{-d}^0 dz' \\ \times \exp (\kappa_e z' \sec \theta) \bar{S} (\theta, \phi, z') + \sec \theta \\ \times \exp (-\kappa_e (z + d) \sec \theta) \bar{\bar{R}}_{12} (\theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \int_{-d}^0 dz' \exp (-\kappa_e (z' + d) \sec \theta) \\ \times \bar{W} (\theta, \phi, z') + \sec \theta \int_{-d}^z dz' \exp (\kappa_e (z' - z) \\ \times \sec \theta) \bar{S} (\theta, \phi, z') \tag{A4.a}
+$$
+
+$$
+\bar{I} (\pi - \theta, \phi, z) = \exp (\kappa_e z \sec \theta) \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{T}}_{01} (\theta_0) \\ \times \bar{I}_0 \delta (\cos \theta_0 - \cos \theta_{0inc}) \delta (\phi - \phi_{inc}) \\ + \sec \theta \exp (\kappa_e z \sec \theta) \bar{\bar{Z}}^{-1} (\theta) \\ \bar{\bar{R}}_{10} (\theta) \int_{-d}^0 dz' \exp (\kappa_e z' \sec \theta) \\ \times \bar{S} (\theta, \phi, z') + \sec \theta \exp (\kappa_e (z - d) \sec \theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{R}}_{10} (\theta) \bar{\bar{R}}_{12} (\theta) \int_{-d}^0 dz' \\ \times \exp (-\kappa_e (z' + d) \sec \theta) \bar{W} (\theta, \phi, z') \\ + \sec \theta \int_z^0 dz' \exp (\kappa_e (z' - z) \sec \theta) \bar{W} (\theta, \phi, z') \tag{A4.b}
+$$
+
+where $\bar{\bar{Z}} (\theta) = \bar{\bar{I}} - \bar{\bar{R}}_{10} (\theta) \bar{\bar{R}}_{12} (\theta) \exp (-\kappa_e 2d \sec \theta)$.
+
+Equations (A4.a) and (A4.b) could be solved using iterative approach, $\bar{I} = \bar{I}^{(0)} + \bar{I}^{(1)} + \dots$, by viewing $\bar{S}$ and $\bar{W}$ as small perturbations. The zeroth order solution $\bar{I}^{(0)}$, known as the reduced solution, is the first term in (A4.a) and (A4.b) and does not contribute to backscattering. The nth order solution $\bar{I}^{(n)} (n = 1, 2, \dots)$ could be updated from lower order solution $\bar{I}^{(n-1)}$ through source terms $\bar{S}^{(n)}$ and $\bar{W}^{(n)}$
+
+$$
+\bar{I}^{(n)} (\theta, \phi, z) = \exp (-\kappa_e (z + 2d) \sec \theta) \bar{\bar{R}}_{12} (\theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{R}}_{10} (\theta) \bar{S}^{(n)}_c (\theta, \phi) \\ + \exp (-\kappa_e (z + d) \sec \theta) \bar{\bar{R}}_{12} (\theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \bar{W}^{(n)}_c (\theta, \phi) + \bar{S}^{(n)}_z (\theta, \phi, z) \tag{A5.a}
+$$
+
+$$
+\bar{I}^{(n)} (\pi - \theta, \phi, z) = \exp (\kappa_e z \sec \theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{R}}_{10} (\theta) \bar{S}^{(n)}_c (\theta, \phi) \\ + \exp (\kappa_e (z - d) \sec \theta) \\ \times \bar{\bar{Z}}^{-1} (\theta) \bar{\bar{R}}_{10} (\theta) \\ \times \bar{\bar{R}}_{12} (\theta) \bar{W}^{(n)}_c (\theta, \phi) + \bar{W}^{(n)}_z (\theta, \phi, z) \tag{A5.b}
+$$
+
+where $\bar{S}^{(n)}_c (\theta, \phi) = \sec \theta \int_{-d}^0 dz' \exp (\kappa_e z' \sec \theta) \bar{S}^{(n)} (\theta, \phi, z')$, $\bar{W}^{(n)}_c (\theta, \phi) = \sec \theta \int_{-d}^0 dz' \exp (-\kappa_e (z' + d) \sec \theta) \bar{W}^{(n)} (\theta, \phi, z')$ and $\bar{S}^{(n)}_z (\theta, \phi, z) = \sec \theta \int_{-d}^z dz' \exp (\kappa_e (z' - z) \sec \theta) \bar{S}^{(n)} (\theta, \phi, z')$, $\bar{W}^{(n)}_z (\theta, \phi, z) = \sec \theta \int_z^0 dz' \exp (\kappa_e (z' - z) \sec \theta) \bar{W}^{(n)} (\theta, \phi, z')$ are defined for short.
+
+$\bar{S}^{(n)}$ and $\bar{W}^{(n)}$ are related to $\bar{I}^{(n-1)}$ by (A2.a) and (A2.b), with $\bar{S}^{(1)}$ and $\bar{W}^{(1)}$ given explicitly
+
+$$
+\bar{S}^{(1)} (\theta, \phi, z) = \bar{\bar{P}} (\theta, \phi; \theta_{inc}, \phi_{inc}) \bar{M}^{(0)} (\theta_{inc}) \\ \times \exp (-\kappa_e (z + 2d) \sec \theta_{inc}) \\ + \bar{\bar{P}} (\theta, \phi; \pi - \theta_{inc}, \phi_{inc}) \\ \times \bar{N}^{(0)} (\theta_{inc}) \exp (\kappa_e z \sec \theta_{inc}) \tag{A6.a}
+$$
+
+$$
+\bar{W}^{(1)} (\theta, \phi, z) = \bar{\bar{P}} (\pi - \theta, \phi; \theta_{inc}, \phi_{inc}) \bar{M}^{(0)} (\theta_{inc}) \\ \times \exp (-\kappa_e (z + 2d) \sec \theta_{inc}) \\ + \bar{\bar{P}} (\pi - \theta, \phi; \pi - \theta_{inc}, \phi_{inc}) \bar{N}^{(0)} (\theta_{inc}) \\ \times \exp (\kappa_e z \sec \theta_{inc}) \tag{A6.b}
+$$
+
+where $\bar{M}^{(0)} (\theta_{inc}) = \bar{\bar{R}}_{12} (\theta_{inc}) \bar{\bar{Z}}^{-1} (\theta_{inc}) \bar{\bar{T}}_{01} (\theta_{0inc}) \bar{I}_0 \frac{\varepsilon_0 \cos \theta_{0inc}}{\varepsilon_1 \cos \theta_{inc}}$, and $\bar{N}^{(0)} (\theta_{inc}) = \bar{\bar{Z}}^{-1} (\theta_{inc}) \bar{\bar{T}}_{01} (\theta_{0inc}) \bar{I}_0 \frac{\varepsilon_0 \cos \theta_{0inc}}{\varepsilon_1 \cos \theta_{inc}}$.
+
+The contribution to bistatic scattering coefficient $\gamma^{(n)}_{\beta \alpha} (\theta_0, \phi; \theta_{0inc}, \phi_{inc})$ and backscattering coefficient $\sigma^{(n)}_{\beta \alpha} (\theta_{0inc}, \phi_{inc})$ from the nth order specific intensity $\bar{I}^{(n)} (\theta, \phi, z)$ is [24]
+
+$$
+\gamma^{(n)}_{\beta \alpha} (\theta_0, \phi; \theta_{0inc}, \phi_{inc}) = 4\pi \frac{\cos \theta_0 I^{(n)}_{0\beta} (\theta_0, \phi)}{\cos \theta_{0inc} I_{0inc\alpha}} \tag{A7}
+$$
+
+$$
+\sigma^{(n)}_{\beta \alpha} (\theta_{0inc}, \phi_{inc}) = \cos \theta_{0inc} \gamma^{(n)}_{\beta \alpha} (\theta_{0inc}, \pi + \phi_{inc}; \theta_{0inc}, \phi_{inc}) \tag{A8}
+$$
+
+where the nth order specific intensity in the air region $\bar{I}^{(n)}_0 (\theta, \phi)$ is related to $\bar{I}^{(n)} (\theta, \phi, z)$ by the transmissivity matrix from snow to air $\bar{\bar{T}}_{10} (\theta)$, $\bar{I}^{(n)}_0 (\theta, \phi) = \bar{\bar{T}}_{10} (\theta) \cdot \bar{I}^{(n)} (\theta, \phi, z = 0)$. The overall bistatic scattering and backscattering is the sum of contribution from each order.
+
+When the underlying boundary is rough, surface scattering also contributes to backscattering by $\sigma_s = \sigma_{s0} (\theta_{inc}) \exp (-2\kappa_e d \sec \theta_{inc})$, where $\sigma_{s0} (\theta_{inc})$ is the bare surface backscattering coefficient at the incidence angle inside the snow medium. The bistatic scattering effects of rough surface are ignored.
+
+## APPENDIX B
+## NUMERICAL RECIPES
+
+In this appendix, we describe the numerical recipes, in particular how to evaluate the angular integral in (A2.a), (A2.b), or (1a)–(1d), and the z-integral in (A4.a) and (A4.b) or the definition of $\bar{S}^{(n)}_c$, $\bar{S}^{(n)}_z$, $\bar{W}^{(n)}_c$, and $\bar{W}^{(n)}_z$, and give criteria for parameter selection.
+
+Let us first consider the typical angular integral of (1a). We apply Gaussian–Legendre quadrature for $\theta$-integral and trapezoidal quadrature for $\phi$-integral. Considering the azimuthal symmetry of phase matrix $\bar{\bar{P}} (\theta, \phi; \theta', \phi')$ with respect to $\phi - \phi'$, the discretized version of (1a) reads
+
+$$
+\bar{S}^{(n)}_u (\theta_k, \phi_p, z) = \Delta \phi \sum_{p'=1}^{N_p} \sum_{k'=1}^{N_k} a_{k'} \left[ \bar{\bar{P}} (\theta_k, \phi_p - \phi_{p'}; \theta_{k'}, 0) \cdot \bar{I}^{(n-1)} (\theta_{k'}, \phi_{p'}, z) \right] \tag{B1}
+$$
+
+where $\theta_k$ ($k = 1, \dots, N_k$) are the Gaussian–Legendre quadrature points, with $\mu_k = \cos (\theta_k)$ the positive half of the $2N_k$ roots of Legendre polynomial of $2N_k$th order and $a_k$ the corresponding Gaussian–Legendre quadrature weights at $\theta_k$; $\phi_p = p \Delta \phi$ ($p = 0, 1, \dots, N_p - 1$) are the uniformly spaced trapezoidal quadrature points, with $\Delta \phi = 2\pi/N_p$. Note phase matrix $\bar{\bar{P}} (\theta, \phi; \theta', \phi')$ is only required at the grid points $\bar{\bar{P}} (\theta_k, \phi_p; \theta_{k'}, 0)$, and the summation over $\phi_{p'}$ in (B1) forms a cyclical convolution, and could be accelerated by FFT.
+
+Three kinds of z-integrals are encountered in the form of $\int_{-d}^0 dz' f(z')$ as in $\bar{S}^{(n)}_c$ and $\bar{W}^{(n)}_c$, $\int_{-d}^z dz' f(z')$ in $\bar{S}^{(n)}_z$, and $\int_z^0 dz' f(z')$ in $\bar{W}^{(n)}_z$. We sample $z$ uniformly at $z_q = -d + q\Delta z$, $\Delta z = d/N_q$, $q = 0, 1, \dots, N_q$, and denote $f(z_q)$ with $f_q$. Then $\int_{-d}^0 dz' f(z')$ could be evaluated with trapezoidal quadrature rule directly
+
+$$
+\int_{-d}^0 dz' f(z') = \Delta z \left( \frac{1}{2} f_0 + \sum_{q'=1}^{N_q - 1} f_{q'} + \frac{1}{2} f_{N_q} \right) \tag{B2}
+$$
+
+$\int_{-d}^{z_q} dz' f(z')$ and $\int_{z_q}^0 dz' f(z')$ could be evaluated recursively
+
+$$
+\int_{-d}^{z_q} dz' f(z') = \int_{-d}^{z_{q-1}} dz' f(z') + \frac{\Delta z}{2} (f_{q-1} + f_q), q = 1, \dots, N_q \tag{B3}
+$$
+
+$$
+\int_{z_q}^0 dz' f(z') = \frac{\Delta z}{2} (f_q + f_{q+1}) + \int_{z_{q+1}}^0 dz' f(z'), q = N_q - 1, \dots, 0 \tag{B4}
+$$
+
+with $\int_{-d}^{z_0} dz' f(z') = 0$ and $\int_{z_{N_q}}^0 dz' f(z') = 0$.
+
+Note the angular integral as illustrated in (B1) is to be applied for any sampling point of $z_q$. An estimation criterion of typical numerical parameters is provided. The discretization number of $\theta_k$, $\phi_p$ can be set as $N_k = 16$ and $N_p = 32$ for a relatively smoothly changing phase matrix; the discretization number of $z_q$ could be related to the optical thickness of snow layer $\tau = \kappa_e d$ by $N_q = \max (\tau / 0.05, 8)$; the sufficient scattering order for the convergence of backscattering could be related to the optical thickness $\tau$ and the scattering albedo $\varpi = \kappa_s / \kappa_e$ as $\max (\varpi \tau / 0.1, 5)$.
+
+## REFERENCES
+
+[1] H. Rott *et al.*, “Cold regions hydrology high-resolution observatory for snow and cold land processes,” *Proc. IEEE*, vol. 98, no. 5, pp. 752–765, May 2010.
+
+[2] ESA, *Report for Mission Selection: CoReH2O*, European Space Agency, Noordwijk, The Netherlands, ESA SP-1324/2 (3 volume series), 2012.
+
+[3] J. Lemmetyinen *et al.*, *Technical Assistance for the Deployment of an X- to Ku-Band Scatterometer During the NoSREx II Experiment*, ESA ESTEC Contract No. 22671/09/NL/JA, Final Rep., Dec. 2011.
+
+[4] J. Lemmetyinen *et al.*, *Technical Note NoSRex Consolidated Datasets*, ESA ESTEC Contract No. 22671/09/NL/JA, Nov. 2013.
+
+[5] R. A. Anthes and B. Moore III, *Earth Science and Applications From Space: National Imperatives for the Next Decade and Beyond*. Washington, DC, USA: Space Studies Board, Natl. Res. Council, 2007.
+
+[6] S. H. Yueh, S. J. Dinardo, A. Akgiray, R. West, D. W. Cline, and K. Elder, “Airborne Ku-band polarimetric radar remote sensing of terrestrial snow cover,” *IEEE Trans. Geosci. Remote. Sens.*, vol. 47, no. 10, pp. 3347–3364, Oct. 2009.
+
+[7] T. E. Durham, “An 8-40 GHz wideband instrument for snow measurements,” *Earth Sci. Technol. Forum*, 5 pp., 2011 [Online]. Available: http://esto.nasa.gov/conferences/estf2011/papers/Durham_ESTF2011.pdf.
+
+[8] J. Shi *et al.*, “WCOM: The science scenario and objectives of a global water cycle observation mission,” presented at IGARSS, Quebec, Canada, Jul. 13–18, 2014.
+
+[9] J. T. Pulliainen, J. Grandell, and M. T. Hallikainen, “HUT snow emission model and its applicability to snow water equivalent retrieval,” *IEEE. Trans. Geosci. Remote Sens.*, vol. 37 no. 3, pp. 1378–1390, May 1999.
+
+[10] J. Lemmetyinen, J. Pulliainen, A. Rees, A. Kontu, Y. Qiu, and C. Derksen, “Multiple-layer adaptation of HUT snow emission model: Comparison with experimental data,” *IEEE Trans. Geosci. Remote Sens.*, vol. 48, no. 7, pp. 2781–2794, Jul. 2010.
+
+[11] A. Wiesmann and C. Mätzler, “Microwave emission model of layered snowpacks,” *Remote Sens. Environ.*, vol. 70, pp. 307–316, 1999.
+
+[12] G. Picard *et al.*, “Simulation of the microwave emission of multi-layered snowpacks using the dense media radiative transfer theory: The DMRTML model,” *Geosci. Model Dev.*, vol. 6, pp. 1061–1078, 2013.
+
+[13] L. Tsang, J. A. Kong, and R. T. Shin, *Theory of Microwave Remote Sensing*. Hoboken, NJ, USA: Wiley, 1985.
+
+[14] L. Tsang and J. A. Kong, *Scattering of Electromagnetic Waves, Advanced Topics*, vol. 3. Hoboken, NJ, USA: Wiley, 2001.
+
+[15] L. Tsang, C. T. Chen, A. T. C. Chang, J. Guo, and K. H. Ding, “Dense media radiative transfer theory based on quasicrystalline approximation with application to passive microwave remote sensing of snow,” *Radio Sci.*, vol. 35, pp. 741–749, 2000.
+
+[16] L. Tsang, J. Pan, D. Liang, Z. Li, D. W. Cline, and Y. Tan, “Modeling active microwave remote sensing of snow using dense media radiative transfer (DMRT) theory with multiple-scattering effects,” *IEEE Trans. Geosci. Remote Sens.*, vol. 45, no. 4, pp. 990–1004, Apr. 2007.
+
+[17] K.-H. Ding, X. Xu, and L. Tsang, “Electromagnetic scattering by bicontinuous random microstructures with discrete permittivities,” *IEEE Trans. Geosci. Remote Sens.*, vol. 48, no. 8, pp. 3139–3151, Aug. 2010.
+
+[18] X. Xu, L. Tsang, and S. Yueh, “Electromagnetic models of Co/crosspolarization of bicontinuous/DMRT in radar remote sensing of terrestrial snow at X- and Ku-band for CoReH2O and SCLP applications,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 5, no. 3, pp. 1024–1032, Jun. 2012.
+
+[19] W. Chang *et al.*, “Dense media radiative transfer applied to SnowScat, and SnowSAR,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 7, no. 9, pp. 3811–3825, Sep. 2014.
+
+[20] D. Liang, X. Xu, L. Tsang, K. M. Andreadis, and E. G. Josberger, “The effects of layers in dry snow on its passive microwave emissions using dense media radiative transfer theory based on the quasicrystalline approximation (QCA/DMRT),” *IEEE Trans. Geosci. Remote Sens.*, vol. 46, no. 11, pp. 3663–3671, Nov. 2008.
+
+[21] C. Mätzler, “HPACK, A bistatic radiative transfer model for microwave emission and backscattering of snowpacks, and validation by surfacebased experiments,” Inst. Appl. Phys., Univ. Bern, Bern, Switzerland, IAP-Research Rep. 2000-4, Jun. 2000.
+
+[22] L. Tsang and A. Ishimaru, “Backscattering enhancement of random discrete scatterers,” *J. Opt. Soc. Amer. A*, vol. 1, no. 8, pp. 836–1338, Aug. 1984.
+
+[23] L. Tsang and A. Ishimaru, “Theory of backscattering enhancement of random discrete isotropic scatterers based on the summation of all ladder and cyclical terms,” *J. Opt. Soc. Amer. A*, vol. 2, no. 8, pp. 1331–1338, Aug. 1985.
+
+[24] R. H. Lang and J. S. Sidhu, “Electromagnetic backscattering from a layer of vegetation: A discrete approach,” *IEEE Trans. Geosci. Remote Sens.*, vol. GE-21, no. 1, pp. 62–71, Jan. 1983.
+
+[25] L. Tsang, J. A. Kong, and K. H. Ding, *Scattering of Electromagnetic Waves: Theory and Applications*, vol. 1. Hoboken, NJ, USA: Wiley, 2000.
+
+[26] S. Huang, L. Tsang, E. G. Njoku, and K. S. Chen, “Backscattering coefficients, coherent reflectivities, and emissivities of randomly rough soil surfaces at L-band for SMAP applications based on numerical solutions of Maxwell equations in three-dimensional simulations,” *IEEE Trans. Geosci. Remote Sens.*, vol. 48, no. 6, pp. 2557–2568, Jun. 2010.
+
+[27] S. Huang and L. Tsang, “Electromagnetic scattering of randomly rough soil surfaces based on numerical solutions of Maxwell solutions of Maxwell equations in three-dimensional simulations using a hybrid UV/PBTG/SMCG method,” *IEEE Trans. Geosci. Remote Sens.*, vol. 50, no. 10, pp. 4025–4035, Oct. 2012.
+
+[28] C. Fierz *et al.*, “The international classification for seasonal snow on the ground,” in “*IHP Tech. Doc. in Hydrol. Ser.*,” UNESCO-IHP, Paris, No. 83, IACS Contribution No. 1, 2009.
+
+[29] X. Xu, L. Tsang, W. Chang, and S. Yueh, “Bicontinuous DMRT model extracted from multi-size QCA with application to terrestrial snowpack,” in *Proc. XXXIth URSI Gen. Assem. Sci. Symp. (URSI GASS’14)*, Beijing, China, Aug. 2014, pp. 1–3, doi: 10.1109/URSIGASS.2014.6929662.
+
+[30] W. Chang, K.-H. Ding, L. Tsang, and X. Xu, “Microwave scattering and medium characterization for terrestrial snow with QCA–Mie and bicontinuous models: Comparison studies,” *IEEE Trans. Geosci. Remote Sens.*, 2014, to be published.
+
+[31] W. Chang, “Electromagnetic scattering of dense media with application to active and passive microwave remote sensing of terrestrial snow,” Ph.D. dissertation, Department of Electrical Engineering, Univ. Washington, Seattle, WA, USA, 2014.
+
+![Shurun Tan](photo1)
+**Shurun Tan** (S’14) was born in Shandong, China. He received the B.Eng. and M.Eng. degrees in electrical engineering from Southeast University, Nanjing, China, in 2009 and 2012, respectively. From 2012 to 2015, he was a Ph.D. candidate at the Department of Electrical Engineering, University of Washington, Seattle, WA, USA. He is currently pursuing the Ph.D. degree in electrical engineering at the University of Michigan, Ann Arbor, MI, USA.
+
+From 2010 to 2011, he was a Visiting Student at the Department of Electrical and Computer Engineering, University of Houston, Houston, TX, USA. His research interests include applied electromagnetics and computational electromagnetics in geophysical media remote sensing such as terrestrial snow, ice sheet, and vegetated land surfaces.
+
+**Wenmo Chang** (S’11) received the B.S. and M.S. degrees in electrical engineering from the Tsinghua University, Beijing, China, in 2006 and 2009, respectively, and the Ph.D. degree in electrical engineering from the University of Washington, Seattle, WA, USA, in 2014.
+
+His research interests include radio propagation and wave scattering in random media.
+
+![Leung Tsang](photo2)
+**Leung Tsang** (F’90) was born in Hong Kong. He received the S.B. and S.M. degrees in electrical engineering and the Ph.D. degree in electrical engineering and computer science from the Massachusetts Institute of Technology, Cambridge, MA, USA, in 1971, 1973, and 1976, respectively.
+
+He is currently Professor with the Department of Electrical Engineering and Computer Science, University of Michigan, Ann Arbor, MI, USA. He was a Professor of Electrical Engineering with the University of Washington, Seattle, WA, USA from 1983 to 2014. He was the Chair of the Department from 2006 to 2011. Between 2001 and 2004, he was on leave with the City University of Hong Kong, Hong Kong. He is the coauthor of *Theory of Microwave Remote Sensing* and *Scattering of Electromagnetic Waves Volumes 1, 2, and 3*. His research interests include waves in random media and rough surfaces, remote sensing, computational electromagnetics, signal integrity, and optics. Dr. Tsang was the President of the IEEE Geoscience and Remote Sensing Society from 2006 to 2007, and the Editor-in-Chief of TGARS from 1996 to 2001. He has been the Chair of PIERS since 2008. He is a Fellow of the Optical Society of America. He was the recipient of the IEEE Third Millennium Medal in 2000 and the Outstanding Service Award from the IEEE Geoscience and Remote Sensing Society in 2000, the Distinguished Achievement Award from the IEEE Geoscience and Remote Sensing Society in 2008, the Fiorino Oro Award from the CeTeM, Italy in 2010, the William Pecora Award cosponsored by the U.S. Department of Interior and NASA in 2012, and the 2013 IEEE Electromagnetics Award.
+
+![Juha Lemmetyinen](photo3)
+**Juha Lemmetyinen** received the D.Sc. (Tech.) degree in electrical engineering from the Aalto University [formerly Helsinki University of Technology (TKK)], Espoo, Finland, in 2012.
+
+From 2004 to 2008, he was a Researcher with the TKK Laboratory of Space Technology, TKK Department of Radio Science and Engineering where he specialized in radiometer calibration techniques and remote sensing. Since 2009, he has been a Scientist with the Arctic Research Unit, Finnish Meteorological Institute, Helsinki, Finland. His research interests include RT modeling and applications of SAR and microwave radiometers in remote sensing of the cryosphere.
+
+![Martin Proksch](photo4)
+**Martin Proksch** received the Master’s degree in atmospheric science from the University of Innsbruck, Innsbruck, Austria. Since 2009, he works with the Snow Physics Research Group, WSL Institute for Snow and Avalanche Research SLF, Davos, Switzerland, where he is currently pursuing the Ph.D. degree.
+
+He was involved in the Nordic Snow and Radar Experiment (NoSREx), Sodankylä, Finland, from 2011 to 2013, and is an NPI Student of the European Space Agency ESA. His research interests include snow measurement methods and their application to active and passive remote sensing.

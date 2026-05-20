@@ -1,0 +1,830 @@
+# Microwave Signatures of Snow Cover Using Numerical Maxwell Equations Based on Discrete Dipole Approximation in Bicontinuous Media and Half-Space Dyadic Green’s Function
+
+**Shurun Tan**, *Student Member, IEEE*, **Jiyue Zhu**, *Student Member, IEEE*, **Leung Tsang**, *Fellow, IEEE*, and **Son V. Nghiem**, *Fellow, IEEE*
+
+**Abstract—A three-dimensional snowpack scattering and emission model is developed by numerically solving Maxwell’s equations (NMM3D) over the entire snowpack on an underlying half-space. The solutions are crucial to microwave remote sensing that requires the preservation of coherent phase information. The heterogeneous snowpack is represented as a bicontinuous medium. Effects of the underlying half-space are included through a half-space Green’s function in a volume integral equation formulation. The volume integral equation is then solved using the discrete dipole approximation. The fast Fourier transform is effectuated for all three dimensions with half-space Green’s function rather than the conventional free space Green’s function. To overcome the snow volume truncation in the finite numerical calculations, periodic boundary conditions are applied in the lateral extent. Thus, in NMM3D, the physical microwave scattering and emission problem is solved without using any radiative transfer equations. In this formulation, the scattering matrix of the snowpack accounts for both the magnitude and phase. The NMM3D simulations are demonstrated at Ku-band frequency for a snow cover up to 25-cm thick. The results are applicable to remote sensing of snow over sea ice, and thin layers of terrestrial snow. Quantitative values of backscattering and bistatic scattering coefficients are derived for active microwave remote sensing, and brightness temperatures for passive microwave remote sensing. The full wave simulation results are compared with those of the partially coherent approach of the dense media radiative transfer (DMRT). The NMM3D results capture effects of backscattering enhancement and coherent layering that are missed in DMRT. The full wave solution to Maxwell equations is important to advance radar polarimetry, interferometry, and tomography that require the preservation of the full phase information and all interface interactions for applications to radar remote sensing of snow cover on land and on sea ice.**
+
+**Index Terms—Active and passive microwave, backscattering enhancement, coherent layer effects, dense media radiative transfer (DMRT), dense media scattering, discrete dipole approximation (DDA), full wave simulation, half-space Green’s function, snow remote sensing, volume integral equation (VIE).**
+
+## I. INTRODUCTION
+
+MANY past and recent approaches for active and passive microwave remote sensing of snow on land and on ice involve the use of radiative transfer equations. These include the conventional radiative transfer equation that assumes ice grains in snow scatter independently which results in Rayleigh scattering, and the dense media radiative transfer (DMRT) that takes into account the dense packing of ice grains. Collective scattering effects are introduced in the empirical Helsinki University of Technology model [1], the semiempirical microwave emission model of layered snowpacks model [2], and the physical based DMRT model [3]–[12]. The DMRT models use either an analytical approximation of quasi-crystalline approximation [3]–[5] or numerical solutions of Maxwell’s equation localized for a block of snow of several wavelengths in size [6]–[13]. The rationale of DMRT is the assumption that ice grains in snow form a statistically homogeneous medium. Inherently, DMRT is a partially coherent approach. The coherent part is obtained by solving Maxwell’s equations over several cubic wavelengths of statistically homogeneous snow volume to derive the effective permittivities for the coherent waves, as in the effective medium theory for dielectric mixtures and metamaterials [14], [15]. DMRT also computes the phase matrix and the extinction coefficients for the incoherent waves. These effective parameters homogenize the snowpack. Solving Maxwell’s equations on a snow block of several cubic wavelengths accounts for the dense packing and near field coherent wave interactions within several cubic wavelengths. These parameters are then substituted into the radiative transfer equation that constitutes the incoherent part of DMRT. The DMRT equation is then solved to include incoherent far field interactions and volume / surface interactions. DMRT has been extensively applied to study the wave propagation and scattering in dense media such as terrestrial snow and compared with data from TerraSAR-X and POLSCAT [8], and from SnowSAR and SnowScat [9], [11].
+
+As an approximated approach, radiative transfer equations arise from the ladder or the correlated ladder approximation of the Bethe-Salpeter equation [3], [16], rendering the incoherency of the solution. From the first principle, electromagnetic scattering and emission processes are governed by the classical Maxwell equations, which are coherent as the solutions give both amplitude and phase of the scattering parameters. In the past, cyclical corrections have been additionally applied to the DMRT results of backscatter to emulate the backscattering enhancement effects [11], which are from cyclical terms in the Feynman diagram [16]–[19] attributable to multiple volume scattering as well as volume-surface interactions.
+
+To make fundamental advances in scattering and emission modeling, we have set forth efforts in solving Maxwell equations numerically for a laterally stratified snowpack over a half-space of dielectric medium [13], [20] without invoking radiative transfer equations. Within the limit of current computational resources, we have solved the problems for thin snow cover, which is consistent with snow on sea ice with a typical snow depth range of 10–20 cm [21]. The drastic thinning of snow cover on sea ice in past decades under a changing climate [21] emphasizes the demand for truly physical interpretations of remote sensing signatures for observations of the diminished snow cover, which plays a crucial role in Arctic sea ice processes [21]. Wave interactions arising from these thin layers are largely coherent. In the backscattering direction for monostatic radar measurements, coherent wave interactions give rise to backscattering enhancement phenomena [11], [16]–[19] that are not captured by DMRT. To overcome such limitations, Maxwell’s equations need to be solved directly for applications of radar polarimetry, interferometry, and tomography to remote sensing of snow cover on land and on sea ice.
+
+In this paper, we consider the layered medium configuration in Fig. 1(a). The half-space below the snow cover represents sea ice in the polar oceans or the soil below the terrestrial snow. For the snow on sea ice, we consider cases for the thick sea ice, such as thick first-year or multiyear sea ice, in which much of the strength of electromagnetic waves is attenuated within the thick sea ice layer. The discontinuity of the permittivity at the interface between snow and the underlying half-space causes reflections, which are included in the numerical solution of Maxwell’s equations by using the half-space dyadic Green’s function to formulate volume integral equation (VIE). The snow medium is computer generated as a bicontinuous medium [7]. The bicontinuous medium is characterized in terms of a correlation function and a specific surface area, which is realistic as compared to snow microstructure measurements [9], [10], [12]. The method of moments is then used to solve the VIE that is discretized uniformly into small cubes. Pulse basis functions and point matching are used, leading to discrete dipole approximation (DDA). The fast Fourier transform (FFT) technique is effectuated in all three dimensions with half-space Green’s function rather than the conventional free space Green’s function. The three-dimensional (3-D) FFT is used to accelerate the matrix-vector multiplication in the iterative linear system solver [22]–[24]. The scattering matrix of the snowpack is computed using this fully coherent approach of numerical solution of Maxwell equations in three-dimension (NMM3D). In addition to providing fully coherent solution for electromagnetic scattering and emission, the full wave simulation also allows the modeling of the coherence matrix and speckle statistics [25], and enables the truly physical characterization for coherent radar polarimetry, interferometry, and tomography [26] that fundamentally require the full preservation of phase information.
+
+*[Figure 1: Illustration of the full wave simulation of a plane wave impinging upon a snowpack on an underlying half-space. Periodic boundary conditions are applied in the two lateral directions. Half-space periodic Green’s function is used to account for the influence from the interface between the snow cover and the underlying medium. (a) The active scattering problem is solved directly. (b) The passive emission problem is derived from reciprocity using the field solution of the active scattering problem.]*
+
+In this paper, the fully coherent approach is further improved by implementing the periodic boundary conditions together with the use of the periodic dyadic Green’s function in half-space. The periodic boundary conditions remove the edge diffraction artifacts arising from the finite computational domain, produce physically consistent results, and allow us to derive brightness temperatures of the snowpack [13], [20] following the reciprocity principle and the fluctuation dissipation theorem [16], Fig. 1(b). This approach accounts for an arbitrary temperature profile of the snowpack and includes coherent effects in the thin layer together with fully coherent volume-surface interactions. Brightness temperatures and backscatters from the fully coherent model are compared with DMRT results for various snowpack configurations to understand and to determine the applicability regime of DMRT. We have developed two DMRT models: One is the conventional DMRT without cyclical correction; the other is the DMRT with cyclical correction [11], denoted by DMRT_C. The correction is for the calculation of backscatter only, it does not affect the bistatic scattering coefficients other than at the backward scattering direction, and it does not change the results of brightness temperature.
+
+With the periodic boundary conditions, we use periodic Green’s function to formulate the integral equation, which includes the reflection contribution from the bottom half-space and appropriately accounts for its singularities. The scattered wave and transmitted wave are in discrete directions other than continuous directions as required by the Bloch wave conditions. Numerical simulations show that the Floquet modes have minimal effects on the accuracy of the far field.
+
+The organization of the paper is as follows. We describe the methodology of the full wave simulation of snowpack in Section II. This includes the formulation of the VIE, solving the VIE with DDA, and derivation of the active and passive microwave observables. We then illustrate the full wave simulation results in Section III, including speckle statistics, bistatic scattering coefficients, backscattering coefficients, and brightness temperatures. Results are illustrated for both 2-D and 3-D simulations and are compared with DMRT results. For 3-D simulations, the sizes of the problem solved in this paper are up to 15 cm by 15 cm in horizontal directions and 25 cm in vertical direction, applicable to X- and Ku-band remote sensing of snow over sea ice and thin layers of terrestrial snow. The conclusions are finally drawn in Section IV. Many details in applying the FFT techniques to accelerate the matrix-vector multiplications, in evaluating the half-space periodic Green’s functions and accounting for its singularities, and in connecting the passive emission problem with the active scattering problem are given in the appendices. The methodology for 2-D full wave simulation is also summarized in the appendix.
+
+## II. METHODOLOGY: PLANE WAVE IMPINGING UPON AN INFINITE 3-D SNOW LAYER WITH PERIODIC BOUNDARY CONDITIONS
+
+We describe the key techniques considering a plane wave impinging upon a snow layer with infinite lateral extent emulated by periodic boundary conditions. In the 3-D case, the periodic boundary conditions are applied in both $\hat{x}$ and $\hat{y}$ direction, and the Green’s function is a dyad rather than a scalar. The Ewald summation method is used to compute the 3-D dyadic Green’s function with the 2-D periodicity [27], [28].
+
+### A. VIE in 3-D With Half-Space Dyadic Green’s Function and Periodic Boundary Conditions
+
+We start with the 3-D VIE applied to an infinite snow layer:
+$$
+\bar{E}(\bar{r}) = \bar{E}_{inc}(\bar{r}) + k^2 \int_{-\infty}^{+\infty} dx' \int_{-\infty}^{+\infty} dy' \int_{0}^{H} dz' \bar{\bar{G}}(\bar{r}, \bar{r}') (\varepsilon_r(\bar{r}') - 1) \bar{E}(\bar{r}') \tag{1}
+$$
+Note that the integration limits are over the extent of the snow layer which is infinite in the lateral x- and y-directions, and is finite from the snow/ground interface at $z = 0$ to the snow/air interface at $z = H$ in the vertical z-direction. In (1), $\bar{E}(\bar{r})$ is the electric field at point $\bar{r}$, $\bar{E}_{inc}$ is the incident plane wave with wave vector $\bar{k}_i = \bar{k}_{i\rho} + \hat{z}k_{iz}$, $k$ is the free-space wavenumber, $\varepsilon_r(\bar{r}')$ is the relative permittivity at $\bar{r}'$, and $\bar{\bar{G}}(\bar{r}, \bar{r}')$ is the half-space dyadic Green’s function representing the field response at $\bar{r}$ due to a current source at $\bar{r}'$. Applying the Bloch wave conditions in the x and y lateral directions for periodic medium
+$$
+\bar{E}(\bar{r} + \bar{\rho}_{pq}) = \bar{E}(\bar{r}) \exp(i\bar{k}_{i\rho} \cdot \bar{\rho}_{pq}) \tag{2}
+$$
+where $\bar{k}_{i\rho} = \bar{k}_i \cdot (\hat{x}\hat{x} + \hat{y}\hat{y})$ is the projection of $\bar{k}_i$ on the horizontal plane, and
+$$
+\bar{\rho}_{pq} = p\bar{a}_1 + q\bar{a}_2 \tag{3}
+$$
+where $p$, and $q$ are integers, and $\bar{a}_1$ and $\bar{a}_2$ are lattice vectors (periods) in the lateral plane. We choose $\bar{a}_1 = \hat{x} L_x$ and $\bar{a}_2 = \hat{y} L_y$, but they can be more general vectors. With the periodicity
+$$
+\varepsilon_r(\bar{r}' + \bar{\rho}_{pq}) = \varepsilon_r(\bar{r}') \tag{4}
+$$
+we convert the integral domain to one period in x- and y-directions
+$$
+\bar{E}(\bar{r}) = \bar{E}_{inc}(\bar{r}) + k^2 \int_{\Omega_0} d\bar{r}' \bar{\bar{G}}_P(\bar{r}, \bar{r}'; \bar{k}_{i\rho})(\varepsilon_r(\bar{r}') - 1) \bar{E}(\bar{r}') \tag{5}
+$$
+where $\Omega_0$ denotes one period. The period centered at origin can be defined as $-\frac{L_x}{2} < x < \frac{L_x}{2}$, $-\frac{L_y}{2} < y < \frac{L_y}{2}$, and $0 < z < H$, where $L_x$ and $L_y$ are the two lateral dimensions of the finite snow volume along $x$ and $y$, respectively. $\bar{\bar{G}}_P$ is the periodic dyadic Green’s function related to the half-space dyadic Green’s function $\bar{\bar{G}}$ as follows:
+$$
+\bar{\bar{G}}_P(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) = \sum_{p,q} \bar{\bar{G}}(\bar{r}, \bar{r}' + \bar{\rho}_{pq}) \exp(i\bar{k}_{i\rho} \cdot \bar{\rho}_{pq}) \tag{6}
+$$
+Equation (5) is the VIE in 3-D with periodic boundary conditions in the two lateral directions.
+
+### B. DDA With Half-Space Periodic Green’s Function
+
+The half-space dyadic Green’s function $\bar{\bar{G}} = \bar{\bar{G}}_0 + \bar{\bar{G}}_R$, where $\bar{\bar{G}}_0$ and $\bar{\bar{G}}_R$ represent the free-space and the reflection response, respectively. Similarly, with periodic boundary conditions, we decompose $\bar{\bar{G}}_P$ into the free space response $\bar{\bar{G}}_P^0$ and the reflection contribution $\bar{\bar{G}}_P^R$
+$$
+\bar{\bar{G}}_P(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) = \bar{\bar{G}}_P^0(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) + \bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) \tag{7}
+$$
+The singularity is only within $\bar{\bar{G}}_P^0$ when $\bar{r} - \bar{r}' = \bar{\rho}_{pq}$, and is thus, limited to $\bar{r} - \bar{r}' = 0$ within one unit period. $\bar{\bar{G}}_P^0$ and $\bar{\bar{G}}_P^R$ have different translational symmetry properties
+$$
+\bar{\bar{G}}_P^0(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) = \bar{\bar{G}}_P^0(\bar{r} - \bar{r}'; \bar{k}_{i\rho}) \tag{8}
+$$
+$$
+\bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) = \bar{\bar{G}}_P^R(\bar{\rho} - \bar{\rho}', z + z'; \bar{k}_{i\rho}) \tag{9}
+$$
+We rearrange the VIE
+$$
+\bar{E}(\bar{r}) = \bar{E}_{inc}(\bar{r}) + k^2 \int_{\Omega_0} d\bar{r}' \bar{\bar{G}}_P^0(\bar{r}, \bar{r}'; \bar{k}_{i\rho})(\varepsilon_r(\bar{r}') - 1) \bar{E}(\bar{r}') + k^2 \int_{\Omega_0} d\bar{r}' \bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_{i\rho})(\varepsilon_r(\bar{r}') - 1) \bar{E}(\bar{r}') \tag{10}
+$$
+After discretizing the snow volume into small cubes with cube edge length $d$ and volume $V_C^{(j)}$, where the superscript $(j)$ denotes the $j$th cube, and applying pulse basis function to represent $\bar{E}$, we use the DDA in (10).
+
+Let us define the singular integral $\bar{\bar{S}}$ over the self-cube $V_C^{(0)}$
+$$
+\bar{\bar{S}} = \int_{V_C^{(0)}} d\bar{r}' \bar{\bar{G}}_P^0(0, \bar{r}'; \bar{k}_{i\rho}) \tag{11}
+$$
+Also, define the dipole moment $\bar{p}_i$
+$$
+\bar{p}_i = \Delta V \varepsilon (\varepsilon_r(\bar{r}_i) - 1) \bar{E}(\bar{r}_i) \tag{12}
+$$
+and the polarizability $\bar{\bar{\alpha}}_i$ for each cube
+$$
+\bar{\bar{\alpha}}_i = \Delta V \varepsilon (\varepsilon_r(\bar{r}_i) - 1) \left( \bar{\bar{I}} - k^2 (\varepsilon_r(\bar{r}_i) - 1) \bar{\bar{S}} \right)^{-1} \tag{13}
+$$
+Then, we obtain the DDA equation for a half-space medium with half-space dyadic Green’s function
+$$
+\bar{p}_i = \bar{\bar{\alpha}}_i \left[ \bar{E}_{inc}(\bar{r}_i) + \frac{k^2}{\varepsilon} \sum_{j \neq i} \bar{\bar{G}}_P^0(\bar{r}_i, \bar{r}_j; \bar{k}_{i\rho}) \bar{p}_j + \frac{k^2}{\varepsilon} \sum_{j} \bar{\bar{G}}_P^R(\bar{r}_i, \bar{r}_j; \bar{k}_{i\rho}) \bar{p}_j \right] \tag{14}
+$$
+Note that the matrix-vector multiplication of $\sum_{j \neq i} \bar{\bar{G}}_P^0(\bar{r}_i, \bar{r}_j; \bar{k}_{i\rho}) \bar{p}_j$ is in the form of convolutions in 3-D with the translational invariance relation (8) and a canonical and uniform sampling grid of $\bar{r}_i$ and $\bar{r}_j$. Similarly, the matrix-vector multiplication of $\sum_{j} \bar{\bar{G}}_P^R(\bar{r}_i, \bar{r}_j; \bar{k}_{i\rho}) \bar{p}_j$ has the form of convolution in the two lateral dimensions and the form of correlation in the vertical dimension considering (9). This shows that the matrix-column multiplication product of the response part of the dyadic Green’s function with electric field vector can also be accelerated with 3-D FFT rather than 2-D FFT. The application of FFT techniques in accelerating the matrix-vector multiplications in (14) is summarized in Appendix A. The evaluation of $\bar{\bar{G}}_P^0$, $\bar{\bar{G}}_P^R$, and $\bar{\bar{S}}$ are summarized in Appendix B. Detailed derivations can be found in [13].
+
+### C. Far-Field Scattered Field and the Bistatic Scattering Coefficients
+
+*1) Scattered Field:* After the matrix equations are solved, we obtain the internal fields inside the random medium. Next, we compute the far field scattered field. Substituting the spectral domain representation of $\bar{\bar{G}}_P^0$ in (87) with $z \gg z'$ in the far field and $\bar{\bar{G}}_P^R$ in (97) into (10) to identify the far-field scattered field $\bar{E}_s(\bar{r})$:
+$$
+\bar{E}_s(\bar{r}) = \sum_{\alpha} \exp(i\bar{k}_\alpha \cdot \bar{r}) \tilde{\bar{B}}_\alpha \tag{15}
+$$
+where
+$$
+\bar{B}_\alpha = \frac{k^2}{\varepsilon} \frac{i}{2\Omega} \frac{1}{k_{z\alpha}} \times \left[ \sum_{j} \exp(-i\bar{k}_\alpha \cdot \bar{r}_j) \bar{p}_j \cdot \left[ \hat{e}_\alpha(k_{z\alpha})\hat{e}_\alpha(k_{z\alpha}) + \hat{h}_\alpha(k_{z\alpha})\hat{h}_\alpha(k_{z\alpha}) \right] + \sum_{j} \exp(-i\bar{K}_\alpha \cdot \bar{r}_j) \bar{p}_j \cdot \left[ R^{TE}(k_{z\alpha})\hat{e}_\alpha(k_{z\alpha})\hat{e}_\alpha(-k_{z\alpha}) + R^{TM}(k_{z\alpha})\hat{h}_\alpha(k_{z\alpha})\hat{h}_\alpha(-k_{z\alpha}) \right] \right] \tag{16}
+$$
+In (16), $\hat{e}_\alpha$ and $\hat{h}_\alpha$ are the polarization vectors of the horizontal and vertical polarized Floquet modes as defined in (94)–(96). $\bar{k}_\alpha$ and $\bar{K}_\alpha$ are the wavevectors of the upward and downward Floquet modes as defined in (88) and (89), respectively. $k_{z\alpha}$ is the vertical component of the wavenumber as defined in (91).
+
+$\bar{B}_\alpha$ plays the same role as the scattering amplitude $\bar{f}$ in the case of a single scatterer. We call $\bar{B}_\alpha$ the discretized scattering amplitudes arising from periodic scatterers.
+
+We consider the reflected field of the directed incidence wave from the half-space as scattered wave. Thus, the corrected discrete scattering amplitudes $\tilde{\bar{B}}_\alpha$:
+$$
+\tilde{\bar{B}}_\alpha = \bar{B}_\alpha + \delta_{\alpha 0} \left[ R^{TE}(k_{z0})\hat{e}_\alpha(k_{z0})\hat{e}_\alpha(-k_{z0}) + R^{TM}(k_{z0})\hat{h}_\alpha(k_{z0})\hat{h}_\alpha(-k_{z0}) \right] \cdot \hat{q}_i \tag{17}
+$$
+where $\delta$ is the Kronecker delta function, and $\hat{q}_i$ denotes the polarization of the incidence plane wave, which in general is a linear combination of the orthonormal polarization vectors $\hat{e}(-k_{iz})$ and $\hat{h}(-k_{iz})$:
+$$
+\hat{q}_i = \alpha \hat{e}(-k_{iz}) + \beta \hat{h}(-k_{iz}) \tag{18}
+$$
+Then
+$$
+\bar{E}_s(\bar{r}) = \sum_{\alpha} \exp(i\bar{k}_\alpha \cdot \bar{r}) \tilde{\bar{B}}_\alpha \tag{19}
+$$
+
+*2) Scattering Power, the Reflectivity, and the Bistatic Scattering Coefficients:* The scattered power per unit cell can be calculated by
+$$
+P_s = \int_{\Omega} d\bar{\rho} \hat{z} \cdot \bar{S}_s = \frac{1}{2} \int_{\Omega} d\bar{\rho} \hat{z} \cdot \text{Re} \left[ \bar{E}_s \times \bar{H}_s^* \right] \tag{20}
+$$
+where $\Omega$ is the unit cell area.
+Substituting (19) into (20) and using Faraday’s law to represent $\bar{H}_s$, after some mathematical manipulation, we have
+$$
+P_s = \frac{1}{2} \frac{1}{\omega\mu} \Omega \sum_{\alpha} \exp(-2 \text{Im}[k_{z\alpha}]z) \text{Re}[k_{z\alpha}] \left| \tilde{\bar{B}}_\alpha \right|^2 \tag{21}
+$$
+For scattered far field, only the propagating wave contributes. For lossless background media
+$$
+P_s = \frac{1}{2} \frac{1}{\omega\mu} \Omega \sum_{\text{propagating}} k_{z\alpha} \left| \tilde{\bar{B}}_\alpha \right|^2 \tag{22}
+$$
+Considering the incidence power per lattice cell
+$$
+P_{inc} = \frac{1}{2\eta} \Omega \cos\theta_{inc} \tag{23}
+$$
+we obtain the reflectivity $r$:
+$$
+r = \frac{P_s}{P_{inc}} = \frac{1}{k_{iz}} \sum_{\alpha} \text{Re}[k_{z\alpha}] \left| \tilde{\bar{B}}_\alpha \right|^2 \tag{24}
+$$
+The bistatic scattering coefficients $\gamma(\theta, \phi)$ are defined such that
+$$
+r = \frac{P_s}{P_{inc}} = \frac{1}{4\pi} \int_{0}^{2\pi} d\phi \int_{0}^{\pi/2} d\theta \sin\theta \gamma(\theta, \phi) \tag{25}
+$$
+For a rectangular lattice, one can connect $\Delta\alpha = \Delta m \Delta n$ with $\Delta k_x \Delta k_y$:
+$$
+1 = \Delta\alpha = \Delta m \Delta n = \frac{\Omega}{4\pi^2} \Delta k_x \Delta k_y \tag{26}
+$$
+and
+$$
+dk_x dk_y = d\phi dk_\rho k_\rho = d\phi d\theta k^2 \cos\theta \sin\theta \tag{27}
+$$
+Thus
+$$
+\frac{P_s}{P_{inc}} = \frac{1}{k_{iz}} \sum_{\alpha} \text{Re}[k_{z\alpha}] \left| \tilde{\bar{B}}_\alpha \right|^2 \Delta\alpha = \frac{1}{k_{iz}} \sum_{\alpha} \text{Re}[k_{z\alpha}] \left| \tilde{\bar{B}}_\alpha \right|^2 \frac{\Omega}{4\pi^2} \Delta k_x \Delta k_y \tag{28}
+$$
+Converting the summation into integrals:
+$$
+\frac{P_s}{P_{inc}} = \frac{1}{k_{iz}} \iint dk_x dk_y \text{Re}[k_{z\alpha}] \left| \tilde{\bar{B}}_\alpha \right|^2 \frac{\Omega}{4\pi^2} = k^2 \frac{\Omega}{4\pi^2} \int_{0}^{2\pi} d\phi \int_{0}^{\pi/2} d\theta \cos\theta \sin\theta \frac{\text{Re}[k_{z\alpha}]}{k_{iz}} \left| \tilde{\bar{B}}_\alpha \right|^2 \tag{29}
+$$
+Only the propagating modes contribute:
+$$
+\frac{P_s}{P_{inc}} = k^2 \frac{\Omega}{4\pi^2} \int_{0}^{2\pi} d\phi \int_{0}^{\pi/2} d\theta \sin\theta \frac{\cos^2\theta}{\sin\theta_{inc}} \left| \tilde{\bar{B}}_\alpha \right|^2 \tag{30}
+$$
+Comparing (30) with (25), we find that
+$$
+\gamma(\theta, \phi) = k^2 \frac{\Omega}{\pi} \frac{\cos^2\theta}{\cos\theta_{inc}} \left| \tilde{\bar{B}}_\alpha \right|^2 \tag{31}
+$$
+The bistatic scattering coefficients $\gamma(\theta, \phi)$ are only defined at the discrete scattering angles by the Floquet modes at $(k_{x\alpha}, k_{y\alpha})$.
+
+The polarization decomposition yields
+$$
+\gamma_V(\theta, \phi) = k^2 \frac{\Omega}{\pi} \frac{\cos^2\theta}{\cos\theta_{inc}} \left| \hat{h}_\alpha \cdot \tilde{\bar{B}}_\alpha \right|^2
+$$
+$$
+\gamma_H(\theta, \phi) = k^2 \frac{\Omega}{\pi} \frac{\cos^2\theta}{\cos\theta_{inc}} \left| \hat{e}_\alpha \cdot \tilde{\bar{B}}_\alpha \right|^2 \tag{32}
+$$
+Expression (31) for $\gamma(\theta, \phi)$ is the total scattering coefficients in a single realization. The coherent and incoherent part are given by realization averages:
+$$
+\gamma^{coh}(\theta, \phi) = k^2 \frac{\Omega}{\pi} \frac{\cos^2\theta}{\cos\theta_{inc}} \left| \left\langle \tilde{\bar{B}}_\alpha \right\rangle \right|^2 \tag{33}
+$$
+$$
+\gamma^{tot}(\theta, \phi) = k^2 \frac{\Omega}{\pi} \frac{\cos^2\theta}{\cos\theta_{inc}} \left\langle \left| \tilde{\bar{B}}_\alpha \right|^2 \right\rangle \tag{34}
+$$
+and
+$$
+\gamma^{incoh}(\theta, \phi) = \gamma^{tot}(\theta, \phi) - \gamma^{coh}(\theta, \phi) \tag{35}
+$$
+With periodic boundary conditions, the coherent scattering field is concentrated in the specular scattering direction.
+
+### D. Transmissivity, Absorptivity, and the Brightness Temperature
+
+*1) Transmitted Power and the Boundary Field:* The transmitted power per unit lattice is
+$$
+P_t = \int_{\Omega_0} d\bar{\rho}(-\hat{z}) \cdot \bar{S}_t = \frac{1}{2} \int_{\Omega_0} d\bar{\rho}(-\hat{z}) \cdot \text{Re} [\bar{E}_t \times \bar{H}_t^*] \tag{36}
+$$
+where $\bar{E}_t$ and $\bar{H}_t$ are the total field on the boundary of the half-space at $z = 0$.
+
+We express the boundary field as the sum of incidence field and scattered field. This is done by substituting the spectral domain representation of $\bar{\bar{G}}_P^0$ in (87) and $\bar{\bar{G}}_P^R$ in (97) into (10), noticing $z = 0 < z'$. Then the scattered field is
+$$
+\bar{E}_s(\bar{r}) = \sum_{\alpha} \left[ \bar{C}_\alpha^0 \exp(i\bar{K}_\alpha \cdot \bar{r}) + \bar{C}_\alpha^R \exp(i\bar{k}_\alpha \cdot \bar{r}) \right] \tag{37}
+$$
+where
+$$
+\bar{C}_\alpha^0 = \frac{k^2}{\varepsilon} \left[ \hat{e}_\alpha(-k_{z\alpha})\hat{e}_\alpha(-k_{z\alpha}) + \hat{h}_\alpha(-k_{z\alpha})\hat{h}_\alpha(-k_{z\alpha}) \right] \cdot \sum_{j} \frac{i}{2\Omega} \frac{\exp(-i\bar{K}_\alpha \cdot \bar{r}_j)}{k_{z\alpha}} \bar{p}_j \tag{38}
+$$
+$$
+\bar{C}_\alpha^R = \frac{k^2}{\varepsilon} \left[ R^{TE}(k_{z\alpha})\hat{e}_\alpha(k_{z\alpha})\hat{e}_\alpha(-k_{z\alpha}) + R^{TM}(k_{z\alpha})\hat{h}_\alpha(k_{z\alpha})\hat{h}_\alpha(-k_{z\alpha}) \right] \cdot \sum_{j} \frac{i}{2\Omega} \frac{\exp(-i\bar{K}_\alpha \cdot \bar{r}_j)}{k_{z\alpha}} \bar{p}_j \tag{39}
+$$
+Putting together with $\bar{E}_{inc}$, we have
+$$
+\bar{E}_t(\bar{r}) = \sum_{\alpha} \left[ \tilde{\bar{C}}_\alpha^0 \exp(i\bar{K}_\alpha \cdot \bar{r}) + \tilde{\bar{C}}_\alpha^R \exp(i\bar{k}_\alpha \cdot \bar{r}) \right] \tag{40}
+$$
+where
+$$
+\tilde{\bar{C}}_\alpha^0 = \bar{C}_\alpha^0 + \delta_{\alpha 0} \left[ \hat{e}_0(-k_{z0})\hat{e}_0(-k_{z0}) + \hat{h}_0(-k_{z0})\hat{h}_0(-k_{z0}) \right] \cdot \hat{q}_i \tag{41}
+$$
+$$
+\tilde{\bar{C}}_\alpha^R = \bar{C}_\alpha^R + \delta_{\alpha 0} \left[ R^{TE}(k_{z0})\hat{e}_0(k_{z0})\hat{e}_0(-k_{z0}) + R^{TM}(k_{z0})\hat{h}_\alpha(k_{z0})\hat{h}_0(-k_{z0}) \right] \cdot \hat{q}_i \tag{42}
+$$
+where $\hat{q}_i$ denotes the polarization of the incidence wave.
+The total magnetic field is obtained from Faraday’s law. Specifically, at $z = 0$
+$$
+\bar{E}_t(\bar{\rho}, z=0) = \sum_{\alpha} \left[ \tilde{\bar{C}}_\alpha^0 + \tilde{\bar{C}}_\alpha^R \right] \exp(i\bar{k}_{\rho\alpha} \cdot \bar{\rho}) \tag{43}
+$$
+$$
+\bar{H}_t(\bar{\rho}, z=0) = \frac{1}{\omega\mu} \sum_{\alpha} \left[ \bar{K}_\alpha \times \tilde{\bar{C}}_\alpha^0 + \bar{k}_\alpha \times \tilde{\bar{C}}_\alpha^R \right] \exp(i\bar{k}_{\rho\alpha} \cdot \bar{\rho}) \tag{44}
+$$
+
+*2) Transmitted Power and the Transmissivity:* Substituting (43) and (44) into (36), and making use of the orthogonality of the Floquet modes:
+$$
+P_t = \frac{1}{2} \frac{1}{\omega\mu} \Omega_0 (-\hat{z}) \cdot \sum_{\alpha} \text{Re} \left[ \left( \tilde{\bar{C}}_\alpha^0 + \tilde{\bar{C}}_\alpha^R \right) \times \left( \bar{K}_\alpha^* \times \tilde{\bar{C}}_\alpha^{0*} + \bar{k}_\alpha^* \times \tilde{\bar{C}}_\alpha^{R*} \right) \right] \tag{45}
+$$
+Assuming a lossless background media of the top half-space, further manipulations yield the following:
+
+1) For propagating waves in the top half-space
+$$
+P_t^{\text{propagating}} = \frac{1}{2} \frac{1}{\omega\mu} \Omega_0 \sum_{\alpha, \text{propagating}} \times k_{z\alpha} \left( \left| \tilde{\bar{C}}_\alpha^0 \right|^2 - \left| \tilde{\bar{C}}_\alpha^R \right|^2 \right) \tag{46}
+$$
+
+2) For evanescent waves in the top half-space
+$$
+P_t^{\text{evanescent}} = \frac{1}{2} \frac{1}{\omega\mu} \Omega_0 \sum_{\alpha, \text{evanescent}} \times \left[ -2\text{Im}(k_{z\alpha}) \text{Im}\left( \tilde{\bar{C}}_\alpha^0 \tilde{\bar{C}}_\alpha^{R*} \right) \right] \tag{47}
+$$
+Putting together
+$$
+P_t = \frac{1}{2} \frac{1}{\omega\mu} \Omega_0 \sum_{\alpha} \left[ \text{Re}(k_{z\alpha}) \left( \left| \tilde{\bar{C}}_\alpha^0 \right|^2 - \left| \tilde{\bar{C}}_\alpha^R \right|^2 \right) - 2\text{Im}(k_{z\alpha}) \text{Im}\left( \tilde{\bar{C}}_\alpha^0 \tilde{\bar{C}}_\alpha^{R*} \right) \right] \tag{48}
+$$
+The transmissivity $t$ is then
+$$
+t = \frac{P_t}{P_{inc}} = \frac{1}{k_{iz}} \sum_{\alpha} \left[ \text{Re}(k_{z\alpha}) \left( \left| \tilde{\bar{C}}_\alpha^0 \right|^2 - \left| \tilde{\bar{C}}_\alpha^R \right|^2 \right) - 2\text{Im}(k_{z\alpha}) \text{Im}\left( \tilde{\bar{C}}_\alpha^0 \tilde{\bar{C}}_\alpha^{R*} \right) \right] \tag{49}
+$$
+One can represent $\tilde{\bar{C}}_\alpha^0$ and $\tilde{\bar{C}}_\alpha^R$ into their two orthogonal polarizations to further simplify the calculations.
+
+*3) Absorbed Power and Absorptivity:* The absorbed power per unit lattice
+$$
+P_a = \iint_{\Omega_0} dxdy \int_{0}^{H} dz \frac{1}{2} \omega \varepsilon''(\bar{r}) \left| \bar{E}(\bar{r}) \right|^2 = \sum_{j} \Delta V \frac{1}{2} \omega \varepsilon''(\bar{r}_j) \left| \bar{E}(\bar{r}_j) \right|^2 \tag{50}
+$$
+where we have used double prime" to denote the imaginary part of a complex quantity.
+Assuming lossless background media (e.g., air in the snow layer)
+$$
+P_a = \sum_{j \in \text{scatterer}} \Delta V \frac{1}{2} \omega \varepsilon''(\bar{r}_j) \left| \frac{\bar{p}_j}{\Delta V \varepsilon (\varepsilon_r(\bar{r}_j) - 1)} \right|^2 \tag{51}
+$$
+In two-phase random media
+$$
+P_a = \frac{1}{\Delta V} \frac{1}{2} \frac{\omega}{\varepsilon} \frac{\varepsilon''_{pr}}{|\varepsilon_{pr} - 1|^2} \sum_{j} |\bar{p}_j|^2 \tag{52}
+$$
+The absorptivity is then defined by
+$$
+a = \frac{P_a}{P_{inc}} = \frac{1}{\cos\theta_{inc}} \frac{1}{\Omega_0} \frac{k}{\varepsilon^2} \frac{1}{\Delta V} \frac{\varepsilon''_{pr}}{|\varepsilon_{pr} - 1|^2} \sum_{j} |\bar{p}_j|^2 = \sum_{j} \Delta a_j \tag{53}
+$$
+where $\Delta a_j$ is the differential absorptivity per small cube:
+$$
+\Delta a_j = \frac{1}{\cos\theta_{inc}} \frac{1}{\Omega_0} \frac{k}{\varepsilon^2} \frac{1}{\Delta V} \frac{\varepsilon''_{pr}}{|\varepsilon_{pr} - 1|^2} |\bar{p}_j|^2 \tag{54}
+$$
+
+*4) Brightness Temperature:* Following the reciprocity relation between the scattering and emission problem as derived in Appendix C, the brightness temperature $T_B$ for the snowpack:
+$$
+T_B(\theta_{inc}) = \int_{V_{snow}} da(\bar{r}') T_s(\bar{r}') + t T_g = \sum_{j} \Delta a_j T_s(\bar{r}_j) + t T_g \tag{55}
+$$
+where the integration domain is over one unit lattice, and $T_s$ and $T_g$ are the physical temperatures of the snowpack and the ground (the bottom half-space) in Kelvin.
+For constant snow temperature
+$$
+T_B(\theta_{inc}) = a T_s + t T_g \tag{56}
+$$
+
+*5) Energy Conservation:* The energy conservation relation exhibits itself as
+$$
+r + a + t = 1 \tag{57}
+$$
+
+## III. ILLUSTRATION OF NUMERICAL RESULTS
+
+### A. 2-D Simulation Results
+
+In this section, we first use a 2-D simulation to demonstrate the possibility of full wave simulation in producing consistent scattering and emission results. In the 2-D simulation, we assume the microstructure of snowpack is invariant perpendicular to the incidence plane, and the structure is generated by taking one slice of the 3-D bicontinuous media. The 2-D wave equation is a scalar Helmholtz equation and is much simpler to solve than its 3-D counterpart. However, it can be used to demonstrate most of the physics, such as the edge diffraction, the energy conservation, the separation of incoherent scattering field and coherent scattering field through Monte Carlo simulation, the effective media effects causing coherent multiple wave reflections, etc. The 2-D VIE is summarized in Appendix D, and the detailed derivation and solution can be found in [13, Sec. 3.4].
+
+We first illustrate the decomposition of scattered waves into coherent and incoherent waves in Fig. 2. We consider a snowpack of 10-cm thickness on ground. The finite lateral computational domain is truncated at 50 cm in applying periodic boundary conditions. The impinging wave is at 17.2 GHz with electric field polarized perpendicular to the incidence plane, and has an incidence angle of 40°. Thus, the computational domain is of $28.7\lambda \times 5.7\lambda$. The ground has permittivity $(5 + i0.5)\varepsilon_0$. The ice has permittivity $(3.2 + 0.001i)\varepsilon_0$. The bicontinuous media has parameters of $\langle\zeta\rangle = 5000/m, b = 1,$ and $f_v = 0.3$.
+
+*[Figure 2: Decomposition of bistatic scattering coefficients into coherent and incoherent parts for 2-D simulation with periodic boundary condition.]*
+
+*[Figure 3: Comparison of incoherent bistatic scattering coefficients with and without periodic boundary conditions.]*
+
+The 2-D bicontinuous media is simply taken from independent cross sections of the 3-D bicontinuous medium.
+
+The bistatic scattering coefficient as shown in Fig. 2 are calculated from 500 Monte Carlo simulations. As discussed before, the periodic boundary condition emulates a layer of snow of infinite lateral extent, and thus, the coherent scattering wave is only exhibited in the specular scattering direction. Thus, the total scattering coefficients can be used to model radar observations directly without the complexity of coherent and incoherent wave decomposition.
+
+The incoherent bistatic scattering coefficients are plotted in Fig. 3, comparing to the 2-D full wave simulation results without applying the periodic boundary conditions. The calculation with periodic boundary condition is performed with a period in the horizontal domain of 50 cm ($\sim 28.7$ free-space wavelengths $\lambda$) and with 500 Monte Carlo simulations. Convergence test is carried out over the length of the finite period in the lateral extent of the computation domain in affecting the bistatic scattering pattern. It is found that a period in the lateral domain close to 10 free-space wavelengths is sufficient to produce converging bistatic scattering coefficients, and this requirement is nearly independent of the thickness of the snowpack in the vertical direction, for which our tests have covered up to 30 cm of snow. This criterion in minimizing the lateral domain is to be taken in 3-D simulations as the CPU requirements rapidly increases in 3-D simulations. On the other hand, the results without periodic boundary conditions are calculated with horizontal domain size of 0.5 m ($\sim 28.7 \lambda$) and 1 m ($\sim 57.3 \lambda$), respectively, both from 1000 Monte Carlo simulations. The results are in good agreements for scattering angles in $-45^\circ \sim 30^\circ$. Note that larger horizontal domain leads to decreased bistatic scattering coefficient at larger scattering angles, alleviating the edge diffraction artifacts. The results with periodic boundary conditions rapidly decrease as the scattering angle increases to near grazing. This effect is physical showing that the periodic boundary condition effectively removes the artificial edge diffraction effects due to truncating the computational domain. The edge diffraction effects are shown to be more severe in 3-D simulations to compromise the accuracy in the predicted backscatter without applying periodic boundary conditions in the lateral extents [13, Sec. 3.3]. The vertical lines in Fig. 3 denote the discrete scattering angles as results of the Floquet boundary conditions. With $P \gg \lambda$, the number of discrete scattering angles are large enough to resolve the angular patterns of bistatic scattering coefficients. It is noted that the peak in the backscattering direction on the order of $\sim 2$ dB demonstrates the backscattering enhancement.
+
+The energy conservation as demonstrated by the previous example is nearly perfect within the numerical limit of the computation: It has a reflectivity $r = 0.3559$, absorptivity $a = 0.0161$, and transmissivity $t = 0.6295$, adding up to $r + a + t = 1.0015$, and thus, the energy is conserved to the precision of less than 0.2%. This is impossible without applying periodic boundary conditions in the lateral extent as the edge diffraction makes it impossible to compute the transmitted power into the bottom half-space through a surface integration of the Poynting vector over a finite area. Energy conservation can neither be achieved with a tapered incidence wave in the case of a layer of volumetric scatterers above a half-space. Numerical tests with snow depth up to 30 cm show that stable results for backscatter and brightness temperature are obtained for the period $P \ge 10\lambda$, quite robust to the thickness of the snow layer. Tests also show that convergence of backscatter is achieved within $\sim 0.5$ dB for 100 realizations.
+
+To illustrate the results of brightness temperature, we simulate a case of thermal emission from a layer of ice on top of dielectric half-space. The ground has permittivity $(5 + i0.5)\varepsilon_0$ and temperature of 273.15 K. The ice has permittivity $(3.2 + 0.001i)\varepsilon_0$ and temperature of 260 K. The thickness of the ice layer is 5 cm. We also truncate the lateral domain at 5 cm for applying periodic boundary conditions. The brightness temperature at Ku band of 17.2 GHz is calculated as a function of the observation angle and compared with the analytical results of layered medium emission in Fig. 4. The results are in good agreement, and the oscillation of the brightness temperature as a function of angle confirms the coherent layer effects. The discretization for the calculation is 1.0 mm. Using a finer discretization would further improve the agreements.
+
+*[Figure 4: Brightness temperature simulation of a layer of ice on dielectric ground.]*
+
+### B. 3-D Simulation Results
+
+In this section, we illustrate numerical results from 3-D full wave simulation and compare with DMRT results. We consider the scattering from a layer of snow as represented by bicontinuous media. The bicontinuous medium is as described in [7] with parameters of $\langle\zeta\rangle = 5000/m$, $b = 1.0$, and $f_v = 0.3$. The correlation function of the bicontinuous medium is given in [7]. The random medium has a corresponding exponential correlation length of 0.36 mm by fitting the correlation function with an exponential function. The snow layer has thickness $d = 10$ cm. The two horizontal directions are truncated at $L_x = L_y = 15$ cm, for applying periodic boundary conditions. The microwave frequency is set at Ku band of 17.2 GHz, at which the computational domain is of $8.6\lambda \times 8.6\lambda \times 5.8\lambda$. A plane wave is impinging upon the snow layer at 40°. The bottom half-space has dielectric constant of 5+0.5i. The ice has dielectric constant of 3.2+i0.001. The snow layer has an effective optical thickness of 0.32. The numerical sizes of the problems are 150 by 150 cubes in the horizontal plane times 100 cubes in the vertical direction, giving 2.25 million cubes, and 7.75 million scalar electric field unknowns in the VIE. The largest problem we have solved so far includes 100 million cubes.
+
+In Fig. 5, the incoherent bistatic scattering coefficients are plotted as a function of scattering angle in the incidence plane and compared with the results of the partially coherent approach of DMRT. Note that the results of full wave simulation are discrete because of periodic boundary conditions. The bistatic scattering coefficients are averaged over 100 realizations. There are overall good agreements between the full wave simulation and DMRT. Cyclical corrections have not been applied to the DMRT results of the bistatic scattering coefficients. The notable peak in the backscattering direction of –40° on the order of $\sim 2$ dB is a demonstration of the backscattering enhancement effects [11], [16]–[19]. Another notable peak is observed in the specular direction at 40°, which is unique to the 3-D simulations as compared to Fig. 3 for the 2-D simulation. The peak in the specular direction is not an artifact of periodic boundary condition as it is also demonstrated in a truncated treatment without applying periodic boundary conditions [13, pp. 121, Fig. III.10]. The peak is neither due to insufficient number of realization in the Monte Carlo simulation. Further analysis is required to explain the physical causes of this peak.
+
+*[Figure 5: Incoherent bistatic scattering coefficients as a function of observation angle in the incidence plane. The backward scattering direction is at −40° in the plot.]*
+
+*[Figure 6: Incoherent bistatic scattering coefficients from 3-D full wave simulation. The coefficients are in decibel.]*
+
+In Fig. 6, the bistatic scattering coefficients are plotted in the entire top hemisphere as a function of $k_{sx}$ and $k_{sy}$ for all the four combination of polarizations. The scattering patterns are as expected that the copolarized scattering power are concentrated close to the incidence plane while the cross-polarized scattering power are directed perpendicular to the incidence plane.
+
+In Fig. 7, the speckle statistics obtained from the 100 realizations are plotted for the four polarizations in the backward scattering direction. The scattering matrix $S$ is scaled such that $\sigma = |S|^2$ [25]. The amplitude distribution of $S$ agrees with Rayleigh distribution for statistically homogeneous snowpack, while the phase distribution is shown to be uniform in $0 \sim 2\pi$. The close agreement in VH and HV shows that the numerical results satisfy the reciprocity principle.
+
+*[Figure 7: Speckle statistics of the backward scattering amplitude from 3-D full wave simulation with periodic boundary conditions. The bars are the histograms of the magnitude of the scattering amplitude $|S|$, and the red curves are the fitted Rayleigh distribution.]*
+
+*[Figure 8: Backscatter versus incidence angle compared with DMRT results.]*
+
+On checking the energy conservation: For vertical polarization, reflectivity $r = 0.1321$, absorptivity $a = 0.0147$, and transmissivity $t = 0.8517$, adding up to $r + a + t = 0.9985$; for horizontal polarization, reflectivity $r = 0.1965$, absorptivity $a = 0.0142$, and transmissivity $t = 0.7878$, adding up to $r + a + t = 0.9985$. Thus, the energies are conserved to within 0.2% for both polarizations.
+
+The backscatters and brightness temperatures from the same snowpack with 10 cm thickness are calculated as a function of incidence and observation angle, and plotted in Figs. 8 and 9, respectively. In the brightness temperatures simulations, the snowpack temperature and ground temperature are set to be 260 K and 273.15 K, respectively. The DMRT results are calculated using the same bicontinuous medium parameters. The active results are from DMRT_C that denotes the inclusion of the cyclical corrections for backscatter.
+
+*[Figure 9: Brightness temperature as a function of observation angle compared to the results of DMRT and layered media emission.]*
+
+In Fig. 8, the solid curves are the results of the fully coherent approach of NMM3D with periodic boundary conditions; the dashed curves are the results of DMRT_C. The NMM3D results oscillates around the DMRT results demonstrating that the coherent layering effects causes multiple reflections and coherent wave interferences.
+
+In Fig. 9, the circles and squares are the results of the NMM3D for the vertical and horizontal polarizations, respectively; the red and blue solid curves are the results of layered media emission theory for the two polarizations with the snow layer being approximated by an effective permittivity $\varepsilon_{eff} = 1.48\varepsilon_0$, only considering coherent wave reflections at interfaces but completely ignoring volumetric scattering effects. The dashed curves are the results of DMRT.
+
+The NMM3D results oscillate around the DMRT results with much weaker variation than the layered media emission results. The comparison shows damped oscillations and decreased brightness temperatures in the NMM3D results due to scattering. The coherent layer effects are still exhibited in the weak oscillations, and the coherent layer effects are shown to be stronger for horizontal polarizations than vertical polarizations especially at larger observation angles.
+
+The backscatters and brightness temperatures are also computed as a function of snow depth in Figs. 10 and 11, respectively. The incidence and observation angle are fixed at 40°. The snowpack microstructure and ground parameters are the same as before. In both cases the NMM3D results are compared with DMRT results. For backscatter the DMRT_C results are calculated using the same bicontinuous medium parameters and includes the cyclical corrections [11].
+
+In Fig. 10, the solid curves are the results of full wave simulation with periodic boundary conditions, while the dashed curves are the results of DMRT_C. The differences between the backscattering coefficients are generally within 1 dB. The oscillation pattern of the full wave simulation results preserves for snow depth up to 25 cm, demonstrating coherent wave effects.
+
+*[Figure 10: Backscatter as a function of snow depth compared with DMRT results.]*
+
+*[Figure 11: Brightness temperature as a function of snow depth compared with DMRT and layered media emission results.]*
+
+In Fig. 11, the circles and squares are the results of the fully coherent approach of NMM3D; the dashed curves are the results of layered media with effective permittivity $\varepsilon_{eff} = 1.48\varepsilon_0$ considering coherent wave reflections at interfaces but ignoring volumetric scattering effects. The solid curves are the results of DMRT. There are larger discrepancies in the horizontal polarization than in the vertical polarization between the NMM3D brightness temperatures and DMRT results. The differences in the horizontal polarizations are most significant at small thicknesses. The comparison shows that the horizontal polarization is more sensitive to coherent layer effects due to its relatively larger reflection coefficients; and the coherent layer effects are most significant at small thickness. The comparison between the full wave results and the effective medium results indicates that scattering smooths coherent oscillations and decreases brightness temperatures. The decreasing magnitude of the oscillation of the brightness temperatures in horizontal polarization from the NMM3D around the DMRT results at larger snow depths implies the weakening of coherent layer effects as suppressed by the increasing volumetric scattering.
+
+## IV. CONCLUSION
+
+The DMRT approach is a partially coherent approach and is an approach of homogenization where the snowpack is represented by its effective permittivity, the extinction coefficients and the scattering phase matrices. In this paper, we have formulated and implemented a fundamentally new approach in dealing with the scattering and emission problem from layered snowpack on a dielectric half-space. The approach is based on solving Maxwell’s equations directly without introducing approximations assumed by the radiative transfer equations. The approach is used to study microwave signatures based on the fundamental physics, without using the radiative transfer equation which is an ad-hoc approach. A thin layer of snow on land or on sea ice, causes coherent multiple reflections and the coherent volume–surface interactions. The coherent far-field volume–volume scattering interaction gives rise to constructive wave interference between the two cyclical paths close to the backward scattering direction. Both are not included in the radiative transfer equations. However, the fully coherent approach, based upon full wave simulations, can capture the backscattering enhancement effects and the coherent layer effects under certain configurations. It is noteworthy that the current treatment using half-space dyadic Green’s function assumes a flat underlying interface. On the other hand, the role of roughness in the interface is expected to slightly compromise the coherent wave interactions due to angular spreading and polarization coupling. Further study is required to characterize the roughness effects in combined volume surface interactions. Moreover, the variation in the snow layer depths on the order of wavelength within the radar / radiometer footprint is supposed to partially or fully smooth out the coherent oscillations. Such effects of varying layer thickness are under examination. The characterization and interpretation of cross-polarization from the snowpack is also under investigation.
+
+Besides calculating the incoherent scattering coefficients, the fully coherent approach directly computes the complex scattering matrix of the snowpack, including both magnitude and phase. The correct preservation of the phase information enables new capabilities to model SAR polarimetry such as coherency matrix and speckle statistics, to account for scattering phase center in interferograms, and to generate coherent microwave images, such as SAR-tomograms to reveal the vertical structure of the snowpack through multiple microwave acquisitions of the snowpack over a limited range of angles and frequencies [13]. The largest numerical problem solved so far contains 100 million cubic elements. The examples reported in this paper contains as large as $\sim 17$ million scalar electric field unknowns. With improvement of the algorithm and increasing computer resources, we can solve larger problems. As demonstrated in this paper, the full wave solution to Maxwell equations fundamentally preserves the full phase information and all interface interactions, which are important for applications of radar polarimetry, interferometry, and tomography to remote sensing of snow cover on land and on sea ice. In particular, to address the stark contrast between Arctic and Antarctic sea ice characteristics in response to environmental and climate changes [34], accurate observations of snow on sea ice are crucial to develop algorithms for sea ice thickness retrieval from sea ice freeboard estimates that are strongly dependent on the snow cover layer.
+
+## APPENDIX A
+### FFTS TO ACCELERATE THE MATRIX-VECTOR MULTIPLICATIONS
+
+The most time-consuming part in an iterative linear system solver, such as the generalized minimal residual method [29], is the matrix-vector product calculation. A direct dense matrix-vector multiplication takes $\Theta(N^2)$ algebraic operations, and the storage of the dense matrix takes $\Theta(N^2)$ memory. Both become intensive as the number of unknowns $N$ becomes large. Thus, we take advantage of the translational invariance of the dyadic Green’s functions, which is the kernel of the matrix elements, restated as follows, dropping the subscript $P$, that
+$$
+\bar{\bar{G}}_0(\bar{r}_i, \bar{r}_j) = \bar{\bar{G}}_0(x_n - x_{n'}, y_m - y_{m'}, z_l - z_{l'})
+$$
+$$
+\bar{\bar{G}}_R(\bar{r}_i, \bar{r}_j) = \bar{\bar{G}}_R(x_n - x_{n'}, y_m - y_{m'}, z_l + z_{l'}) \tag{58}
+$$
+The symmetry suggests that if we choose the sampling points $\bar{r}_i, \bar{r}_j$ uniformly, i.e., let $x_n = -\frac{L_x}{2} + (n + \frac{1}{2})d, y_m = -\frac{L_y}{2} + (m + \frac{1}{2})d$, and $z_l = (l + \frac{1}{2}) d$, where d is the discretization size, $0 \le n \le N_x - 1, 0 \le m \le N_y - 1, 0 \le l \le N_z - 1$, and $N = N_x N_y N_z$, then we only need to evaluate $\bar{\bar{G}}_0(\bar{r}_i, \bar{r}_j)$ and $\bar{\bar{G}}_R(\bar{r}_i, \bar{r}_j)$ on a much smaller set of grid points:
+$$
+\bar{\bar{G}}_0(\bar{r}_i, \bar{r}_j) = \bar{\bar{G}}_0 \left( (n - n') d, (m - m') d, (l - l') d \right) \triangleq \tilde{\bar{\bar{G}}}_0 \left( n - n', m - m', l - l' \right)
+$$
+$$
+\bar{\bar{G}}_R(\bar{r}_i, \bar{r}_j) = \bar{\bar{G}}_R \left( (n - n') d, (m - m') d, (1 + l + l') d \right) \triangleq \tilde{\bar{\bar{G}}}_R \left( n - n', m - m', l + l' \right) \tag{59}
+$$
+where $-(N_x - 1) \le n - n' \le N_x - 1, -(N_y - 1) \le m - m' \le N_y - 1, -(N_z - 1) \le l - l' \le N_z - 1$, and $0 \le l + l' \le 2(N_z - 1)$. Note that we only need to sample over $(2N_x - 1) \times (2N_y - 1) \times (2N_z - 1)$ points instead of $(N_x N_y N_z)^2$ points without this translational symmetry. The savings are huge in that only a very small fraction of $(2N_x - 1) \times (2N_y - 1) \times (2N_z - 1) / (N_x N_y N_z)^2 \approx 8/N$ of the original memory is needed.
+
+The resulting matrix on uniform grids (canonical grids) is Toeplitz in the sense that
+$$
+\bar{\bar{G}}_0(\bar{r}_i + (\hat{x}s_x + \hat{y}s_y + \hat{z}s_z), \bar{r}_j + (\hat{x}s_x + \hat{y}s_y + \hat{z}s_z)) = \bar{\bar{G}}_0(\bar{r}_i, \bar{r}_j)
+$$
+$$
+\bar{\bar{G}}_R(\bar{r}_i + (\hat{x}s_x + \hat{y}s_y + \hat{z}s_z), \bar{r}_j + (\hat{x}s_x + \hat{y}s_y - \hat{z}s_z)) = \bar{\bar{G}}_R(\bar{r}_i, \bar{r}_j) \tag{60}
+$$
+Thus, different rows of the matrix elements are related to each other by a proper rotation.
+The techniques of using FFT to accelerate the Toeplitz matrix-vector multiplications to handle $\sum_{j \neq i} \bar{\bar{G}}_0(\bar{r}_0, \bar{r}_j) \cdot \bar{p}_j$ and $\sum_{j} \bar{\bar{G}}_R(\bar{r}_i, \bar{r}_j) \cdot \bar{p}_j$ as appeared in (14), are illustrated as follows.
+
+We first convert the vector version of the matrix-vector multiplication into 9 scalar components, formally
+$$
+\left[ \bar{\bar{G}} \cdot \bar{p} \right]_x = G_{xx}p_x + G_{xy}p_y + G_{xz}p_z
+$$
+$$
+\left[ \bar{\bar{G}} \cdot \bar{p} \right]_y = G_{yx}p_x + G_{yy}p_y + G_{yz}p_z
+$$
+$$
+\left[ \bar{\bar{G}} \cdot \bar{p} \right]_z = G_{zx}p_x + G_{zy}p_y + G_{zz}p_z \tag{61}
+$$
+Then we are left to deal with each of the scalar versions of the matrix-vector multiplications of the following two different forms:
+$$
+q(n, m, l) = \sum_{n'=0}^{N_x-1} \sum_{m'=0}^{N_y-1} \sum_{l'=0}^{N_z-1} g(n - n', m - m', l - l') \times p(n', m', l') \tag{62}
+$$
+$$
+q_R(n, m, l) = \sum_{n'=0}^{N_x-1} \sum_{m'=0}^{N_y-1} \sum_{l'=0}^{N_z-1} g_R(n - n', m - m', l + l') \times p(n', m', l') \tag{63}
+$$
+These can be readily accelerated using 3-D FFTs and Inverse FFTs [22]–[24], such that
+$$
+\tilde{q}(n, m, l) = \text{FT}^{-1}_{2N_x \times 2N_y \times 2N_z} \{ G(i, j, k) \cdot P(i, j, k) \} \tag{64}
+$$
+$$
+\tilde{q}_R(n, m, l) = \text{FT}^{-1}_{2N_x \times 2N_y \times 2N_z} \{ G_R(i, j, k) \cdot P(i, j, -k) \} \tag{65}
+$$
+where $\cdot$ denotes element-wise multiplication of the two matrices, and FT and FT$^{-1}$ denote the Fourier transform and inverse Fourier transform of the given size, respectively:
+$$
+P(i, j, k) = \text{FT}_{2N_x \times 2N_y \times 2N_z} \{ \tilde{p}(n, m, l) \} \tag{66}
+$$
+$$
+G(i, j, k) = \text{FT}_{2N_x \times 2N_y \times 2N_z} \{ \tilde{g}(n, m, l) \} \tag{67}
+$$
+$$
+G_R(i, j, k) = \text{FT}_{2N_x \times 2N_y \times 2N_z} \{ \tilde{g}_R(n, m, l) \} \tag{68}
+$$
+$$
+P(i, j, -k) = P(i, j, 2N_z - k), 1 \le k \le 2N_z - 1 \tag{69}
+$$
+where $\tilde{p}, \tilde{g}$, and $\tilde{g}_R$ are all of dimensions $2N_x \times 2N_y \times 2N_z$. $\tilde{p}$ is a zero-padded version of $p$ (of dimension $N_x \times N_y \times N_z$). And $q$ and $q_R$ are truncated version of $\tilde{q}$ and $\tilde{q}_R$ taking the data in the first quadrant.
+Using the short hand notation
+$$
+p(n, m, l) = p(x_0 + n\Delta x, y_0 + m\Delta y, z_0 + l\Delta z)
+$$
+$$
+g(n, m, l) = g(n\Delta x, m\Delta y, l\Delta z)
+$$
+$$
+g_R(n, m, l) = g_R(n\Delta x, m\Delta y, 2z_0 + l\Delta z).
+$$
+Then
+$$
+\tilde{p}(n, m, l) = \begin{cases} p(n, m, l), & 0 \le n \le N_x - 1, 0 \le m \le N_y - 1, 0 \le l \le N_z - 1 \\ 0, & \text{otherwise} \end{cases} \tag{70}
+$$
+$$
+\tilde{g}(n, m, l) = \begin{cases} 0, & n = N_x \text{ or } m = N_y \text{ or } l = N_z \\ g(n', m', l'), & \text{otherwise} \end{cases} \tag{71}
+$$
+where
+$$
+n' = \begin{cases} n, & 0 \le n \le N_x - 1 \\ n - 2N_x, & N_x + 1 \le n \le 2N_x - 1 \end{cases}
+$$
+$$
+m' = \begin{cases} m, & 0 \le m \le N_y - 1 \\ m - 2N_y, & N_y + 1 \le m \le 2N_y - 1 \end{cases}
+$$
+$$
+l' = \begin{cases} l, & 0 \le l \le N_z - 1 \\ l - 2N_z, & N_z + 1 \le l \le 2N_z - 1 \end{cases}
+$$
+and
+$$
+\tilde{g}_R(n, m, l) = \begin{cases} 0, & n = N_x \text{ or } m = N_y \text{ or } l = 2N_z - 1 \\ g_R(n', m', l), & \text{otherwise} \end{cases} \tag{72}
+$$
+where $n'$ and $m'$ are the same as in (71).
+And finally
+$$
+q(n, m, l) = \tilde{q}(n, m, l), \quad 0 \le n \le N_x - 1, 0 \le m \le N_y - 1, 0 \le l \le N_z - 1 \tag{73}
+$$
+$$
+q_R(n, m, l) = \tilde{q}_R(n, m, l), \quad 0 \le n \le N_x - 1, 0 \le m \le N_y - 1, 0 \le l \le N_z - 1 \tag{74}
+$$
+The FFT technique significantly improves the CPU requirements from $O(N^2)$ to $O(N \log N)$, and the memory requirements from $O(N^2)$ to $O(N)$, where $N = N_x N_y N_z$. One can further make use of the symmetry and parity of the components of the dyadic Green’s functions to reduce the computational complexity and memory requirements.
+
+## APPENDIX B
+### HALF-SPACE PERIODIC DYADIC GREEN’S FUNCTION AND ITS SINGULARITIES
+
+*B.1. 3-D Periodic Dyadic Green’s Function in Free Space $\bar{\bar{G}}_P^0$:* The periodic dyadic Green’s function in free space is defined as follows:
+$$
+\bar{\bar{G}}_P^0(\bar{r}, \bar{r}'; \bar{k}_i) = \sum_{p,q} \bar{\bar{G}}_0(\bar{r}, \bar{r}' + \bar{\rho}_{pq}) \exp(i\bar{k}_{i\rho} \cdot \bar{\rho}_{pq}) \tag{75}
+$$
+Considering
+$$
+\bar{\bar{G}}_0(\bar{r}, \bar{r}') = \left( \bar{\bar{I}} + \frac{\nabla\nabla}{k^2} \right) g(\bar{r}, \bar{r}') \tag{76}
+$$
+$$
+g(\bar{r}, \bar{r}') = \frac{\exp(ik|\bar{r} - \bar{r}'|)}{4\pi|\bar{r} - \bar{r}'|} \tag{77}
+$$
+$$
+g_P(\bar{r}, \bar{r}'; \bar{k}_i) = \sum_{p,q} g(\bar{r}, \bar{r}' + \bar{\rho}_{pq}) \exp(i\bar{k}_{i\rho} \cdot \bar{\rho}_{pq}) \tag{78}
+$$
+It follows that
+$$
+\bar{\bar{G}}_P^0(\bar{r}, \bar{r}') = \left( \bar{\bar{I}} + \frac{\nabla\nabla}{k^2} \right) g_P(\bar{r}, \bar{r}'; \bar{k}_i) = \bar{\bar{I}}g_P(\bar{r}, \bar{r}'; \bar{k}_i) + \frac{1}{k^2} \nabla\nabla g_P(\bar{r}, \bar{r}'; \bar{k}_i) \tag{79}
+$$
+Both $g_P(\bar{r}, \bar{r}'; \bar{k}_i)$ and $\nabla\nabla g_P(\bar{r}, \bar{r}'; \bar{k}_i)$ can be evaluated efficiently using the Ewald summation technique, with details given in [13, Sec. 3.5.3].
+
+*B.2. Singular Integral $\bar{\bar{S}}$ of $\bar{\bar{G}}_P^0$ Over the Self-Cube:* Let us evaluate the singular integral of $\bar{\bar{S}}$ as defined in (11). We decompose $\bar{\bar{G}}_P^0$ into the free space response $\bar{\bar{G}}^0$ and the regularized response $\tilde{\bar{\bar{G}}}_P^0$
+$$
+\bar{\bar{G}}_P^0(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) = \bar{\bar{G}}^0(\bar{r}, \bar{r}') + \tilde{\bar{\bar{G}}}_P^0(\bar{r}, \bar{r}'; \bar{k}_{i\rho}) \tag{80}
+$$
+This also defines the regularized free space dyadic periodic Green’s function $\tilde{\bar{\bar{G}}}_P^0$, which is of no singularity:
+$$
+\tilde{\bar{\bar{G}}}_P^0(\bar{r}; \bar{k}_i) = \bar{\bar{G}}_P(\bar{r}; \bar{k}_i) - \bar{\bar{G}}(\bar{r}) = \bar{\bar{I}} \left( g_P(\bar{r}; \bar{k}_i) - g(\bar{r}) \right) + \frac{1}{k^2} \left( \nabla\nabla g_P(\bar{r}; \bar{k}_i) - \nabla\nabla g(\bar{r}) \right) \tag{81}
+$$
+Then
+$$
+\bar{\bar{S}} = \int_{V_C^{(0)}} d\bar{r}' \bar{\bar{G}}^0(0, \bar{r}') + \int_{V_C^{(0)}} d\bar{r}' \tilde{\bar{\bar{G}}}_P^0(0, \bar{r}'; \bar{k}_{i\rho}) \tag{82}
+$$
+The first term is well known [24] with the results restated as follows:
+$$
+\int_{V_C^{(0)}} d\bar{r}' \bar{\bar{G}}^0(0, \bar{r}') = \bar{\bar{I}}s_0 \tag{83}
+$$
+$$
+s_0 \approx -\frac{1}{3k^2} + \frac{1}{k^2} \frac{1}{4\pi} \left[ \left( \frac{4\pi}{3} \right)^{1/3} k^2d^2 + \frac{i2k^3d^3}{3} \right] \tag{84}
+$$
+The second term has a smooth integrand with no singularity:
+$$
+\int_{V_C^{(0)}} d\bar{r}' \tilde{\bar{\bar{G}}}_P^0(0, \bar{r}'; \bar{k}_{i\rho}) = \Delta V \tilde{\bar{\bar{G}}}_P^0(0, 0; \bar{k}_{i\rho}) = \Delta V \lim_{\bar{r} \to 0} \tilde{\bar{\bar{G}}}_P^0(\bar{r}; \bar{k}_{i\rho}) \tag{85}
+$$
+The result is a symmetric $3 \times 3$ matrix that is not scalar proportional to $\bar{\bar{I}}$. Thus
+$$
+\bar{\bar{S}} = \bar{\bar{I}}s_0 + \Delta V \tilde{\bar{\bar{G}}}_P^0(0, 0; \bar{k}_{i\rho}) \tag{86}
+$$
+The evaluation of the regularized dyadic Green’s function at origin $\lim_{\bar{r} \to 0} \tilde{\bar{\bar{G}}}_P^0(\bar{r}; \bar{k}_{i\rho})$ is detailed in [13, Sec. 3.5.3].
+
+*B.3. 3-D Periodic Dyadic Green’s Function in Half-Space $\bar{\bar{G}}_P^R$:* Using the spectral domain representation of $g_P$, we can express the free space periodic dyadic Green’s function as follows:
+$$
+\bar{\bar{G}}_P^0(\bar{r}, \bar{r}'; \bar{k}_i) = \begin{cases}
+\frac{i}{2\Omega} \sum_{\alpha} \frac{1}{k_{z\alpha}} \left[ \hat{e}_\alpha(k_{z\alpha})\hat{e}_\alpha(k_{z\alpha}) + \hat{h}_\alpha(k_{z\alpha})\hat{h}_\alpha(k_{z\alpha}) \right] \times \exp(i\bar{k}_\alpha \cdot (\bar{r} - \bar{r}')) & z - z' > 0 \\
+\frac{i}{2\Omega} \sum_{\alpha} \frac{1}{k_{z\alpha}} \left[ \hat{e}_\alpha(-k_{z\alpha})\hat{e}_\alpha(-k_{z\alpha}) + \hat{h}_\alpha(-k_{z\alpha})\hat{h}_\alpha(-k_{z\alpha}) \right] \times \exp(i\bar{K}_\alpha \cdot (\bar{r} - \bar{r}')) & z - z' < 0
+\end{cases} \tag{87}
+$$
+where $\alpha$ denotes a combined mode index $(m, n)$
+$$
+\bar{k}_\alpha = \bar{k}_{i\alpha} + \hat{z}k_{z\alpha} \tag{88}
+$$
+$$
+\bar{K}_\alpha = \bar{k}_{i\alpha} - \hat{z}k_{z\alpha} \tag{89}
+$$
+where
+$$
+\bar{k}_{i\alpha} = \bar{k}_{i,mn} = \bar{k}_{i\rho} + m\bar{b}_1 + n\bar{b}_2 \tag{90}
+$$
+$$
+k_{z\alpha} = \sqrt{k^2 - |\bar{k}_{i\alpha}|^2} \tag{91}
+$$
+$\bar{b}_1$ and $\bar{b}_2$ are the reciprocal lattice vectors:
+$$
+\bar{b}_1 = \frac{2\pi}{\Omega} (\bar{a}_2 \times \hat{z}) \tag{92}
+$$
+$$
+\bar{b}_2 = -\frac{2\pi}{\Omega} (\bar{a}_1 \times \hat{z}) \tag{93}
+$$
+where $\Omega = |\bar{a}_1 \times \bar{a}_2|$. $\hat{e}_\alpha$ and $\hat{h}_\alpha$ are polarization vectors that form a triplet with $\hat{k}_\alpha = \hat{h}_\alpha \times \hat{e}_\alpha$
+$$
+\hat{e}_\alpha(k_{z\alpha}) = \hat{e}_\alpha(-k_{z\alpha}) = \frac{1}{k_{\rho\alpha}} (k_{y\alpha}\hat{x} - k_{x\alpha}\hat{y}) \tag{94}
+$$
+$$
+\hat{h}_\alpha(k_{z\alpha}) = -\frac{k_{z\alpha}}{kk_{\rho\alpha}} (k_{x\alpha}\hat{x} + k_{y\alpha}\hat{y}) + \frac{k_{\rho\alpha}}{k}\hat{z} \tag{95}
+$$
+$$
+\hat{h}_\alpha(-k_{z\alpha}) = \frac{k_{z\alpha}}{kk_{\rho\alpha}} (k_{x\alpha}\hat{x} + k_{y\alpha}\hat{y}) + \frac{k_{\rho\alpha}}{k}\hat{z} \tag{96}
+$$
+We immediately get the reflection contribution $\bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_i)$, assuming boundary at $z = 0$, and the field point $z \ge 0$, and the source point $z' \ge 0$:
+$$
+\bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_i) = \frac{i}{2\Omega} \sum_{\alpha} \frac{\exp(i\bar{k}_\alpha \cdot \bar{r}) \exp(-i\bar{K}_\alpha \cdot \bar{r}')}{k_{z\alpha}} \times \left[ R^{TE}\hat{e}_\alpha(k_{z\alpha})\hat{e}_\alpha(-k_{z\alpha}) + R^{TM}\hat{h}_\alpha(k_{z\alpha})\hat{h}_\alpha(-k_{z\alpha}) \right] \tag{97}
+$$
+Realizing
+$$
+\exp(i\bar{k}_\alpha \cdot \bar{r}) \exp(-i\bar{K}_\alpha \cdot \bar{r}') = \exp(i\bar{k}_{i\alpha} \cdot (\bar{\rho} - \bar{\rho}')) \exp(ik_{z\alpha} (z + z')) \tag{98}
+$$
+It follows the translational invariance relation of $\bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_i)$
+$$
+\bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_i) = \bar{\bar{G}}_P^R(\bar{\rho} - \bar{\rho}', z + z'; \bar{k}_i) \tag{99}
+$$
+The summation for $\bar{\bar{G}}_P^R(\bar{r}, \bar{r}'; \bar{k}_i)$ in spectral domain is easier to handle than the continuous integration in $\bar{\bar{G}}^R(\bar{r}, \bar{r}'_i)$ with a single point source [30]–[32]. The complexity increases when $z + z' \to 0$ due to the increasing terms to be included in the series. We can get around this difficulty in DDA since $z + z' \ge d$, where $d$ is the finite discretization size.
+
+## APPENDIX C
+### GENERALIZED RECIPROCITY BETWEEN ACTIVE AND PASSIVE PROBLEM
+
+We derive the generalized reciprocity relation between the active scattering and passive emission problem as illustrated in Fig. 1. We consider an active problem A, where the snowpack is illuminated by an incidence plane wave, and a passive problem B, where the thermal emission from the snowpack is observed in the direction that is opposite to the incidence direction of the active problem. It is difficult to solve the passive problem B directly, but we show that the solution of the brightness temperature can be represented using the field solution that we already obtained for the active problem A. The derivation here is an extension of [16, Ch. 7, Sect. V, pp. 344-349] to the half-space configuration.
+
+*C.1. Active Remote Sensing Problem A:* The time averaged Poynting’s vector $\bar{S}^{(A)}$
+$$
+\bar{S}^{(A)} = \frac{1}{2} \text{Re} \left[ \bar{E} \times \bar{H}^* \right] = \frac{1}{4} \left[ \bar{E} \times \bar{H}^* - \bar{H} \times \bar{E}^* \right] \tag{100}
+$$
+Substituting into (100)
+$$
+\bar{H} = \frac{1}{i\omega\mu} \nabla \times \bar{E}
+$$
+and making use of the vector identity
+$$
+\nabla \cdot (\bar{A} \times \bar{B}) = \bar{B} \cdot \nabla \times \bar{A} - \bar{A} \cdot \nabla \times \bar{B}
+$$
+we can show that, assuming $\mu$ is real, representing no magnetic losses:
+$$
+\nabla \cdot \bar{S}^{(A)} = \frac{1}{4} \frac{-1}{i\omega\mu} 2i \text{Im} \left[ \bar{E}^* \cdot \nabla \times \nabla \times \bar{E} \right] \tag{101}
+$$
+$\bar{E}$, short for $\bar{E}^{(A)}$, the electric field of problem A, obeys the vector wave equation:
+$$
+\nabla \times \nabla \times \bar{E}(\bar{r}) - \omega^2\mu\varepsilon(\bar{r})\bar{E}(\bar{r}) = 0 \tag{102}
+$$
+Thus
+$$
+\nabla \cdot \bar{S}^{(A)} = -\frac{\omega}{2} \varepsilon''(\bar{r}) \left| \bar{E}^{(A)}(\bar{r}) \right|^2 \tag{103}
+$$
+where $\varepsilon''$ denotes the imaginary part of $\varepsilon$. Thus
+$$
+\int_{S} d\hat{S}\hat{n} \cdot \bar{S}^{(A)} = \int_{V} d\bar{r} \nabla \cdot \bar{S}^{(A)} = -\frac{\omega}{2} \int_{V} d\bar{r} \varepsilon''(\bar{r}) \left| \bar{E}^{(A)}(\bar{r}) \right|^2 \tag{104}
+$$
+Equation (104) is actually the Poynting’s theorem in a source free region stating that the time averaged net power flow into a closed surface is being absorbed.
+
+*C.2. Passive Thermal Emission Problem B:* The thermal currents, satisfying the fluctuation dissipation theorem, creates the radiation field $\bar{E}(\bar{r}, \omega)$:
+$$
+\langle \bar{J}(\bar{r}, \omega) \bar{J}^*(\bar{r}', \omega') \rangle = \frac{4}{\pi} \omega \varepsilon''(\bar{r}) K_b T(\bar{r}) \bar{\bar{I}} \delta(\omega - \omega') \delta(\bar{r} - \bar{r}') \tag{105}
+$$
+where $K_b$ is the Boltzmann constant.
+We want to compute the thermal emission proportional to
+$$
+\int_{\Delta\omega} d\omega \langle \bar{E}(\bar{r}, \omega) \bar{E}^*(\bar{r}, \omega) \rangle.
+$$
+The vector wave equation governing $\bar{E}(\bar{r}, \omega)$
+$$
+\nabla \times \nabla \times \bar{E}(\bar{r}) - \omega^2\mu\varepsilon(\bar{r})\bar{E}(\bar{r}) = i\omega\mu\bar{J}(\bar{r}) \tag{106}
+$$
+The vector wave equation governing the dyadic Green’s function $\bar{\bar{G}}(\bar{r}, \bar{r}')$
+$$
+\nabla \times \nabla \times \bar{\bar{G}}(\bar{r}, \bar{r}') - \omega^2\mu\varepsilon(\bar{r})\bar{\bar{G}}(\bar{r}, \bar{r}') = \bar{\bar{I}}\delta(\bar{r} - \bar{r}') \tag{107}
+$$
+We can express $\bar{E}(\bar{r})$ using $\bar{\bar{G}}(\bar{r}, \bar{r}')$ and $\bar{J}(\bar{r})$
+$$
+\bar{E}(\bar{r}) = i\omega\mu \int d\bar{r}' \bar{\bar{G}}(\bar{r}, \bar{r}') \cdot \bar{J}(\bar{r}') \tag{108}
+$$
+Note that this Green’s function $\bar{\bar{G}}(\bar{r}, \bar{r}')$ considers all the complexities in geometry, and the radiation source using $\bar{\bar{G}}$ as the propagator is only the thermal currents. This is different from the half-space Green’s function we used to formulate the active scattering problem, where the polarization currents act as radiation source.
+It is ready to show that from (108) and (105) that
+$$
+\int_{\Delta\omega} d\omega \left\langle \left| \hat{\alpha} \cdot \bar{E}(\bar{r}, \omega) \right|^2 \right\rangle = \int d\bar{r}' \left| \bar{\bar{G}}(\bar{r}, \bar{r}') \cdot \hat{\alpha} \right|^2 \omega^2\mu^2 \frac{4}{\pi} \omega \varepsilon''(\bar{r}') K_b T(\bar{r}') \tag{109}
+$$
+where $\hat{\alpha}$ denotes the polarization. And the brightness temperature at $\hat{\alpha}$ polarization and angle $\theta$
+$$
+T_b^{\alpha\alpha}(\omega) = \lim_{r \to \infty} \frac{16\pi^2 \eta r^2}{A_0 \cos\theta} \int_{V} d\bar{r}' \omega \varepsilon''(\bar{r}') T(\bar{r}') \left| \hat{\alpha} \cdot \bar{\bar{G}}(\bar{r}, \bar{r}') \right|^2 \tag{110}
+$$
+where $\eta = \sqrt{\mu_0/\varepsilon_0}$ is the free-space wave impedance, and $A_0$ is the horizontal surface area of the region $V$ where we perform the integration.
+The reciprocity that relates the passive problem to the active problem is as follows:
+$$
+\lim_{r \to \infty} \hat{\alpha} \cdot \bar{\bar{G}}(\bar{r}, \bar{r}') = \frac{e^{ikr}}{4\pi r} \bar{E}^{(A)}(\bar{r}') \tag{111}
+$$
+where $\bar{E}^{(A)}$ is the electric field due to an incidence plane wave of unit magnitude and polarized in $\hat{\alpha}$. The factor $\frac{\exp(ikr)}{4\pi r}$ is to account for the effect that $\bar{E}^{(A)}$ is the response to a plane wave with phase referenced at origin. This only applies to the far field, where a spherical wave differs from a plane wave by a diverging factor of $\frac{\exp(ikr)}{4\pi r}$.
+Substituting (111) into (110), it immediately follows that
+$$
+T_b^{\alpha\alpha}(\omega) = \frac{\eta}{A_0 \cos\theta} \int d\bar{r}' \omega \varepsilon''(\bar{r}') \left| \bar{E}^{(A)}(\bar{r}') \right|^2 T(\bar{r}') \tag{112}
+$$
+Making use of (103), we can also put
+$$
+T_b^{\alpha\alpha}(\omega) = -\frac{2\eta}{A_0 \cos\theta} \int d\bar{r}' \nabla \cdot \bar{S}^{(A)}(\bar{r}') T(\bar{r}') \tag{113}
+$$
+Equations (112) and (113) represent the brightness temperature using the field solution of the active scattering problem, where the volume integration extends to $z \to -\infty$.
+
+*C.3. Snowpack Scattering and Emission on Half-Space:* Confining to our snow scattering and emission on half-space problem, we can split the volume integral in (112) into the integration in snowpack and in the bottom half-space. For the latter part, we use the form of (113):
+$$
+T_b(\theta) = \frac{\eta}{A_0 \cos\theta} \int_{V_{snow}} d\bar{r}' \omega \varepsilon''(\bar{r}') \left| \bar{E}^{(A)}(\bar{r}') \right|^2 T(\bar{r}') - \frac{2\eta}{A_0 \cos\theta} \int_{V_{ground}} d\bar{r}' \nabla \cdot \bar{S}^{(A)}(\bar{r}') T(\bar{r}') \tag{114}
+$$
+Note that the first term represents the emission from snow volume and the second term represents the emission from the underlying half-space. The second term can be simplified when we take a constant ground temperature $T_g$. Under this condition, we can apply the Gaussian divergence theorem to convert the volume integral into a surface integral. Note that the surface integral on the four side walls cancel out under the statistical translational invariance along the horizontal direction for both the geometry and the incidence plane wave. The surface integral over the bottom wall at $z \to -\infty$ also vanishes where we can assume the power flow decays to zero. Thus, only the integral over the snow-ground interface contributes to the integration. Under these conditions, we have
+$$
+T_b^{ground} = -\frac{2\eta}{A_0 \cos\theta} T_g \int_{A} d\bar{r}' \hat{z} \cdot \bar{S}^{(A)}(\bar{r}')
+$$
+$$
+= -\frac{\eta}{A_0 \cos\theta} T_g \int_{A} d\bar{r}' \hat{z} \cdot \text{Re} \left[ \bar{E}^{(A)}(\bar{r}') \times \bar{H}^{(A)*}(\bar{r}') \right] \tag{115}
+$$
+Putting everything together
+$$
+T_b(\theta_{inc}) = \frac{\eta}{A_0 \cos\theta_{inc}} \int_{V_{snow}} d\bar{r}' \omega \varepsilon''(\bar{r}') \left| \bar{E}^{(A)}(\bar{r}') \right|^2 T(\bar{r}') - \frac{\eta}{A_0 \cos\theta_{inc}} T_g \int_{A} d\bar{r}' \hat{z} \cdot \text{Re} \left[ \bar{E}^{(A)}(\bar{r}') \times \bar{H}^{(A)*}(\bar{r}') \right] \tag{116}
+$$
+Comparing with the definition of $P_{inc}$ in (23), $P_a$ in (50), and $P_t$ in (36), we can readily rewrite (116):
+$$
+T_b(\theta_{inc}) = \int_{V_{snow}} \frac{dP_a(\bar{r}')}{P_{inc}} T_s(\bar{r}') + T_g \frac{P_t}{P_{inc}} \tag{117}
+$$
+This proves the general reciprocal relation between the active and passive problem as given in (55).
+
+## APPENDIX D
+### 2-D VIE WITH PERIODIC BOUNDARY CONDITION AND DDA
+
+We consider the TE polarization case and start from the regular 2-D VIE with the integral domain over the entire layer, where the structure is invariant in the direction perpendicular to the incidence plane
+$$
+\psi(x, z) = \psi^{inc}(x, z) + k^2 \int_{-\infty}^{\infty} dx' \int_{0}^{H} dz' g(x, z, x', z') (\varepsilon_r(x', z') - 1) \psi(x', z') \tag{118}
+$$
+where $\psi$ denotes the electric field polarized perpendicular to the incidence plane. With periodic boundary condition
+$$
+\psi(x + mP, z) = \psi(x, z) \exp(ik_{ix}mP) \tag{119}
+$$
+where $P$ is the period. Then
+$$
+\psi(x, z) = \psi^{inc}(x, z) + k^2 \int_{-P/2}^{P/2} dx' \int_{0}^{H} dz' g_P(x, z; x', z'; k_{ix}) \times (\varepsilon_r(x', z') - 1) \psi(x', z') \tag{120}
+$$
+where $g_P(x, z; x', z'; k_{ix})$ is recognized as the periodic Green’s function:
+$$
+g_P(x, z; x', z'; k_{ix}) = \sum_{m=-\infty}^{\infty} g(x, z, x' + mP, z') \times \exp(ik_{ix}mP) \tag{121}
+$$
+Since
+$$
+g(x, z; x', z') = g^0(x, z; x', z') + g^R(x, z; x', z') \tag{122}
+$$
+where $g^0$ and $g^R$ denotes the free-space and the reflection response, in spectral domain,
+$$
+g^0(x, x'; z, z') = \frac{i}{4\pi} \int_{-\infty}^{\infty} dk_x \exp(ik_x(x - x')) \times \frac{1}{k_z} \exp(ik_z|z - z'|) \tag{123}
+$$
+where $k_z = \sqrt{k^2 - k_x^2}$. Taking the boundary is at $z = 0$
+$$
+g^R(x, x'; z, z') = \frac{i}{4\pi} \int_{-\infty}^{\infty} dk_x \exp(ik_x(x - x')) \times \frac{R(k_x)}{k_z} \exp(ik_z(z + z')), \quad z > 0 \tag{124}
+$$
+where $R(k_x)$ is the Fresnel reflection coefficient.
+We also decompose $g_P(x, z; x', z'; k_{ix})$ into two parts:
+$$
+g_P(x, z; x', z'; k_{ix}) = g_P^0(x, z; x', z'; k_{ix}) + g_P^R(x, z; x', z'; k_{ix}) \tag{125}
+$$
+where
+$$
+g_P^0(x, z; x', z'; k_{ix}) = \sum_{m=-\infty}^{\infty} g^0(x, z, x' + mP, z') \times \exp(ik_{ix}mP) \tag{126}
+$$
+$$
+g_P^R(x, z; x', z'; k_{ix}) = \sum_{m=-\infty}^{\infty} g^R(x, z, x' + mP, z') \times \exp(ik_{ix}mP) \tag{127}
+$$
+Then the DDA of the VIE is
+$$
+p_m = \alpha_m \left[ \psi^{inc}(x_m, z_m) + \frac{k^2}{\varepsilon} \sum_{n \neq m} p_n g_P^0(x_m, z_m; x_n, z_n; k_{ix}) + \frac{k^2}{\varepsilon} \sum_{n} p_n g_P^R(x_m, z_m; x_n, z_n; k_{ix}) \right] \tag{128}
+$$
+where
+$$
+p_n = \Delta^2 \varepsilon (\varepsilon_r(x_n, z_n) - 1) \psi(x_n, z_n) \tag{129}
+$$
+$$
+\alpha_m = \frac{\Delta^2 \varepsilon (\varepsilon_r(x_m, z_m) - 1)}{1 - k^2 (\varepsilon_r(x_m, z_m) - 1) S} \tag{130}
+$$
+$$
+S = \int_{\sigma_m} dx'dz' g_P^0(x_m, z_m; x', z'; k_{ix}) \tag{131}
+$$
+where $\Delta$ is the edge length of the square unit cell, and $\Delta^2$ is the area of the discretization unit.
+It is shown that $g_P^0$ and $g_P^R$ share the same translational invariance as $g^0$ and $g^R$, respectively, thus, the FFT techniques also apply to accelerate the matrix-vector multiplications:
+$$
+p_m = \alpha_m \left[ \psi^{inc}(x_m, z_m) + \frac{k^2}{\varepsilon} \sum_{n \neq m} p_n g_P^0(x_m - x_n, z_m - z_n; k_{ix}) + \frac{k^2}{\varepsilon} \sum_{n} p_n g_P^R(x_m - x_n, z_m + z_n; k_{ix}) \right] \tag{132}
+$$
+Here, $g_P^0$ can be efficiently calculated using integral transformation method [24], [33]. The evaluation of $g_P^0$, $g_P^R$, and $S$ are detailed in [13].
+
+## ACKNOWLEDGMENT
+
+The research was carried out at the Radiation Laboratory, University of Michigan and Jet Propulsion Laboratory, California Institute of Technology.
+
+## REFERENCES
+
+[1] J. T. Pulliainen, J. Grandell, and M. T. Hallikainen, “HUT snow emission model and its applicability to snow water equivalent retrieval,” *IEEE. Trans. Geosci. Remote Sens.*, vol. 37, no. 3, pp. 1378–1390, May 1999.
+
+[2] A. Wiesmann and C. Mätzler, “Microwave emission model of layered snowpacks,” *Remote Sens. Environ.*, vol. 70, pp. 307–316, 1999.
+
+[3] L. Tsang, J. A. Kong, and R. T. Shin, *Theory of Microwave Remote Sensing*, New York, NY, USA: Wiley, 1985.
+
+[4] L. Tsang, C. T. Chen, A. T. C. Chang, J. Guo, and K. H. Ding, “Dense media radiative transfer theory based on quasicrystalline approximation with application to passive microwave remote sensing of snow,” *Radio Sci.*, vol. 35, pp. 741–749, 2000.
+
+[5] L. Tsang, J. Pan, D. Liang, Z. Li, D. W. Cline, and Y. Tan, “Modeling active microwave remote sensing of snow using dense media radiative transfer (DMRT) theory with multiple-scattering effects,” *IEEE Trans. Geosci. Remote Sens.*, vol. 45, no. 4, pp. 990–1004, Apr. 2007.
+
+[6] K. K. Tse, L. Tsang, C. H. Chan, K. H. Ding, and K. W. Leung, “Multiple scattering of waves by dense random distributions of sticky particles for applications in microwave scattering by terrestrial snow,” *Radio Sci.*, vol. 42, 2007, Art. no. RS5001.
+
+[7] K.-H. Ding, X. Xu, and L. Tsang, “Electromagnetic scattering by bicontinuous random microstructures with discrete permittivities,” *IEEE Trans. Geosci. Remote Sens.*, vol. 48, no. 8, pp. 3139–3151, Aug. 2010.
+
+[8] X. Xu, L. Tsang, and S. Yueh, “Electromagnetic models of co/crosspolarization of bicontinuous/DMRT in radar remote sensing of terrestrial snow at X- and Ku-band for CoReH2O and SCLP applications,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 5, no. 3, pp. 1024–1032, Jun. 2012.
+
+[9] W. Chang, S. Tan, J. Lemmetyinen, L. Tsang, X. Xu, and S. Yueh, “Dense media radiative transfer applied to snowscat and snowSAR,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 7, no. 9, pp. 3811–3825, Sep. 2014.
+
+[10] W. Chang, K.-H. Ding, L. Tsang, and X. Xu, “Microwave scattering and medium characterization for terrestrial snow with QCA-Mie and bicontinuous models: Comparison studies,” *IEEE Trans. Geosci. Remote. Sens.*, vol. 54, no. 6, pp. 3637–648, Jun. 2016.
+
+[11] S. Tan, W. Chang, L. Tsang, J. Lemmetyinen, and M. Proksch, “Modeling both active and passive microwave remote sensing of snow using dense media radiative transfer (DMRT) theory with multiple scattering and backscattering enhancement,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 8, no. 9, pp. 4418–4430, Sep. 2015.
+
+[12] W. Chang, “Electromagnetic Scattering of Dense Media with Application to Active and Passive Microwave Remote Sensing of Terrestrial Snow,” Ph.D. dissertation, Dept. Elect. Eng., Univ. Washington, Seattle, WA, USA, 2014.
+
+[13] S. Tan, “Multiple Volume Scattering in Random Media and Periodic Structures with Applications in Microwave Remote Sensing and Wave Functional Materials,” Ph.D. dissertation, Dept. Elect. Eng. Comput. Sci., Univ. Michigan, Ann Arbor, MI, USA, Dec. 2016.
+
+[14] L. Tsang and J. A. Kong, “Scattering of electromagnetic waves from random media with strong permittivity fluctuations,” *Radio Sci.*, vol. 16, no. 3, pp. 303–320, 1981.
+
+[15] A. Sihvola, “Mixing rules with complex dielectric coefficients,” *Subsurface Sens. Technol. Appl.*, vol. 1, no. 4, pp. 393–415, 2000.
+
+[16] L. Tsang and J. A. Kong, *Scattering of Electromagnetic Waves, Advanced Topics*, vol. 3. Hoboken, NJ, USA: Wiley, 2001.
+
+[17] L. Tsang and A. Ishimaru, “Backscattering enhancement of random discrete scatterers,” *J. Opt. Soc. Amer. A*, vol. 1, no. 8, pp. 836–839, Aug. 1984.
+
+[18] L. Tsang and A. Ishimaru, “Theory of backscattering enhancement of random discrete isotropic scatterers based on the summation of all ladder and cyclical terms,” *J. Opt. Soc. Amer. A*, vol. 2, no. 8, pp. 1331–1338, Aug. 1985.
+
+[19] L. Tsang, K.-H. Ding, G. Zhang, C. C. Hsu, and J. A. Kong, “Backscatterng enhancement and clustering effects of randomly distributed dielectric cylindres overlying a dielectric half-space based on monte-carlo simulations,” *IEEE Trans. Antennas Propag.*, vol. 43, no. 5, pp. 488–499, May 1995.
+
+[20] S. Tan, J. Zhu, L. Tsang, and S. V. Nghiem, “Full wave simulation of snowpack applied to microwave remote sensing of sea ice,” *2017 IEEE Int. Geosci. Remote Sensing Symp. (IGARSS 2017)*, Fort Worth, Texas, Jul. 23–28, 2017.
+
+[21] M. A. Webster et al., “Interdecadal changes in snow depth on arctic sea ice,” *J. Geophys. Res. Oceans*, vol. 119, pp. 5395–5406, 2014. doi: 10.1002/2014JC009985.
+
+[22] R. Schmehl, B. M. Nebeker, and E. D. Hirleman, “discrete-dipole approximation for scattering by features on surfaces by means of a two-dimensional fast fourier transform technique,” *J. Opt. Soc. Amer. A*, vol. 14, no. 11, pp. 3026–3036, 1997.
+
+[23] T. J. Cui and W. C. Chew, “Fast algorithm for electromagnetic scattering by buried 3-D dielectric objects of large size,” *IEEE Trans. Geosci. Remote Sens.*, vol. 37, no. 5, pp. 2597–2608, Sep. 1999.
+
+[24] L. Tsang, J. A. Kong, K.-H. Ding, and C. O. Ao, *Scattering of Electromagnetic Waves, Numerical Simulations*, vol. 2. New York, NY, USA: Wiley, 2001.
+
+[25] K. S. Chen, L. Tsang, K. L. Chen, T. H. Liao, and J. S. Lee, “Polarimetric simulations of SAR at L-band over bare soil using scattering matrices of random rough surfaces from numerical 3D solutions of maxwell equations,” *IEEE Trans. Geosci. Remote Sens.*, vol. 52, no. 11, pp. 7048–7058, Nov. 2014.
+
+[26] L. Ferro-Famil, S. Tebaldini, M. Davy, and F. Boute, “3D SAR imaging of the snowpack at X- and Ku-Band: results from the AlpSAR campaign,” in *Proc. 10th Eur. Conf. Synthetic Aperture Radar*, 2014, pp. 1–4.
+
+[27] A. Kustepeli and A. Q. Martin, “On the splitting parameter in the Ewald method,” *IEEE Trans. Microw. Guid. Wave Lett.*, vol. 10, no. 5, pp. 168–170, May 2000.
+
+[28] S. Campione and F. Capolino, “Ewald method for 3D periodic dyadic Green’s functions and complex modes in composite materials made of spherical particles under the dual dipole approximation,” *Radio Sci.*, vol. 47, no. RS0N06, pp. 1–11, 2012. doi: 10.1029/2012RS005031.
+
+[29] Y. Saad and M. H. Schultz, “GMRES: A generalized minimal residual algorithm for solving nonsymmetric linear systems,” *SIAM J. Sci. Stat. Comput.*, vol. 7, no. 3, pp. 856–869, 1986.
+
+[30] W. C. Chew, *Waves and Fields in Inhomogeneous Media*. New York, NY, USA: IEEE Press, 1995.
+
+[31] A. Banos, *Dipole Radiation in the Pressence of a Conducting Half-Space*. Oxford, U.K.: Pergamon, 1966.
+
+[32] M. A. Taubenblatt and K. T. Tuyen, “Calculation of light scattering from particles and structures on a surface by the coupled-dipole method,” *J. Opt. Soc. Amer. A*, vol. 10, no. 5, pp. 912–919, 1993.
+
+[33] M. E. Veysoglu, H. A. Yueh, R. T. Shin, and J. A. Kong, “Polarimetric passive remote sensing of periodic surfaces,” *J. Electromagn. Waves Appl.*, vol. 5, no. 3, pp. 267–280, 1991.
+
+[34] S. V. Nghiem, I. G. Rigor, P. Clemente-Colón, G. Neumann, and P. Li, “Geophysical constraints on the Antarctic sea ice cover,” *Remote Sens. Environ.*, vol. 181, pp. 281–292, 2016. doi: 10.1016/j.rse.2016.04.005.
+
+**Shurun Tan** (S’14) received the B.Eng. and M.Eng. degrees in electrical engineering from the Southeast University, Nanjing, China, in 2009 and 2012, respectively, and the Ph.D. degree in electrical engineering from the University of Michigan, Ann Arbor, MI, USA, in December 2016.
+From December 2010 to November 2011, he was a Visiting Student in the Department of Electrical and Computer Engineering, University of Houston, Houston, TX, USA. From September 2012 to December 2014, he was a Ph.D. candidate in the Department of Electrical Engineering, University of Washington, Seattle, WA, USA.
+Since January 2015, he has been affiliated with the Radiation Laboratory, and the Department of Electrical Engineering and Computer Science, University of Michigan, Ann Arbor, first as a Ph.D. candidate, and recently as a Postdoctoral Research Fellow since January 2017. His research interests include electromagnetic theory, wave propagation, and scattering in random media with applications in geophysical remote sensing of terrestrial snow, ice sheet, and vegetated land surfaces. He is also interested in high performance computing, and in wave propagation and scattering in periodic wave functional materials such as photonic crystals and metamaterials.
+
+**Jiyue Zhu** (S’17) received the B.E. degree in electrics and information engineering from Xidian University, Xi’An, China, in 2012 and the M.Sc. degree in electromagnetics and microwave techniques from Southeast University, Nanjing, China, in 2015. He is currently working toward the Ph.D. degree in electric engineering at the University of Michigan, Ann Arbor, MI, USA.
+His research interests include computational electromagnetics in geophysical media remote sensing such as terrestrial snow, snow over sea ice and retrieval algorithm of terrestrial snow.
+
+**Leung Tsang** (S’73–M’75–SM’85–F’90) was born in Hong Kong. He received the S.B., S.M., and Ph.D. degrees in electrical engineering and computer science from the Massachusetts Institute of Technology, Cambridge, MA, USA, in 1971, 1973, and 1976, respectively.
+He is currently a Professor in the Department of Electrical Engineering and Computer Science, University of Michigan, Ann Arbor, MI, USA. He was a Professor of electrical engineering at the University of Washington from 1983 to 2014. He was the Chair of the Department from 2006 to 2011. Between 2001 and 2004, he was on leave from the City University of Hong Kong. He is the coauthor of “*Theory of Microwave Remote Sensing*” and “*Scattering of Electromagnetic Waves*” Volumes 1, 2, and 3. His current research interests include waves in random media and rough surfaces, remote sensing, computational electromagnetics, signal integrity, and optics.
+Dr. Tsang was the President of the IEEE Geoscience and Remote Sensing Society from 2006 to 2007, and the Editor-in-Chief of TGARS from 1996 to 2001. He has been the Chair of PIERS since 2008. He is a Fellow of the Optical Society of America. He received the IEEE Third Millennium Medal in 2000 and the Outstanding Service Award from the IEEE Geoscience and Remote Sensing Society in 2000, the Distinguished Achievement Award from the IEEE Geoscience and Remote Sensing Society in 2008 and the Fiorino Oro Award from the CeTeM, Italy in 2010, the William Pecora Award co-sponsored by the US Department of Interior and NASA in 2012, and the 2013 IEEE Electromagnetics Award.
+
+**Son V. Nghiem** (M’85–S’03–F’15) received the B.S degree in electrical engineering from the Texas A&M University, College Station, TX, USA, in 1985, and the S.M. and Ph.D. degree in electrical engineering and computer science from the Massachusetts Institute of Technology, Cambridge, MA, USA, in 1988 and 1991, respectively.
+In 1991, he joined the Jet Propulsion Laboratory (JPL), California Institute of Technology (CalTech), where he is currently a Senior Research Scientist, the Science and Applications Development Lead of the Radar Science and Engineering Section, and the JPL Hydrology Discipline Program Manager of the Hydrology Office in the Earth Science and Technology Directorate. His research encompasses active and passive remote sensing, development of advanced satellite radars and radiometers, electromagnetic scattering and emission modeling, and earth sciences and applications from the tropics to polar regions. He holds a patent for his invention on high-resolution wind measurements with satellite data for offshore wind energy development. He has published 100 peer-reviewed articles and more than 360 conference articles.
+Dr. Nghiem received the 1999 Lew Allen Award for Excellence in recognition of his pioneering research in the areas of polarimetric scatterometry for Earth science remote sensing and contributions to future advanced satellite instrument concepts, the 2006 NASA Exceptional Achievement Medal for developing scientific applications of scatterometry in land, ice, and snow processes, the 2008 NASA Exceptional Scientific Achievement Medal for his contributions to understanding the melt state of Greenland and Antarctica ice sheets, its significance in Earth science missions, and its implications in climate change, the 2010 NASA Exceptional Technology Achievement Medal for his contributions in developing a new technology using NASA satellite scatterometer data to measure high-resolution global wind for off-shore wind energy development, and the 2013 Edward Stones Award for outstanding research publication on the extreme melt across the Greenland ice sheet in summer 2012. He was invited to present science results on Arctic change and impacts to the Office of Science and Technology Policy in the White House in 2012. His research results have been reported worldwide by major news networks.

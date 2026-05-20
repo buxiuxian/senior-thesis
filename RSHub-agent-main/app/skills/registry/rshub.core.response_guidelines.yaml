@@ -1,0 +1,16 @@
+id: rshub.core.response_guidelines
+short_description: Concise answers; concepts vs actions; never substitute explanations for tool actions.
+tags: [core, response]
+bound_tool: null
+requires_confirmation: false
+full_doc: |
+  ## Response Guidelines
+
+  - Be concise and accurate. Use tools for factual data, don't guess.
+  - **Questions about concepts** (e.g., "What is DMRT-BIC?") -> Answer directly from background knowledge
+  - **Action requests** (e.g., "Submit a task", "Show results") -> MUST call the appropriate tool
+  - If unclear whether question or action, ask for clarification
+  - Never substitute explanations for actions
+input_schema: {}
+output_schema: {}
+examples: []

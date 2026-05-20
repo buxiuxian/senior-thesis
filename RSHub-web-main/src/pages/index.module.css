@@ -1,0 +1,155 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroWrapper {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: url('https://www.geospatialworld.net/wp-content/uploads/2023/07/Remote-Sensing-Analysis-1600x840-1.png');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: overlay;
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.8) 100%);
+  z-index: 1;
+}
+
+.heroBanner {
+  position: relative;
+  z-index: 2;
+  padding: 4rem 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+.heroContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.heroSubtitle {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  font-weight: 400;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.heroButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.ctaButton {
+  background: white !important;
+  color: #667eea !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  padding: 1.5rem 3rem !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  text-transform: none !important;
+  height: auto !important;
+  min-height: 60px !important;
+  line-height: 1.4 !important;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #667eea !important;
+}
+
+.secondaryButton {
+  background: transparent !important;
+  color: white !important;
+  border: 2px solid white !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  padding: 1.5rem 3rem !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+  height: auto !important;
+  min-height: 60px !important;
+  line-height: 1.4 !important;
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px) !important;
+  color: white !important;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 3rem 1.5rem;
+  }
+  
+  .heroWrapper {
+    min-height: 65vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .heroBanner {
+    padding: 2rem 1rem;
+  }
+  
+  .heroWrapper {
+    min-height: 60vh;
+  }
+  
+  .heroButtons {
+    flex-direction: column;
+  }
+  
+  .ctaButton,
+  .secondaryButton {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .heroBanner {
+    padding: 1.5rem 1rem;
+  }
+  
+  .heroWrapper {
+    min-height: 55vh;
+  }
+}
+

@@ -1,0 +1,92 @@
+.faqSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.categoryBlock {
+  margin-bottom: 2rem;
+}
+
+.categoryTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e8e8e8;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid #f6a845;
+}
+
+.accordionItem {
+  background: #181818;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.accordionItem:hover {
+  border-color: #f6a845;
+  box-shadow: 0 2px 8px rgba(246, 168, 69, 0.25);
+}
+
+.accordionControl {
+  padding: 1rem 1.25rem;
+  background-color: #181818;
+  transition: background-color 0.2s ease;
+}
+
+.accordionControl:hover {
+  background-color: #252525;
+}
+
+.accordionControl[data-active] {
+  background-color: #181818;
+}
+
+.accordionControl[data-active]:hover {
+  background-color: #181818;
+}
+
+.accordionLabel {
+  color: #e8e8e8;
+}
+
+.accordionContent {
+  padding: 1rem 1.25rem;
+  background: #0f0f0f;
+  border-top: 1px solid #404040;
+  color: #cccccc;
+  line-height: 1.6;
+}
+
+.accordionContent code {
+  background: #0a0a0a;
+  color: #e8e8e8;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+  border: 1px solid #404040;
+}
+
+.faqFooter {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #404040;
+  text-align: center;
+  color: #999999;
+}
+
+.faqLink {
+  color: #f6a845;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.faqLink:hover {
+  color: #fda085;
+}
+
+

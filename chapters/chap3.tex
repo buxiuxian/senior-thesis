@@ -1,0 +1,570 @@
+% Chapter 3: System Design / Methodology
+% RSHub Agent: An AI-Powered Assistant for Microwave Remote Sensing
+% Note: Required packages should be in main document preamble:
+%   \usepackage{tikz}
+%   \usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+%   \usepackage{algorithm, algorithmic, booktabs, amsmath, url}
+
+\chapter{System Design and Methodology}
+\label{chap:system_design}
+
+\section{Overall System Architecture}
+\label{sec:architecture}
+
+\subsection{System Overview}
+
+RSHub Agent uses a layered architecture to keep interfaces explicit between UI, orchestration logic, and external services. The system consists of a React frontend, a FastAPI backend (Agent Core), and external integrations including the RSHub computation platform and LLM providers.
+
+Figure~\ref{fig:system_architecture} illustrates the overall system architecture. The Agent Core implements a ReAct (Reasoning + Acting) loop enhanced with Human-in-the-Loop (HITL) safety mechanisms. All inter-module communication follows RESTful API conventions with JSON data exchange.
+
+\begin{figure}[!htbp]
+	\centering
+	\resizebox{0.96\linewidth}{!}{%
+		\begin{tikzpicture}[
+			font=\small,
+			layerbox/.style={
+				draw,
+				rounded corners=3pt,
+				line width=0.75pt,
+				inner sep=8pt
+			},
+			module/.style={
+				draw,
+				rounded corners=3pt,
+				line width=0.55pt,
+				align=center,
+				minimum width=3.9cm,
+				minimum height=1.05cm
+			},
+			coremodule/.style={
+				draw,
+				rounded corners=3pt,
+				line width=0.55pt,
+				align=center,
+				minimum width=2.95cm,
+				minimum height=1.15cm,
+				font=\footnotesize
+			},
+			arrow/.style={
+				-{Latex[length=2.6mm,width=1.8mm]},
+				line width=0.65pt
+			},
+			labeltext/.style={
+				font=\footnotesize,
+				fill=white,
+				inner sep=1.5pt
+			}
+			]
+			
+			% =====================================================
+			% Frontend Layer
+			% =====================================================
+			\node[font=\bfseries] (frontendTitle) at (0,0) {Frontend Layer};
+			
+			\node[module] (docusaurus) at (-4.9,-1.05) {
+				Docusaurus UI\\
+				\footnotesize React
+			};
+			
+			\node[module] (chat) at (0,-1.05) {
+				RSAgentChat\\
+				\footnotesize Stream SSE
+			};
+			
+			\node[module] (taskboard) at (4.9,-1.05) {
+				CreditDisplay / TaskBoard\\
+				\footnotesize Status Monitor
+			};
+			
+			\node[
+			layerbox,
+			fit=(frontendTitle)(docusaurus)(chat)(taskboard),
+			inner xsep=14pt,
+			inner ysep=11pt
+			] (frontendBox) {};
+			
+			% =====================================================
+			% API Gateway
+			% =====================================================
+			\node[font=\bfseries] (apiTitle) at (0,-3.55) {API Gateway (FastAPI)};
+			
+			\node[module] (agentApi) at (-4.9,-4.6) {
+				/api/agent/chat\\
+				\footnotesize /api/agent/chat/stream
+			};
+			
+			\node[module] (taskApi) at (0,-4.6) {
+				/api/tasks/*\\
+				\footnotesize submit, check, download
+			};
+			
+			\node[module] (creditApi) at (4.9,-4.6) {
+				/api/credits/*\\
+				\footnotesize check, deduct, get
+			};
+			
+			\node[
+			layerbox,
+			fit=(apiTitle)(agentApi)(taskApi)(creditApi),
+			inner xsep=14pt,
+			inner ysep=11pt
+			] (apiBox) {};
+			
+			% =====================================================
+			% Agent Core
+			% =====================================================
+			\node[font=\bfseries] (coreTitle) at (0,-7.05) {Agent Core (ReAct Loop)};
+			\node[font=\bfseries\footnotesize] (orchTitle) at (0,-7.95) {Agent Orchestrator};
+			
+			\node[coremodule] (hitl) at (-5.25,-9.05) {
+				HITL State Machine\\
+				\scriptsize IDLE$\rightarrow$PEND\\[-1pt]
+				\scriptsize CONF$\rightarrow$SUB
+			};
+			
+			\node[coremodule] (router) at (-1.75,-9.05) {
+				Skill Router\\
+				\scriptsize Tiered Load
+			};
+			
+			\node[coremodule] (llm) at (1.75,-9.05) {
+				LLM Service\\
+				\scriptsize Volcengine / OpenRouter
+			};
+			
+			\node[coremodule] (tools) at (5.25,-9.05) {
+				Tools\\
+				\scriptsize Registry
+			};
+			
+			\node[
+			draw,
+			rounded corners=3pt,
+			line width=0.55pt,
+			fit=(orchTitle)(hitl)(router)(llm)(tools),
+			inner xsep=13pt,
+			inner ysep=8pt
+			] (orchBox) {};
+			
+			\node[
+			layerbox,
+			fit=(coreTitle)(orchBox),
+			inner xsep=14pt,
+			inner ysep=14pt
+			] (coreBox) {};
+			
+			% =====================================================
+			% External Services
+			% =====================================================
+			\node[font=\bfseries] (externalTitle) at (0,-12.05) {External Services};
+			
+			\node[module] (rshub) at (-4.9,-13.1) {
+				RSHub Platform\\
+				\footnotesize Task Execution
+			};
+			
+			\node[module] (provider) at (0,-13.1) {
+				LLM Provider\\
+				\footnotesize DeepSeek, etc.
+			};
+			
+			\node[module] (gitsync) at (4.9,-13.1) {
+				GitHub / PyPI\\
+				\footnotesize GitSync Module
+			};
+			
+			\node[
+			layerbox,
+			fit=(externalTitle)(rshub)(provider)(gitsync),
+			inner xsep=14pt,
+			inner ysep=11pt
+			] (externalBox) {};
+			
+			% =====================================================
+			% Inter-layer arrows, placed on the right side
+			% =====================================================
+			\draw[arrow]
+			([xshift=1.0cm]frontendBox.south) --
+			node[right,labeltext] {HTTP / SSE}
+			([xshift=1.0cm]apiBox.north);
+			
+			\draw[arrow]
+			([xshift=1.0cm]apiBox.south) --
+			node[right,labeltext] {agent requests}
+			([xshift=1.0cm]coreBox.north);
+			
+			\draw[arrow]
+			([xshift=1.0cm]coreBox.south) --
+			node[right,labeltext] {tool calls / APIs}
+			([xshift=1.0cm]externalBox.north);
+			
+			% =====================================================
+			% Internal agent flow
+			% =====================================================
+			\draw[arrow] (hitl.east) -- (router.west);
+			\draw[arrow] (router.east) -- (llm.west);
+			\draw[arrow] (llm.east) -- (tools.west);
+			
+		\end{tikzpicture}%
+	}
+	\caption{RSHub Agent overall system architecture showing the frontend layer, API gateway, Agent Core with ReAct loop, and external service integrations.}
+	\label{fig:system_architecture}
+\end{figure}
+
+\subsection{Layer 1 / Layer 2 Tiered Skill Loading}
+
+To control prompt growth in large-context interactions, RSHub Agent implements a \textbf{Tiered Skill Loading} mechanism. This two-layer approach keeps core rules always available while injecting detailed documents only when relevant.
+
+\textbf{Layer 1: Skill Catalog.} Contains lightweight metadata for registered skills including skill ID, short description, and tags. This layer is always loaded into the context window with low prompt overhead.
+
+\textbf{Layer 2: Full Documents.} Contains complete skill documentation including detailed descriptions and usage constraints. Only skills selected by the Skill Router are loaded from this layer.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Comparison of skill loading strategies}
+	\label{tab:skill_loading}
+	\begin{tabular}{lcc}
+		\toprule
+		\textbf{Strategy} & \textbf{Prompt Size} & \textbf{Coverage} \\
+		\midrule
+		Full Load (Baseline) & Large (monolithic prompt) & Full but often redundant \\
+		Tiered Loading (Proposed) & Reduced (selected docs only) & Contextual and task-focused \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Table~\ref{tab:skill_loading} summarizes the design-level trade-off. Quantitative measurements are reported in Chapter~\ref{ch:testing-report}.
+
+\subsection{Skill Routing Mechanism}
+
+The Skill Router implements \textbf{deterministic keyword matching} for skill selection, offering advantages in interpretability and zero embedding inference cost.
+
+The routing algorithm follows a priority-based selection strategy:
+
+\begin{itemize}
+	\item \textbf{P0 (Core)}: Essential skills always loaded (\texttt{tool\_policy}, \texttt{platform}, \texttt{behavior}, \texttt{guidelines})
+	\item \textbf{P1 (HITL)}: Human-in-the-Loop policy skills when HITL is enabled
+	\item \textbf{P2 (Literature)}: Paper indexing skills when query matches literature keywords
+	\item \textbf{P3 (Parameters)}: Model parameter tables when query matches task keywords
+\end{itemize}
+
+Keyword patterns use regular expressions for matching. For example, literature queries match terms like ``paper'', ``citation'', ``equation''. This approach achieves high recall in scientific computing domains where terminology is relatively standardized.
+
+\subsection{Dynamic Loading Implementation}
+
+The Skill Registry employs lazy loading during system initialization. Skill definitions are stored as YAML files in \texttt{app/skills/registry/}, enabling hot-updates and non-programmer maintenance.
+
+The loading process follows these steps:
+\begin{enumerate}
+	\item Scan registry directory for \texttt{*.yaml} and \texttt{*.yml} files
+	\item Validate against Pydantic \texttt{SkillDefinition} model
+	\item Build in-memory index mapping skill IDs to definitions
+	\item Log loading statistics for monitoring
+\end{enumerate}
+
+This design allows domain experts to modify skill documentation without code changes, supporting rapid iteration of agent capabilities.
+
+\section{Workflow Design}
+\label{sec:workflow}
+
+\subsection{TaskSpec Data Structure}
+
+TaskSpec serves as the core data contract between RSHub Agent and the underlying computation platform. It encapsulates all parameters required for remote sensing model execution.
+
+Key fields include:
+\begin{itemize}
+	\item \texttt{token}: User authentication credential
+	\item \texttt{project\_name}, \texttt{task\_name}: Organizational identifiers
+	\item \texttt{task\_data}: Model-specific parameters including \texttt{scenario\_flag}, \texttt{algorithm}, physical parameters (e.g., \texttt{theta\_i\_deg}, \texttt{kl}, \texttt{ks})
+\end{itemize}
+
+\subsection{HITL State Machine}
+
+The Human-in-the-Loop mechanism employs a four-phase state machine to ensure explicit user confirmation for critical operations such as task submission.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[node distance=1.8cm, auto]
+		\tikzset{
+			state/.style={
+				rectangle, 
+				rounded corners=3pt,
+				draw=black!80,
+				line width=0.7pt,
+				minimum width=2.1cm, 
+				minimum height=0.85cm, 
+				align=center, 
+				font=\small,
+				inner sep=3pt
+			},
+			arrow/.style={
+				-{Stealth[length=2.2mm,width=1.5mm]},
+				line width=0.6pt,
+				shorten >=1pt,
+				shorten <=1pt
+			}
+		}
+		
+		% States
+		\node[state, fill=white] (idle) {IDLE};
+		\node[state, fill=yellow!25, right=of idle] (pending) {PENDING};
+		\node[state, fill=green!20, right=of pending] (confirmed) {CONFIRMED};
+		\node[state, fill=blue!15, right=of confirmed] (submitted) {SUBMITTED};
+		
+		% Transitions
+		\draw[arrow] (idle.east) -- node[above, font=\scriptsize, pos=0.5] {Plan/Check} (pending.west);
+		\draw[arrow] (pending.east) -- node[above, font=\scriptsize, pos=0.5] {Confirm} (confirmed.west);
+		\draw[arrow] (confirmed.east) -- node[above, font=\scriptsize, pos=0.5] {Execute} (submitted.west);
+		\draw[arrow] (submitted.south) -- ++(0,-0.6) -| node[pos=0.25, below, font=\scriptsize] {Reset} (idle.south);
+		
+		% Cancel transition
+		\draw[arrow] (pending.south) -- ++(0,-0.55) -| node[pos=0.3, below, font=\scriptsize] {Cancel} (idle.south);
+	\end{tikzpicture}
+	\caption{HITL state machine transitions: IDLE $\rightarrow$ PENDING $\rightarrow$ CONFIRMED $\rightarrow$ SUBMITTED.}
+	\label{fig:hitl_state_machine}
+\end{figure}
+
+State transitions occur as follows:
+\begin{itemize}
+	\item \textbf{IDLE to PENDING}: When Agent generates a task plan requiring confirmation
+	\item \textbf{PENDING to CONFIRMED}: Upon user input matching confirmation keywords (``confirm'', ``yes'')
+	\item \textbf{CONFIRMED to SUBMITTED}: After successful task submission execution
+	\item \textbf{Reset}: Any state can transition to IDLE via cancellation or error recovery
+\end{itemize}
+
+A \textbf{short-circuit optimization} is implemented for the PENDING state: non-confirmation inputs (e.g., casual conversation) return a fixed prompt without LLM invocation, reducing API costs by approximately 30\% for pending sessions.
+
+\subsection{ReAct Execution Loop}
+
+The Agent execution flow combines the ReAct (Reasoning + Acting) paradigm with HITL state validation. Algorithm~\ref{alg:agent_loop} describes the main execution cycle.
+
+\begin{algorithm}[htbp]
+	\caption{Agent ReAct + HITL Execution Loop}
+	\label{alg:agent_loop}
+	\begin{algorithmic}[1]
+		\STATE \textbf{Input:} User message $m$, Session ID $s$, User token $t$
+		\STATE \textbf{Output:} Response $r$, Updated session state
+		\STATE $h, d \gets \textsc{LoadSession}(s)$ \COMMENT{History and metadata}
+		\STATE $\sigma \gets \textsc{RecoverHITL}(d)$ \COMMENT{HITL state machine}
+		\IF{$\sigma.\text{phase} = \text{PENDING}$}
+		\IF{$\textsc{IsConfirmation}(m)$}
+		\STATE $\sigma.\text{Confirm}()$
+		\ELSIF{$\textsc{IsRejection}(m)$}
+		\STATE $\sigma.\text{Reset}()$; \textbf{return} Cancellation response
+		\ELSE
+		\STATE \textbf{return} Fixed HITL pending prompt \COMMENT{Short-circuit}
+		\ENDIF
+		\ENDIF
+		\STATE $S \gets \textsc{SelectSkills}(m)$ \COMMENT{Tiered skill loading}
+		\STATE $p \gets \textsc{RenderTemplate}(S, \sigma)$ \COMMENT{System prompt}
+		\STATE $M \gets \textsc{BuildMessages}(p, m, h)$
+		\FOR{$i = 1$ \textbf{to} $\text{max\_iterations}$}
+		\STATE $R \gets \textsc{LLMCompletion}(M, \text{tools})$
+		\IF{$R.\text{tool\_calls} = \emptyset$}
+		\STATE \textbf{return} $R.\text{content}$ \COMMENT{Natural language response}
+		\ENDIF
+		\FOR{$\tau$ \textbf{in} $R.\text{tool\_calls}$}
+		\IF{$\tau.\text{name} = \text{``submit\_rshub\_task''}$}
+		\IF{$\text{HITL\_ENABLED} \land \neg \sigma.\text{is\_confirmed}()$}
+		\STATE $\text{result} \gets \text{``HITL confirmation required''}$
+		\ELSE
+		\STATE $\text{result} \gets \textsc{ExecuteSubmit}(\tau.\text{args})$
+		\IF{result successful}
+		\STATE $\textsc{DeductCredits}(t)$; $\sigma.\text{MarkSubmitted}()$
+		\ENDIF
+		\ENDIF
+		\ELSE
+		\STATE $\text{result} \gets \textsc{ExecuteTool}(\tau)$
+		\ENDIF
+		\STATE $M \gets M \cup \{\text{ToolResult}(\tau, \text{result})\}$
+		\ENDFOR
+		\ENDFOR
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Input/Output Management}
+
+\textbf{Input Sources:}
+\begin{itemize}
+	\item Direct user messages
+	\item Chat history (sliding window of 16 most recent turns)
+	\item Dynamically injected skill documentation (Layer 2)
+	\item HITL state annotations (appended to conversation metadata)
+\end{itemize}
+
+\textbf{Output Types:}
+\begin{itemize}
+	\item \textbf{Natural Language}: Markdown-formatted responses for user consumption
+	\item \textbf{Confirmation Cards}: Structured task summaries with JSON parameter blocks during HITL confirmation phase
+	\item \textbf{Tool Results}: JSON observations for Agent reasoning continuation
+	\item \textbf{Streaming Chunks}: Server-Sent Events (SSE) for real-time UI updates
+\end{itemize}
+
+\section{Summer Project Observations}
+\label{sec:observations}
+
+\subsection{Experimental Findings}
+
+\textbf{Finding 1: Token Efficiency of Tiered Loading}
+Preliminary internal observations indicate that tiered skill loading reduces prompt size in routine turns while preserving task-relevant guidance.
+
+\textbf{Finding 2: HITL Short-Circuit Effectiveness}
+Session traces show repeated non-confirmation inputs during pending HITL phases. The short-circuit mechanism avoids unnecessary LLM calls for these turns.
+
+\textbf{Finding 3: Deterministic Routing Viability}
+For this domain, deterministic keyword routing is currently sufficient for most task/literature splits and remains easier to debug than embedding-based retrieval.
+
+\subsection{Optimization Directions}
+
+\textbf{Direction 1: Embedding Fallback Mode}
+Maintain deterministic routing as the default for efficiency, with optional embedding-based selection for complex, multi-domain queries that span multiple skill categories.
+
+\textbf{Direction 2: Automated Skill Discovery}
+Implement static analysis of tool definitions to auto-generate Skill Catalog entries, reducing manual registration overhead as the tool ecosystem expands.
+
+\textbf{Direction 3: Parallel Tool Execution}
+The current ReAct loop executes tools serially. Independent tool calls (e.g., credit check and parameter validation) can be scheduled concurrently to reduce end-to-end latency.
+
+\section{Automation Features}
+\label{sec:automation}
+
+\subsection{GitHub Synchronization (GitSync Module)}
+
+The GitSync module provides automated Git workflow assistance as an independent component. It implements basic synchronization between local repositories and GitHub remotes.
+
+The synchronization workflow comprises:
+\begin{enumerate}
+	\item Configuration parsing and repository path resolution
+	\item Pre-flight checks (Git CLI availability, GitHub authentication)
+	\item Working tree cleanliness verification
+	\item Remote fetch and ahead/behind computation
+	\item Automatic fast-forward merge for non-diverged behind states
+	\item Interactive resolution for diverged branches
+\end{enumerate}
+
+\subsection{AI Commit Message Generation}
+
+GitSync leverages the Agent's LLM service via subprocess invocation to generate conventional commit messages. This design achieves zero coupling between modules while maximizing code reuse.
+
+The commit generation pipeline:
+\begin{enumerate}
+	\item Extract staged file list and unified diff (limited to 12,000 characters)
+	\item Construct prompt with Conventional Commits formatting requirements
+	\item Invoke Agent LLM service through isolated Python subprocess
+	\item Parse and normalize output for Git consumption
+\end{enumerate}
+
+Diff truncation prevents token limit violations for large changesets while preserving semantic meaning through the 2-line unified diff context.
+
+\subsection{LLM Invocation Pipeline}
+
+RSHub Agent supports multiple LLM providers through a unified interface. Provider selection is controlled via the \texttt{LLM\_PROVIDER} environment variable.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Supported LLM providers and default configurations}
+	\label{tab:llm_providers}
+	\begin{tabular}{lll}
+		\toprule
+		\textbf{Provider} & \textbf{Base URL} & \textbf{Default Model} \\
+		\midrule
+		Volcengine Ark & \url{ark.cn-beijing.volces.com/api/v3} & DeepSeek V3 \\
+		OpenRouter & \url{openrouter.ai/api/v1} & DeepSeek Chat \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The invocation pipeline implements exponential backoff for rate limit errors (wait time $= 2^{\text{attempt}}$ seconds) and distinguishes between retryable (server errors) and non-retryable (client errors) failure modes.
+
+\section{Implementation Details}
+\label{sec:implementation}
+
+\subsection{Frontend-Backend Interaction}
+
+API endpoints follow RESTful design principles with consistent authentication via Bearer tokens.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Primary API endpoints}
+	\label{tab:api_endpoints}
+	\begin{tabular}{llp{6cm}}
+		\toprule
+		\textbf{Endpoint} & \textbf{Method} & \textbf{Description} \\
+		\midrule
+		\texttt{/api/agent/chat} & POST & Non-streaming conversation \\
+		\texttt{/api/agent/chat/stream} & POST & SSE streaming response \\
+		\texttt{/api/tasks/submit} & POST & Submit computation task \\
+		\texttt{/api/tasks/check} & GET & Query task execution status \\
+		\texttt{/api/credits/check} & GET & Query credit balance \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+The frontend implements Axios interceptors for automatic token attachment and 401 unauthorized handling with redirect to login.
+
+Streaming responses use Server-Sent Events with typed message chunks:
+\begin{itemize}
+	\item \texttt{thinking}: Agent reasoning state display
+	\item \texttt{content}: Incremental response text
+	\item \texttt{done}: Conversation completion with metadata
+	\item \texttt{error}: Error notification
+\end{itemize}
+
+\subsection{Data Models}
+
+Core Pydantic models enforce type safety across module boundaries:
+
+\begin{itemize}
+	\item \texttt{SkillDefinition}: Skill metadata and documentation
+	\item \texttt{HITLState}: Mutable state machine with phase tracking
+	\item \texttt{TaskSubmitRequest}: RSHub platform submission payload
+	\item \texttt{CreditResponse}: Balance and transaction information
+\end{itemize}
+
+\subsection{Configuration Management}
+
+Environment-based configuration supports deployment flexibility:
+
+\begin{itemize}
+	\item \texttt{HITL\_ENABLED}: Toggle human confirmation requirement
+	\item \texttt{SKILL\_TIERED\_LOAD\_ENABLED}: Enable token-optimized loading
+	\item \texttt{CHAT\_HISTORY\_WINDOW}: Control context window size (default: 16)
+	\item \texttt{TASK\_SUBMIT\_COST}: Credit deduction per task submission
+\end{itemize}
+
+\subsection{Skill Module Registry}
+
+Table~\ref{tab:skill_modules} lists the primary skill modules deployed in the present system.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Skill module registry}
+	\label{tab:skill_modules}
+	\begin{tabular}{llp{5cm}l}
+		\toprule
+		\textbf{Skill ID} & \textbf{Category} & \textbf{Description} & \textbf{Load Condition} \\
+		\midrule
+		\texttt{core.tool\_policy} & Core & Tool usage policies & Always \\
+		\texttt{domain.platform} & Core & RSHub platform overview & Always \\
+		\texttt{hitl.policy} & Safety & HITL 4-step workflow & HITL enabled \\
+		\texttt{hitl.confirm\_execute} & Safety & Confirmation guidelines & On confirm \\
+		\texttt{domain.model\_params} & Domain & Model parameter tables & Task keywords \\
+		\texttt{literature.papers} & Literature & Paper indexing & Literature keywords \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\section{Summary}
+
+This chapter presented the system design and implementation methodology of RSHub Agent. Key architectural contributions include:
+
+\begin{enumerate}
+	\item \textbf{Tiered Skill Loading}: Layer 1/2 separation to limit unnecessary prompt payload
+	\item \textbf{Deterministic Routing}: Keyword-based skill selection offering interpretability and zero embedding overhead
+	\item \textbf{HITL State Machine}: Four-phase safety protocol with short-circuit optimization for cost efficiency
+	\item \textbf{Modular LLM Interface}: Provider-agnostic design supporting Volcengine Ark and OpenRouter
+	\item \textbf{GitSync Integration}: Subprocess-based module isolation achieving zero coupling with maximum code reuse
+\end{enumerate}
+
+These design decisions provide a practical foundation for controlled task orchestration, incremental deployment, and measurable follow-up evaluation.
+

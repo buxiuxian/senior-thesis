@@ -1,0 +1,510 @@
+# A Multiple-Scattering Microwave Radiative Transfer Model for Land Emission With Vertically Heterogeneous Vegetation Coverage
+
+**Kaiqi Chen**, *Graduate Student Member, IEEE*, and **Shurun Tan**, *Member, IEEE*
+
+**Abstract— A multiple scattering model for passive radiative transfer (RT) in vegetation that accounts for the vertical profile of the plant structure is developed, offering advancements over the commonly used single-layer uniform scattering models prevalent in the vegetated land surface microwave remote sensing. The proposed model takes into account the complexities of the canopy morphology with vertical heterogeneity, enabling the representation of overlapping vegetation species applicable to diverse plant types and growth stages. Additionally, it serves as a valuable tool for understanding the influence of the vegetation vertical structure on the microwave brightness temperatures. The model is constructed based on high-order solutions to the RT equations, obtained through a numerical iterative approach with an efficient interpolation scheme for algorithm acceleration. This methodology facilitates the accurate distinction of the contributions to the brightness temperature from each scattering order and scattering mechanism, ensuring a comprehensive consideration of multiple scattering effects within various vegetated scenarios. The model is validated using the SMAPVEX12 L-band forest dataset, encompassing a wide range of soil moisture variations. Comparisons are made between the brightness temperatures simulated by the newly developed multiple-scattering model with a continuous profile or layered profile and those obtained from a uniform single-layer model. Results demonstrate significant improvements in the multilayered or the continuously profiled model, showing improved agreement with the measured brightness temperatures. Furthermore, the proposed model is parameterized by matching the high-order solutions to the RT equation to the widely adopted reduced order albedo-tau formalism. The resulting equivalent parameters are linked to the geometries and the electromagnetic properties of the vegetation layer, while also incorporating the effects of multiple scattering. Comparative analysis of the equivalent parameters derived from the layered model and those derived from the single-layer model reveals that the vertical heterogeneity of the vegetation structure has a notable influence on the effective scattering albedo and it yields a value more consistent with the albedo as chosen in the SMAP/SMOS inversion algorithms. Meanwhile, the impact of the vegetation vertical profile on the effective optical thickness and the effective transmissivity of the vegetation layer is weak. These insights are essential for the retrieval of soil moisture and vegetation characteristics including the plant vertical structures in microwave remote sensing.**
+
+**Index Terms— Multilayered model, nonuniform vegetation vertical profile, numerical iterative method, passive microwave remote sensing, radiative transfer (RT), the albedo-tau model.**
+
+## I. INTRODUCTION
+
+SOIL moisture has a critical role in the terrestrial water cycle and is essential for monitoring droughts and predicting plant growth. The utilization of passive microwave remote sensing technology is prevalent in the soil moisture observation owing to its high sensitivity to soil moisture [1], [2], [3]. Nevertheless, soils are typically covered by different types of vegetation, and the existence of vegetation introduces its own radiation energy while simultaneously attenuating the emission from the underneath soil. This presents difficulties in retrieving soil moisture from microwave brightness temperatures. Therefore, numerous electromagnetic scattering models have been developed to enhance understanding of microwave signals’ interaction with vegetation components and the soil.
+
+The microwave electromagnetic scattering models for vegetated land surfaces can be categorized into full-wave analysis-based approaches [4], [5], [6], [7], [8] and radiative transfer (RT) theory-based approaches [9], [10], [11]. The full-wave method considers the interaction of coherent waves between the vegetation, taking into account the impact of vertical structure and horizontal distribution characteristics of plants. This approach is considered to provide a more accurate depiction of vegetation scattering properties. However, the full-wave method typically necessitates a large amount of computational resources. Although the recently proposed fast multiple scattering theory has significantly accelerated the computational process, handling coupling between vegetation scattering and rough ground scattering in full-wave analysis still remains a challenge [7], [8]. On the other hand, the RT theory is based on the energy conservation and it accounts for incoherent far-field scattering interactions within the scenes. The RT theory assumes that scatterers are uniformly distributed in the space, therefore, initial models typically assumed that various vegetation components were uniformly distributed above the soil, ignoring the vertical structure of vegetation [12], [13], [14].
+
+In order to introduce the vertical structural features of vegetation into the RT model, the RT model has undergone a development from a two-layer model [9], [15], [16] to a multilayered model [17], [18], [19]. For forest scenarios, the MIMICS model [15] and the TVG model [9], [16] have been proposed successively. According to these models, vegetation is separated into two layers: the canopy layer and the trunk layer, with the trunk being truncated below the canopy layer. Validation and application of these models have been conducted on a single forest stand or on stands with comparable structures [9], [15], [16]. However, these two-layer models are inadequate for complicated forest scenarios, particularly those including mixed forests with varying tree species and growth stages.
+
+In [17], the MIMICS model has been expanded into a multilayered MIMICS model. In order to account for the height-dependent variation of scattering elements in a forest canopy, multiple vegetation layers are employed instead of one. Recently, a multilayer water cloud model [19] is also proposed to better represent the morphological aspects of plants and understand the influence of vertical water distribution on radar backscatter. Nevertheless, these multilayered models ignore the multiple scattering effects within the scene, resulting in a tendency for these models to overestimate the attenuation impact of vegetation. In [20], the TVG model is expanded to account for height-dependent structural variation in an alpine meadow through the implementation of a multi-volume approach where the vertical heterogeneity of a pasture is represented by three segments/layers. That work elucidates the capability of the TVG model to consider the heterogeneity of vegetation vertical structure while taking into account multiple scattering effects within the scene. However, the TVG model lacks physical interpretability regarding the scattering mechanism within the scene, thus unable to separate the contribution of each scattering order and scattering mechanisms, i.e., specific scattering paths, to microwave observations. What is more, the aforementioned multilayered models primarily serve the purpose of simulating the microwave backscatter coefficients. At present, there is an absence of research pertaining to multilayered models for passive microwave remote sensing, and the understanding of the impact of vegetation’s vertical structure on the scene brightness temperatures is limited.
+
+The primary objective of this article is to incorporate the vertical structural heterogeneity of vegetation into the passive radiation transfer theory, while maintaining the capability to handle multiple scattering effects within the scene. In our proposed model, the vegetation is represented with an arbitrary vertical structure, and the multispecie scatterers to represent various structural elements of the vegetation, i.e., the trunk, the branches, and the leaves, are all distributed with a specified vertical profile as described by their geometry, orientation, material properties (as linked to the water contents), and number densities. Such material and geometric distributions of the scatterers are then transformed into the vertical distribution of the electrical scattering properties, as represented by the scattering phase matrices, the absorption, and extinction coefficients, which are subsequently substituted into the RT equations to solve for the scene brightness temperatures.
+
+The effect of multiple scattering in vegetated land surfaces is analyzed by solving higher order solutions to RT equations. Existing models obtain the higher order solutions to RT equations through several methods including the numerical iterative approach [10], [11], [21], the discrete coordinate method with eigenvalue analysis [22], [23], and the matrix doubling method [9], [16]. The numerical iterative approach is adopted in this work following our recent study [24]. The numerical iterative approach as developed in [24] is proven effective and efficient in solving RT equations with irregular phase matrices, as encountered in forest scenarios with electrically large tree trunks and branches accompanying a strongly forward scattering pattern. The singular phase matrices pose difficulties in solving RT equations and is tackled by a forward scattering extraction strategy and an intensity interpolation scheme in [24].
+
+The devised model enables the investigation of the impact of vegetation’s vertical structure on the scene brightness temperatures with multiple scattering effects. Additionally, the model facilitates the observation and analysis of the contribution to the scene brightness temperatures from different scatterer components at varying heights. This model also predicts the linkage between the vegetation vertical structures and the resulting brightness temperatures. Measurement data from forest scenes in the SMAPVEX12 campaign [25] are employed to validate the efficacy of the developed model. The findings to be reported indicate that the vertical structure of vegetation exerts a considerable influence on the brightness temperature arising from the vegetation layer, while changes in vegetation structure have a relatively minimal impact on the brightness temperature contributed from the soil.
+
+While taking into account the vertical structure of vegetation and the multiple scattering effects, the developed forward model becomes more intricate. Simple representations, such as the albedo-tau model (also known as the tau-omega model in literature) [26], are generally preferred from the perspective of inversion due to the less number of parameters involved. There are two key parameters in the albedo-tau model: the single scattering albedo $\omega$, which is defined as the ratio of the scattering coefficient to the extinction coefficient, and the optical thickness tau $\tau$, defined as the product of the scattering coefficient and the vegetation depth. Prior studies have presented equivalent parameters $\omega$ and $\tau$ by fitting simulation results of a multiple scattering model [12], [27] or experimental data [28], [29] into the albedo-tau formalism. The difficulty resides in deriving the coupled two parameters simultaneously in this fitting procedure. There are research that derives the equivalent albedo from the multiple scattering model while relying on the single scattering optical thickness $\tau$ [13], [30]. However, recent research indicates that optical thickness obtained based on single scattering overestimates the attenuation by the vegetation [29], [31], [32]. Therefore, it becomes necessary to incorporate multiple scattering effects into the optical thickness to accurately quantify the transmissivity of the vegetation layer. To fill this research gap, our earlier study [24] proposed a parameterization approach that derives both equivalent parameters by matching the higher order solutions to the RT equation with the albedo-tau model with a well-designed procedure. The work in [24] is rooted in a physical definition of the optical thickness $\tau$ that links to the multiple scattering solution to the passive RT equation. Two specific scenarios are devised to derive the two parameters unambiguously. Meanwhile, there is a lack of research analyzing the influence of vegetation vertical structure on equivalent parameters. Consequently, the parameterization approach developed in [24] is adopted again in this work to derive the equivalent albedo and tau parameters of the vegetation layer with an arbitrary vertical structure. The obtained equivalent parameters, i.e., the equivalent albedo and the equivalent tau, encompass the consideration of vertical heterogeneity and the impact of multiple scattering processes. The sensitivity of these equivalent parameters to soil factors and the influence of the vegetation vertical structure on these equivalent parameters are comprehensively examined in this article. The findings are to offer valuable theoretical support for the microwave inversion of plant structure information and the selection of appropriate equivalent parameters for the soil retrieval algorithm.
+
+This article is structured as follows. The proposed multiple scattering model incorporating the vegetation vertical heterogeneity is presented in Section II. The albedo-tau parameterization of the physical scattering model is introduced in Section II-C. Simulation and analysis of vertical structure of vegetation on the scene brightness temperatures and the equivalent albedo and tau parameters are conducted in Section III. The validation of the microwave emission model using SMAPVEX12 data is reported in Section IV. And finally the conclusions are drawn in Section V.
+
+## II. GENERALIZED MULTIPLE SCATTERING MODEL TO INCORPORATE VEGETATION VERTICAL HETEROGENEITY AND ITS PARAMETERIZATION
+
+### A. Brief Review to the RT Theory and the Numerical Iterative Approach
+
+The RT theory is commonly employed for modeling microwave emissions from vegetated land surfaces. This theory provides a framework for describing the behavior of electromagnetic radiation as it propagates through a random medium, based on the law of energy conservation. Within the RT theory, the vegetation is represented by a collection of discrete scatterers located above the ground, as depicted in Fig. 1. For forest scenes, tree trunks, branches, and leaves are represented by cylinders or disks with varying sizes, orientations, and dielectric constant (primarily linked to the water content).
+
+RT theory assumes that various types of scatterers are uniformly distributed within the vegetation layer, which is treated as a statistically homogeneous scattering and absorbing layer. In the independent scattering assumption, the attenuation,
+
+![Figure 1: Scenario illustration of applying RT theory to modeling brightness temperatures for a vegetation covered surface.]
+**Fig. 1.** Scenario illustration of applying RT theory to modeling brightness temperatures for a vegetation covered surface.
+
+absorption, and scattering properties of a single vegetation layer are acquired by incoherent summation over the single scattering characteristics of each scatterer. The vegetation layer scattering properties are represented by the extinction coefficient $\kappa_e$, absorption coefficient $\kappa_a$, and scattering phase matrix $P$, respectively.
+
+The passive RT equation in scalar form is expressed as follows for a vertically statistically homogeneous region:
+
+$$ \cos \theta \frac{d I(z, \theta)}{dz} = -\kappa_e(\theta)I(z, \theta) + \frac{K_B}{\lambda^2} \kappa_a(\theta)T + \int_0^\pi d\theta' p(\theta, \theta') I(z, \theta') \sin \theta' \tag{1} $$
+
+where
+
+$$ p(\theta, \theta') = \int_0^{2\pi} d\phi' P(\theta, \phi; \theta', \phi') \tag{2} $$
+
+is the reduced scattering phase matrix, where $\theta'$ and $\theta$ represent the incident and scattering inclination angles.
+
+In the passive RT equation, $K_B$ represents the Boltzmann’s constant, $\lambda$ is the free space wavelength, and $T$ is the physical temperature of the vegetation layer. $I(z, \theta)$ is the microwave radiation intensity, where $z$ represents the height above the ground and $\theta$ represents the observation angle. In passive remote sensing of scenarios with statistical azimuthal symmetry, microwave radiation intensity is assumed to be uniform in the azimuthal direction and independent of the azimuth angle $\phi$.
+
+For scattering in the vegetation layer, RT theory with a single reflective boundary at the bottom is commonly adopted [33], as shown in Fig. 1. The boundary conditions are taken as follows:
+
+$$
+\begin{cases}
+I_d(z = d, \theta) = 0 \\
+I_u(z = 0, \theta) = \frac{K_B}{\lambda^2}(1 - r_{12})T_{\text{gnd}} + I_d(z = 0, \theta)r_{12}.
+\end{cases}
+\tag{3}
+$$
+
+In (3), $d$ is the depth of the vegetation layer, $T_{\text{gnd}}$ is the physical temperature of the ground, and $r_{12}$ is the reflectivity matrix at the bottom boundary. In this study, the Kirchhoff approximation [34] is applied to calculate the reflectivity of the soil.
+
+The iterative approach is an effective technique to solve RT equations with multiple scattering effects. It derives from the RT equation in its integral form and numerical iterations are performed to higher orders until convergence is reached. In each iteration, a further order of scattering is incorporated through a numerical integration of the product of the phase matrix and the microwave intensity. The iterative approach enables separations of individual contributions to microwave intensity from each scattering order and scattering mechanism, allowing for a comprehensive assessment of multiple scattering effects in vegetated land surfaces [10], [11], [35].
+
+![Figure 2: Realistic complex vegetation scene (left), the geometric structure of vegetation with two tree types (middle), and its representation in the multilayered RT model (right).]
+**Fig. 2.** Realistic complex vegetation scene (left), the geometric structure of vegetation with two tree types (middle), and its representation in the multilayered RT model (right).
+
+### B. Generalization to Handle Vertical Heterogeneity of the Vegetation Structure
+
+For complex vegetation scenes, it is essential to improve the model’s depiction of vegetation morphology. As shown in Fig. 2, the height-dependent geometry, composition, and structure of a natural canopy is characterized as elemental scatterers at different heights with varying dielectric constants, sizes, orientations, and distribution densities. Consequently, vegetation can be subdivided into an arbitrary number of sublayers based on its vertical geometric structure. The thickness of each sublayer and the characteristics of the scatterers it contains can be substantially different from other sublayers. Similar to single-layer vegetation models, it is assumed that scatterers within each layer are uniformly distributed. The scattering parameters of each layer are obtained by summing the single scattering characteristics of all scatterers present within that specific layer. Hence, the heterogeneity of the vertical structure of vegetation is manifested further as height-dependent scattering parameters. Such height-dependent scattering parameters are then introduced into the RT equation to make the RT model applicable to complex vegetation structure. The corresponding passive RT equation in scalar form is expressed as follows, incorporating the vertical heterogeneity of scattering parameters:
+
+$$ \cos \theta \frac{d I(z, \theta)}{dz} = -\kappa_e(\theta, z)I(z, \theta) + \frac{K_B}{\lambda^2} \kappa_a(\theta, z)T(z) + \int_0^\pi d\theta' p(\theta, \theta'; z) I(z, \theta') \sin \theta' \tag{4} $$
+
+where
+
+$$ p(\theta, \theta'; z) = \int_0^{2\pi} d\phi' P(\theta, \phi; \theta', \phi'; z). \tag{5} $$
+
+In (5), the scattering phase matrix is defined as follows:
+
+$$ P(\theta, \phi; \theta', \phi'; z) = \sum_{s=1}^{N_s} n_0^{(s)}(z) \left| f^{(s)}(\theta, \phi; \theta', \phi') \right|^2 \tag{6} $$
+
+where $n_0^{(s)}(z)$ is the density profile of scatterers of the $s$th specie per unit volume at the height of $z$ above the ground, which characterizes the vertical distribution of various scatterer components in vegetation and can be adjusted according to the vegetation morphology. $N_s$ represents the number of scatterer species. $f^{(s)}(\theta, \phi; \theta', \phi')$ is the scattering amplitude of the $s$th scatterer specie, where $\theta'$ and $\theta$ represent the incident and scattering inclination angles, respectively, and $\phi'$ and $\phi$ represent the incident and scattering azimuth angles, respectively. $f^{(s)}(\theta, \phi; \theta', \phi')$ is typically calculated using physical electromagnetic scattering models such as the infinite cylinder approximation (ICA) to model the scattering of tree trunks and branches, and the thin disk approximation (TDA) for simulating the scattering of broad leaves [36].
+
+Here, the scattering coefficient $\kappa_s(\theta, z)$ is obtained by integrating the reduced scattering phase matrix over all scattering angles. The absorption coefficient $\kappa_a(\theta, z)$ is determined by
+
+$$ \kappa_a(\theta, z) = \sum_{s=1}^{N_s} n_0^{(s)}(z) \sigma_a^{(s)}(\theta) \tag{7} $$
+
+where $\sigma_a^{(s)}(\theta)$ is the absorption cross section of a scatterer of the $s$th specie. The absorption cross section is obtained by integrating the internal field inside the scatterer [35]. The extinction coefficient $\kappa_e(\theta, z)$ characterizes the extinction of coherent electromagnetic waves during forward propagation caused by absorption and scattering of scatterers and is estimated by adding the scattering coefficient $\kappa_s(\theta, z)$ and the absorption coefficient $\kappa_a(\theta, z)$.
+
+The integral form of the RT equation with boundary conditions of (3) is written as follows:
+
+$$
+\begin{aligned}
+I_u(z, \theta) &= \int_0^z dz' \exp(\tau(\theta, z') - \tau(\theta, z)) \\
+&\quad \times \sec \theta \left[ \frac{K_B}{\lambda^2} \kappa_a(\theta, z')T(z') + S(z', \theta) \right] \\
+&\quad + \sec \theta \exp(-\tau(\theta, z))r_{12} \\
+&\quad \times \int_0^d dz' \exp(-\tau(\pi - \theta, z')) \\
+&\quad \times \left[ \frac{K_B}{\lambda^2} \kappa_a(\pi - \theta, z')T(z') + W(z', \theta) \right] \\
+&\quad + \frac{K_B}{\lambda^2} \exp(-\tau(\theta, z))(1 - r_{12})T_{\text{gnd}}
+\end{aligned}
+\tag{8}
+$$
+
+$$
+\begin{aligned}
+I_d(z, \theta) &= \int_z^d dz' \exp(-\tau(\pi - \theta, z') + \tau(\pi - \theta, z)) \\
+&\quad \times \sec \theta \left[ \frac{K_B}{\lambda^2} \kappa_a(\pi - \theta, z')T(z') + W(z', \theta) \right]
+\end{aligned}
+\tag{9}
+$$
+
+with
+
+$$
+\begin{aligned}
+S(z, \theta) = \int_0^{\pi/2} d\theta' \sin \theta' &\left[ p(\theta, \theta'; z)I_u(z, \theta') + p(\theta, \pi - \theta'; z) \right. \\
+&\left. \times I_d(z, \theta') \right]
+\end{aligned}
+\tag{10}
+$$
+
+$$
+\begin{aligned}
+W(z, \theta) = \int_0^{\pi/2} d\theta' \sin \theta' &\left[ p(\pi - \theta, \theta'; z)I_u(z, \theta') \right. \\
+&\left. + p(\pi - \theta, \pi - \theta'; z)I_d(z, \theta') \right]
+\end{aligned}
+\tag{11}
+$$
+
+and
+
+$$ \tau(\theta, z) = \sec(\theta) \int_0^z \kappa_e(\theta, z'') dz'' \tag{12} $$
+
+represents the optical depth from the ground to a specific height $z$. The upward propagating microwave intensity $I_u(z, \theta)$ contains three terms that correspond to upward radiation/scattering from height $z'$ ($z' < z$), downward radiation/scattering from height $z'$ reflected by the ground, and upward emission from the soil. The downward propagating microwave intensity, $I_d(z, \theta)$, represents downward radiation/scattering from height $z'$ ($z' > z$). $S(z, \theta)$ and $W(z, \theta)$ denote the upward and downward equivalent scattering source terms contributed by intensities propagating in other directions to $I_u(z, \theta)$ and $I_d(z, \theta)$, respectively, as coupled by the reduced phase matrix $p(\theta, \theta'; z)$.
+
+The zeroth-order intensities, denoted as $I_u^{(0)}(z, \theta)$ and $I_d^{(0)}(z, \theta)$, are obtained by considering the radiation from the soil and vegetation as the sole contributors while setting the scattering source terms $S(z', \theta)$ and $W(z', \theta)$ in (8) and (9) to be zero. The expressions are shown below
+
+$$
+\begin{aligned}
+I_u^{(0)}(z, \theta) &= \int_0^z dz' \exp(\tau(\theta, z') - \tau(\theta, z)) \\
+&\quad \times \sec \theta \frac{K_B}{\lambda^2} \kappa_a(\theta, z')T(z') \\
+&\quad + \sec \theta \exp(-\tau(\theta, z))r_{12} \\
+&\quad \times \int_0^d dz' \exp(-\tau(\pi - \theta, z')) \\
+&\quad \times \frac{K_B}{\lambda^2} \kappa_a(\pi - \theta, z')T(z') \\
+&\quad + \frac{K_B}{\lambda^2} \exp(-\tau(\theta, z))(1 - r_{12})T_{\text{gnd}}
+\end{aligned}
+\tag{13}
+$$
+
+$$
+\begin{aligned}
+I_d^{(0)}(z, \theta) &= \int_z^d dz' \exp(-\tau(\pi - \theta, z') + \tau(\pi - \theta, z)) \\
+&\quad \times \sec \theta \frac{K_B}{\lambda^2} \kappa_a(\pi - \theta, z')T(z').
+\end{aligned}
+\tag{14}
+$$
+
+Once the zeroth-order solution has been obtained, the iterative approach is used to compute higher order brightness temperatures. In each iteration, the $n$th-order ($n \ge 1$) of scattering source term $S^{(n)}(z', \theta)$ and $W^{(n)}(z', \theta)$ is obtained by integrating the product of scattering phase matrix and the $(n - 1)$th-order intensities $I_u^{(n-1)}(z, \theta)$ and $I_d^{(n-1)}(z, \theta)$
+
+$$
+\begin{aligned}
+S^{(n)}(z, \theta) &= \int_0^{\pi/2} d\theta' \sin \theta' \\
+&\quad \times \left[ p(\theta, \theta'; z)I_u^{(n-1)}(z, \theta') \right. \\
+&\quad \left. + p(\theta, \pi - \theta'; z)I_d^{(n-1)}(z, \theta') \right]
+\end{aligned}
+\tag{15}
+$$
+
+$$
+\begin{aligned}
+W^{(n)}(z, \theta) &= \int_0^{\pi/2} d\theta' \sin \theta' \\
+&\quad \times \left[ p(\pi - \theta, \theta'; z)I_u^{(n-1)}(z, \theta') \right. \\
+&\quad \left. + p(\pi - \theta, \pi - \theta'; z)I_d^{(n-1)}(z, \theta') \right].
+\end{aligned}
+\tag{16}
+$$
+
+Then, the $n$th order of upward and downward intensities $I_u^{(n)}(z, \theta)$ and $I_d^{(n)}(z, \theta)$ is updated by the $n$th-order scattering source term $S^{(n)}(z', \theta)$ and $W^{(n)}(z', \theta)$
+
+$$
+\begin{aligned}
+I_u^{(n)}(z, \theta) &= \int_0^z dz' \exp(\tau(\theta, z') - \tau(\theta, z)) \sec \theta S^{(n)}(z', \theta) \\
+&\quad + \exp(-\tau(\theta, z))r_{12} \\
+&\quad \times \int_0^d dz' \exp(-\tau(\pi - \theta, z')) \sec \theta W^{(n)}(z', \theta)
+\end{aligned}
+\tag{17}
+$$
+
+$$
+\begin{aligned}
+I_d^{(n)}(z, \theta) &= \int_z^d dz' \exp(-\tau(\pi - \theta, z') + \tau(\pi - \theta, z)) \\
+&\quad \times \sec \theta W^{(n)}(z', \theta).
+\end{aligned}
+\tag{18}
+$$
+
+The procedure is repeated iteratively to yield higher order multiple scattering contributions to the brightness temperature until the convergence is reached. The resulting multiple scattering contributions from zeroth order to $N$th order are then summed up to obtain the up to $N$th-order brightness temperature
+
+$$ T_{B, \text{total}}^{(N)}(\theta) = \sum_{n=0}^N T_B^{(n)}(\theta) = \sum_{n=0}^N \frac{I_u^{(n)}(z = d, \theta)}{\frac{K_B}{\lambda^2}}. \tag{19} $$
+
+### C. Albedo-Tau Parameterization of the Generalized Multiple Scattering Model With Vertical Heterogeneity
+
+The $\omega - \tau$ model is frequently applied in inversion algorithms for vegetated land surface due to its simplicity. In our previous work [24], a strategy for parameterizing the RT model with the $\omega - \tau$ formulation is proposed by matching the model brightness temperature predictions in controlled conditions. This yields equivalent parameters of the vegetation layer that account for multiple scattering effects. The scheme is taken in this article to further parameterize the generalized RT model and derive equivalent parameters that account for both the multiple scattering effects and the vertical heterogeneity of vegetation.
+
+The basic idea to parameterize the physical scattering model is to equalize the multiple scattering solution $T_{B, \text{total}}^{(N)}$ to the $\omega - \tau$ formalism
+
+$$
+\begin{aligned}
+T_{B, \text{total}}^{(N)}(\theta) &= T_{\text{gnd}}(1 - r_{12}) \exp(-\tau_{\text{eff}} \sec \theta) \\
+&\quad + (1 - \omega_{\text{eff}})T(1 - \exp(-\tau_{\text{eff}} \sec \theta)) \\
+&\quad + (1 - \omega_{\text{eff}})T r_{12}(1 - \exp(-\tau_{\text{eff}} \sec \theta)) \\
+&\quad \times \exp(-\tau_{\text{eff}} \sec \theta).
+\end{aligned}
+\tag{20}
+$$
+
+To decouple the equivalent parameters $\omega_{\text{eff}}$ and $\tau_{\text{eff}}$, we first set the physical temperature of the vegetation layer $T$ to zero and the ground reflectivity $r_{12}$ to zero, for which the $\omega - \tau$ formalism in (20) is reduced to the first term representing the upward emission from the ground. This allows us to estimate the equivalent transmissivity $t$ as well as the equivalent optical thickness $\tau_{\text{eff}}$ through
+
+$$ t(\theta) = \frac{T_{B, \text{total}}^{(N)}(\theta)}{T_{\text{gnd}}} = \exp(-\tau_{\text{eff}} \sec \theta). \tag{21} $$
+
+With the effective optical thickness $\tau_{\text{eff}}$ being determined, the effective albedo $\omega_{\text{eff}}$ is then obtained through (20). Note the effective albedo $\omega_{\text{eff}}$ derived in this manner depends on the choice of the ground reflectivity $r_{12}$ and the ground temperature $T_{\text{gnd}}$, and the sensitivity of the derived parameter $\omega_{\text{eff}}$ on the chosen ground conditions is to be tested. The effectiveness of this strategy has been validated for a layer of tree trunks above the ground in [24]. The applicability of it in a more realistic forest scenario comprised of multispecie scattering elements with vertical distribution profiles is to be tested in this article. This parameterization provides theoretical foundation for linking the scattering albedo and optical thickness of the vegetation layer to its geometric and material properties. Our study also indicates the potential to invert vegetation vertical structures from the equivalent parameters.
+
+## III. NUMERICAL RESULTS
+
+### A. Simulation Setup and Scattering Characteristics of Tree Components
+
+In order to illustrate the impact of vertical heterogeneity of vegetation on brightness temperatures, realistic simulations are performed in this study. Simulations are conducted at the L-band SMAP passive channel frequency of 1.41 GHz. A land cover of aspen trees is chosen as the scene for simulation analysis using the measurement data from the SMAPVEX12 campaign [25]. In the simulation, trees are considered to be composed of discrete scatterers of trunks, primary branches (PBs), secondary branches (SBs), and circular leaves. Table I displays the information about vegetation components that is applied in the simulation as estimated from in situ measurement. The size and volumetric moisture of trunks and branches are obtained by taking the average of the measurements. The size and density of leaves are reasonably estimated as they are not explicitly reported in the SMAPVEX12 dataset. The SMAPVEX12 campaign provides a canopy thickness for trees of 6 m, specifically referring to the vertical distance from the first branching point to the top of the tree. The estimated tree height is 8 m, which is comparable to the height of the trunk. The number density of trees is determined based on the vegetation water content (VWC) of the aspen sample plot.
+
+**TABLE I**
+SIMULATION PARAMETERS OF VEGETATION COMPONENTS BASED ON THE MEASUREMENTS FROM THE SMAPVEX12 CAMPAIGN
+
+| Parameter | Value | Parameter | Value |
+| :--- | :--- | :--- | :--- |
+| Trunk Height | 7.85 m | PB Length | 1.41 m |
+| Trunk Diameter | 0.15 m | PB Diameter | 2.88 cm |
+| Trunk Density $N_A$ | 0.24 $/m^2$ | PB Density $N_A$ | 13/tree |
+| Trunk Volume Moisture | 0.37 | PB Volume Moisture | 0.5 |
+| Trunk Orientation $\beta$ | $0^\circ$ | PB Orientation $\beta$ | $[30^\circ, 90^\circ]$ |
+| Leaf Thickness | 0.1 mm | SB Length | 55.5 cm |
+| Leaf Diameter | 2 cm | SB Diameter | 1.12 cm |
+| Leaf Density $N_A$ | 32136 /tree | SB Density $N_A$ | 143/tree |
+| Leaf Volume Moisture | 0.58 | SB Volume Moisture | 0.44 |
+| Leaf Orientation $\beta$ | $[0^\circ, 90^\circ]$ | SB Orientation $\beta$ | $[35^\circ, 90^\circ]$ |
+
+The VWC of the aspen is the sum of the VWC for each component, and is represented as
+
+$$ \text{VWC}_{\text{tree}} = \sum_{s=1}^{N_s} \rho_{\text{water}} V^{(s)} m_{\text{veg}}^{(s)} N_A^{(s)} \tag{22} $$
+
+where $\rho_{\text{water}}$ is water density, which value is 1000 kg/m$^2$. $V^{(s)}$ and $m_{\text{veg}}^{(s)}$ stand for the total volume and the volumetric moisture content of the $s$th specie per tree. $N_A^{(s)}$ represents the number of the $s$th specie per square meter. As recorded in the SMAPVEX12 dataset, the VWC of the aspen sample plot is about 15 kg/m$^2$, which helps determine the density of trees to be 0.24/m$^2$.
+
+In this study, the ICA method [35] is employed to calculate the scattering characteristics of trunks and branches, while the TDA method [35] is applied to calculate the scattering properties of aspen leaves. The scattering parameters are calculated based on the assumption of plane wave incidence and independent scattering. The dielectric constants of vegetation components are calculated from the dual-dispersion model [37].
+
+The probability distribution function of the Eulerian angles $\alpha$ and $\beta$ of the cylinder or disk axis is
+
+$$
+p(\alpha, \beta) =
+\begin{cases}
+\displaystyle \frac{1}{2\pi} \frac{1}{\cos \beta_1 - \cos \beta_2}, & \text{for } \beta_1 \le \beta \le \beta_2 \\
+0, & \text{otherwise}
+\end{cases}
+\tag{23}
+$$
+
+where $\alpha$ and $\beta$ are the orientation angles of the body axis of the cylinder and disk, respectively, $\alpha$ is the azimuthal direction, and $\beta$ is the elevation angle from the vertical direction ($+z$ direction). Equation (23) assumes that the azimuthal angle $\alpha$ of branches and leaves follows a uniform distribution ranging from $0^\circ$ to $360^\circ$, while the elevation angles $\beta$ are uniformly distributed within a given range from $\beta_1$ to $\beta_2$. The distribution ranges of elevation angles for branches and leaves are presented in Table I. Using these parameters, the orientation-averaged scattering amplitude and the absorption cross section for $s$th type of scatters are calculated through (24) and (25), respectively. The orientation-averaged scattering phase matrix and the absorption coefficient are then calculated
+
+![Figure 3: Extinction (yellow line) and absorption (blue line) cross sections per m2 of trunks, PBs, SBs, and leaves as a function of the incident angle. All plots share a common legend as illustrated on the bottom-right panel.]
+**Fig. 3.** Extinction (yellow line) and absorption (blue line) cross sections per m$^2$ of trunks, PBs, SBs, and leaves as a function of the incident angle. All plots share a common legend as illustrated on the bottom-right panel.
+
+by substituting (24) and (25) into (6) and (7), respectively,
+
+$$
+\begin{aligned}
+\left\langle \left| f^{(s)}(\theta, \phi; \theta', \phi') \right|^2 \right\rangle &= \int_0^{2\pi} d\alpha \int_{\beta_1}^{\beta_2} d\beta \sin \beta p(\alpha, \beta) \left| f^{(s)}(\theta, \phi; \theta', \phi'; \alpha, \beta) \right|^2
+\end{aligned}
+\tag{24}
+$$
+
+$$
+\langle \sigma_a^{(s)}(\theta) \rangle = \int_0^{2\pi} d\alpha \int_{\beta_1}^{\beta_2} d\beta \sin \beta p(\alpha, \beta) \sigma_a^{(s)}(\theta; \alpha, \beta). \tag{25}
+$$
+
+To obtain accurate scattering amplitudes for trunks and branches, which exhibit strong forward scattering features, 358 points are sampled uniformly for the scattering inclination angle $\theta$ ranging from 0 to $\pi$, and 60 points are sampled uniformly for the scattering azimuth angle $\phi$ ranging from 0 to $2\pi$. Only 29 points are sampled for the incident inclination angle $\theta'$ ranging from 0 to $\pi$. This is made possible by utilizing our previously proposed interpolation iteration technique [24], which allows us to conduct an asymmetrical sampling of incident and scattering angles during the computation of the phase matrix.
+
+Fig. 3 shows the extinction and absorption cross sections per m$^2$ (a cumulative quantity over the vegetation layer that is unit-less as represented by the cross sections $\sigma$ multiplied by the number density per square meter $N_A$) of the trunk, the PBs, the SBs, and the leaves, respectively, in both V- and H-polarization as a function of the incident angle. The results show that both the absorption and extinction cross sections of the trunk increase with the incidence angle. For PBs and SBs, with the applied orientation average, the results of the horizontal (H) polarization are larger than those of the vertical (V) polarization. Additionally, the results obtained for V-polarization demonstrate a decreasing trend as the incident angle increases. The extinction cross section of the leaves is extremely close to the absorption cross section, indicating that leaves are nearly pure absorbers. Because the orientation of the leaves is uniformly distributed across all angles, the extinction and absorption cross sections of the leaves are independent of the incident angle and the polarization.
+
+Although the developed model permits discretionary characterization of the vegetation vertical profile, for the convenience of analysis, the vegetation is divided into four layers in this section. The vertical heterogeneity of vegetation is reflected by varying the distribution range of different types of scatterers. As shown in Fig. 4, three types of tree structures are adopted and compared to analyze the impact of the vertical distribution of scatterers on the scene brightness temperature. Fig. 4(a) and (b) demonstrates two different vertically nonuniform vegetation structures, denoted as Case 1 and Case 2, respectively. As a benchmark, Fig. 4(c) displays a uniform structure where all scatterers are uniformly distributed in the scene.
+
+Fig. 5 shows the extinction coefficient and absorption coefficient for diverse vegetation structures as a function of height at an incident angle of $40^\circ$. It is observed that the scattering characteristics of each layer vary with depth in Case 1 and Case 2 while stay constant in the uniform case. Since the vertical heterogeneity is solely attributed to varying scatterer distributions in our study, their cumulative contributions along the z-axis remain the same across different cases.
+
+In this work, the dielectric constant of soil is predicted by the Mironov model [38] with clay fraction of 18%. In this section, soil moisture is set to 0.1 m$^3$/m$^3$ and the rms height of the rough soil interface is set to 1 cm. The soil temperature and the vegetation temperature are both set to 300 K.
+
+### B. TB Simulations by the Multilayered Model and the Uniform Model
+
+The multiple scattering brightness temperatures $T_{B, \text{total}}^{(N)}(\theta)$ predicted by the layered model and the uniform model are compared to observe the influence of vertical heterogeneity on brightness temperatures. It is worth noting that although the model is introduced in scalar RT equations for the ease of reading, the actual solution requires the utilization of the vector form of RT equations [10], [21].
+
+Fig. 6 shows that the calculated brightness temperatures $T_{B, \text{total}}^{(N)}(\theta)$ vary with distinct vertical structures. The outcomes predicted by the layered structure for V- and H-polarization exhibit a notable increase compared to the simulations generated from the uniform structure. This suggests that the presence of vertical variation in vegetation has a significant effect on the estimation of brightness temperature.
+
+The established model allows us to examine the contributions to the scene brightness temperature from each individual scattering component in the vegetation canopy. It is obtained by solving the RT equation under a condition that only a single component in the scene has its actual physical temperature while all the other scattering elements are with absolute 0 K temperature. The brightness temperature $T_{B, \text{total}}^{(N)}(\theta)$ contributed from each component in the layered distribution scenario and those from the uniform distribution scenario are compared as a function of the observation angle. The results for vertical
+
+![Figure 4: Visualization of three types of tree structure used in the simulation. (a) Case 1: four-layer structure. The trunks are distributed throughout the entire vegetation layer, the PBs are uniformly distributed in layer 2, the SBs are uniformly distributed in layers 2 and 3, and the leaves are uniformly distributed in layer 2, layer 3, and layer 4. (b) Case 2: four-layer structure. The PBs, SBs, and leaves are uniformly distributed in layer 2, layer 3, and layer 4, respectively. (c) Uniform case. All types of scatterers are uniformly distributed in the vegetation layer.]
+**Fig. 4.** Visualization of three types of tree structure used in the simulation. (a) Case 1: four-layer structure. The trunks are distributed throughout the entire vegetation layer, the PBs are uniformly distributed in layer 2, the SBs are uniformly distributed in layers 2 and 3, and the leaves are uniformly distributed in layer 2, layer 3, and layer 4. (b) Case 2: four-layer structure. The PBs, SBs, and leaves are uniformly distributed in layer 2, layer 3, and layer 4, respectively. (c) Uniform case. All types of scatterers are uniformly distributed in the vegetation layer.
+
+![Figure 5: Extinction and absorption coefficient as a function of the altitude for (a) Case 1, (b) Case 2, and (c) Uniform case.]
+**Fig. 5.** Extinction and absorption coefficient as a function of the altitude for (a) Case 1, (b) Case 2, and (c) Uniform case.
+
+![Figure 6: Comparison of multiorder brightness temperatures calculated from the uniform distribution case and the heterogeneous distribution case.]
+**Fig. 6.** Comparison of multiorder brightness temperatures calculated from the uniform distribution case and the heterogeneous distribution case.
+
+polarization are shown in Fig. 7. The color blocks represent the contribution from different components in the uniform case. For the Case 1 (Case 2) structure, the brightness temperature contribution from each component is reflected by the differences between adjacent solid lines (dashed lines). The comparison demonstrates that the layered structure of vegetation negligibly impacts the contribution of radiation from the soil at different observation angles, but it significantly impacts the contribution of radiation from the vegetation layers. For the layered structures (Case 1 and Case 2), the contributions from PB and SB are smaller than those from the uniform case and they decrease as the observation angle increases, whereas the contributions from trunk and leaf are larger than those from the uniform case and they increase as the observation angle increases. At large observation angles, almost all of the brightness temperature is attributed to the radiation from the components located in the upper layer in Case 1 and Case 2, i.e., the trunk and leaf in layer 4, as illustrated in Fig. 4. This is due to the fact that the optical thickness of the upper layer is larger at larger observation angles, resulting in the radiation from below to be more attenuated.
+
+Fig. 8(a)–(e) shows, respectively, the variation of the contributions from soil, trunk, PB, SB, and leaf to the multiple scattering solution of the microwave intensity $I_u(z, \theta)$ (normalized to the unit of brightness temperature) as a function of height for V-polarization at an observation angle of $40^\circ$, i.e., $(\lambda^2/K_B)I_{u, \text{total}}(z, \theta = 40^\circ)$. In Fig. 8(a), it is evident that for the uniform case, the energy emanating from the soil exponentially declines with the increase in height. Conversely, for the layered case, the attenuation rate of wave propagation demonstrates variability across different layers as a result of diverse scattering parameters associated with each layer (as demonstrated in Fig. 5). It should be emphasized that the soil contributions observed above the vegetation layer remain nearly indistinguishable under different structures of vegetation. This finding implies that changes in the vertical structure of vegetation do not significantly affect the overall optical thickness of the vegetation layer. Meanwhile, taking PB [Fig. 8(c)] as an example, it is observed that the brightness temperature contributed by PB increases with height within the distribution range of the PB (2–3.5 m for layered cases, and 0–8 m for the uniform case). Above the distribution range of the PB, the brightness temperature contributed by PB decreases with height as its upward intensity is attenuated
+
+![Figure 7: Angular pattern of brightness temperature contributions from each vegetation component in the layered distribution scenario and the uniform distribution scenario at V-polarization.]
+**Fig. 7.** Angular pattern of brightness temperature contributions from each vegetation component in the layered distribution scenario and the uniform distribution scenario at V-polarization.
+
+![Figure 8: Multiple scattering solution of the upward microwave intensity $I_u(z, \theta)$ (normalized to the unit of brightness temperatures) versus height for different components under different vegetation structures for vertical polarization at $40^\circ$ observation angle. (a) Soil. (b) Trunk. (c) PB. (d) SB. (e) Leaf. (f) Total.]
+**Fig. 8.** Multiple scattering solution of the upward microwave intensity $I_u(z, \theta)$ (normalized to the unit of brightness temperatures) versus height for different components under different vegetation structures for vertical polarization at $40^\circ$ observation angle. (a) Soil. (b) Trunk. (c) PB. (d) SB. (e) Leaf. (f) Total.
+
+by other scatterers. In the area below the distribution range of the PB, the contributions from PB cannot be ignored. These contributions come from the downward radiation energy of the PB being scattered upward by the ground and other scatterers. Fig. 8(f) displays the curve of $(\lambda^2/K_B)I_{u, \text{total}}(z, \theta = 40^\circ)$, representing the collective contributions from individual components. The aforementioned findings suggest that the vertical structure of vegetation significantly influences the contributions of various components to the microwave intensity at different heights, consequently impacting the overall elevational distribution of the microwave intensity.
+
+Then, we focus on the contribution of each component to the brightness temperature at the top of the vegetation layer (height of 8 m) with an observation angle of $40^\circ$, i.e., $T_{B, \text{total}}^{(N)}(\theta = 40^\circ)$. In Fig. 8(c), it is observed that the brightness temperature contributed from the PB of Case 2 is the smallest. This observation is attributed to the concentrated distribution of PB in the lower layer within Case 2 [as shown in Fig. 4(b)], positioned underneath the SB and leaves. As a result, the upward intensity from PB encounters a more pronounced attenuation effect exerted by other scatterers. In contrast, the brightness temperature contributed from leaves in Case 2 is the largest as illustrated in Fig. 8(e), owing to the concentrated distribution of leaves in the upper layers of the vegetation. Thus, it is deduced that the scatterer components in the upper vegetation layer are likely to contribute the most to the observed brightness temperature.
+
+The developed model involves a comprehensive computation procedure that includes calculating scattering parameters, such as the scattering phase matrix, the scattering coefficient,
+
+![Figure 9: Effective scattering albedo versus soil parameters for uniform distribution case and heterogeneous distribution cases with the soil roughness of 1 cm at $40^\circ$. (a) Effective scattering albedo versus soil moisture with the soil temperature of 300 K. (b) Effective scattering albedo versus soil temperature with the soil moisture of 0.1 m$^3$/m$^3$.]
+**Fig. 9.** Effective scattering albedo versus soil parameters for uniform distribution case and heterogeneous distribution cases with the soil roughness of 1 cm at $40^\circ$. (a) Effective scattering albedo versus soil moisture with the soil temperature of 300 K. (b) Effective scattering albedo versus soil temperature with the soil moisture of 0.1 m$^3$/m$^3$.
+
+and the absorption coefficient, and solving the RT equation iteratively to compute multiple scattering brightness temperatures. Our previous research [24] has revealed that the majority of the total CPU time is consumed in the computation of the scattering phase matrix. Therefore, the computational resources required for computing scattering parameters depend on the number of the scatterer species. Meanwhile, the CPU cost to solve the RT equation through the numerical iteration approach is insensitive to the variation in the vegetation vertical profile. It only depends on the number of points to discretize the z-integral in (17) and (18), which is weakly associated with the canopy height and resolution required to describe the vegetation vertical profile. This fact underscores that our proposed model enables a more precise characterization of vegetation vertical structure without imposing extra significant computational burden.
+
+### C. Effective Parameters Derived From the Multilayered Model
+
+As described in Section III, the effective optical depth $\tau_{\text{eff}}$ is derived from the physical equivalent transmissivity of the vegetation layer and its value is independent of soil parameters, while the effective albedo $\omega_{\text{eff}}$ can potentially be affected by the choice of the soil parameters. Therefore, the sensitivity analysis of the derived effective albedo $\omega_{\text{eff}}$ to soil parameters is first carried out.
+
+Fig. 9 depicts the equivalent albedo derived from the uniform model and the layered model as a function of the soil moisture and the soil temperature at the observation angle of $40^\circ$. The equivalent albedo is shown to be insensitive to the soil temperature, and weakly affected by the soil moisture parameters, especially for the layered structure cases. Furthermore, it is observed that the equivalent albedo decreases as soil moisture increases, which contrasts with the results reported in [13]. This discrepancy arises because the equivalent albedo in [13] is derived from the single scattering optical thickness rather than the equivalent optical thickness that incorporates the effects of multiple scattering. This comparison highlights the impact of optical thickness on the effective scattering albedo and reaffirms the critical importance of incorporating multiple scattering effects in deriving both parameters.
+
+![Figure 10: Comparison of the single scattering albedo values and the effective albedo for both polarizations as a function of observation angle, with the soil temperature of 300 K and soil moisture of 0.1 m$^3$/m$^3$.]
+**Fig. 10.** Comparison of the single scattering albedo values and the effective albedo for both polarizations as a function of observation angle, with the soil temperature of 300 K and soil moisture of 0.1 m$^3$/m$^3$.
+
+Fig. 10 illustrates the single scattering albedo $\omega$ from the uniform distribution case, i.e., the ratio of the scattering coefficient to the extinction coefficient, as well as the effective albedo from the uniform distribution case and the layered distribution cases as a function of the observation angle. These results are obtained under the conditions of soil moisture being 0.1 m$^3$/m$^3$ and soil temperature being 300 K. Our results indicate that the single scattering albedo is strongly dependent on the observation angle and the polarization, while the effective albedo, which takes into account multiple scattering effects, is less sensitive to these factors. It is noteworthy that the derived effective scattering albedo shows less sensitivity to polarization than the results reported in [13]. Additionally, the values of the effective albedo are much smaller than those of the single scattering albedo. What is more, the equivalent albedo derived from the layered structure cases have smaller values compared to those from the uniform distribution case. Their values are much closer to the value of 0.06 and 0.08 selected by the existing inversion algorithm for evergreen broadleaf forests in the SMOS and SMAP applications [39], respectively.
+
+Fig. 11 shows the single scattering optical depth and the effective optical depth from the uniform case and the layered structure cases versus observation angles. Compared to the single scattering optical depth $\tau$, which is the product of
+
+![Figure 11: Optical thickness versus observation angle for uniform distribution case and heterogeneous distribution case.]
+**Fig. 11.** Optical thickness versus observation angle for uniform distribution case and heterogeneous distribution case.
+
+![Figure 12: Transmissivity versus observation angle for the uniform distribution case and the heterogeneous distribution case.]
+**Fig. 12.** Transmissivity versus observation angle for the uniform distribution case and the heterogeneous distribution case.
+
+the extinction coefficient and the thickness of the vegetation layer, the values of the effective optical depth $\tau_{\text{eff}}$ are much smaller, indicating that the multiple scattering effects should be considered in order to reliably estimate the attenuation by the vegetation layer. The equivalent optical thickness derived from the layered structure cases are almost identical to those derived from the uniform distribution case, indicating that the vertical structure of the vegetation has little impact on its optical thickness. The difference in the optical thickness is marginally perceptible at large observation angles.
+
+The transmissivity that accounts for multiple scattering effects is obtained through (21). Fig. 12 indicates that multiple scattering significantly increases the transmissivity of the vegetation layer, and the vertical structure of the vegetation has little impact on its transmissivity.
+
+## IV. MODEL VALIDATION
+
+### A. Description of the Dataset
+
+To validate the proposed multiple scattering model incorporating the vegetation vertical heterogeneity, the simulated results are compared with the data collected from the SMAPVEX12 campaign [25]. The SMAPVEX12 field survey was conducted from June 6 to July 17, 2012 to understand the relationship between SMAP products and changes in soil and vegetation moisture content, and to develop soil moisture inversion algorithms. The SMAPVEX12 campaign was held in an agricultural area south of Winnipeg, Manitoba,
+
+![Figure 13: Normalized distribution density of tree branches and leaves with respect to height.]
+**Fig. 13.** Normalized distribution density of tree branches and leaves with respect to height.
+
+![Figure 14: Extinction coefficient and absorption coefficient of the vegetation with a continuous profile structure.]
+**Fig. 14.** Extinction coefficient and absorption coefficient of the vegetation with a continuous profile structure.
+
+Canada, with various crop types and mixed forest cover. In the SMAPVEX12 study area, four sampling sites for forest scenes were established, each with varying degrees of tree coverage. The principal tree types are aspen, bur oak, and balsam poplar. Data from forest site F5 are used to validate the proposed model. The vegetation parameters of F5 have been given in Table I.
+
+The observation area of each site for soil moisture and vegetation sampling consisted of two orthogonal transects within a circle with a radius of 100 m. Within the observation area, there were nine soil moisture sampling sites, including the central point and two points at 50 m and 100 m in each cardinal direction. The soil moisture at 5 cm depth and soil temperature for each sampling site have been reported during measurement days. The measurements at nine sampling sites for each day are averaged for the analysis as presented in Table II. The soil roughness for this forest site is 0.77 cm, and the dielectric constant of the soil is predicted by the Mironov model [38] based on the reported soil properties.
+
+The passive/active L-band sensor (PALS) provides vertically and horizontally polarized brightness temperatures at a frequency of 1.41 GHz. PALS was mounted at a $40^\circ$ incidence angle looking to the rear of the aircraft and it acquired data at two elevations (low and high) during the SMAPVEX12 campaign. In our analysis, we use PALS measurements at low altitudes (1067 m) due to its higher spatial resolution. The recorded thermal infrared readings of the scene are considered to be vegetation temperatures. For each day of measurement,
+
+![Figure 15: Comparison between the model simulations and the measured brightness temperatures. (a) Vertical polarization. (b) Horizontal polarization.]
+**Fig. 15.** Comparison between the model simulations and the measured brightness temperatures. (a) Vertical polarization. (b) Horizontal polarization.
+
+**TABLE II**
+AVERAGED MEASUREMENTS OF SOIL MOISTURE mv, SOIL TEMPERATURE $T_{\text{gnd}}$, VEGETATION TEMPERATURE $T$, AND BRIGHTNESS TEMPERATURES TB DURING THE SMAPVEX12 CAMPAIGN
+
+| Date | mv(m$^3$/m$^3$) | $T_{\text{gnd}}$(K) | $T$(K) | TB$_{\text{v}}$(K) | TB$_{\text{h}}$(K) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| 6/12 | 0.3514 | 283.9 | 282.6 | 261.6 | 252.5 |
+| 6/15 | 0.3279 | 287.0 | 289.0 | 266.0 | 256.4 |
+| 6/17 | 0.3885 | 286.0 | 285.5 | 262.5 | 254.8 |
+| 6/22 | 0.3773 | 285.0 | 287.1 | 266.1 | 259.4 |
+| 6/23 | 0.3329 | 285.5 | 289.2 | 266.4 | 260.5 |
+| 6/25 | 0.3750 | 285.0 | 288.1 | 266.7 | 264.7 |
+| 6/27 | 0.3506 | 289.2 | 293.6 | 273.2 | 268.0 |
+| 6/29 | 0.2734 | 286.9 | 290.5 | 272.1 | 264.6 |
+| 7/03 | 0.2529 | 288.9 | 293.7 | 277.4 | 270.9 |
+| 7/05 | 0.2263 | 288.9 | 291.2 | 275.2 | 268.5 |
+| 7/08 | 0.1940 | 288.6 | 291.8 | 274.9 | 266.9 |
+| 7/10 | 0.2313 | 289.2 | 293.4 | 276.1 | 266.4 |
+| 7/13 | 0.2119 | 289.2 | 296.2 | 278.1 | 274.5 |
+
+the brightness temperatures and the vegetation temperatures collected by the PALS above the sampling area F5 are averaged for the analysis and the resulting values are presented in Table II.
+
+### B. Continuous Vegetation Vertical Profile Model
+
+In Section III, we have adopted two types of piecewise constant four-layer tree structures to represent the vegetation vertical profile for analysis purposes. In this section, the vegetation canopy is assumed with an arbitrary vertical distribution profile. The distribution density of tree branches and leaves can be obtained by the measured (e.g., from Lidar point clouds) or estimated (e.g., from a vegetation heterogenic growth model) vertical profile of the vegetation, as a function of the height. Due to the absence of field measurement data relative to the vertical profile structure of the forest site F5, we have made reasonable estimations regarding the distribution of vegetation components. Fig. 13 illustrates the normalized distribution density of tree branches and leaves with respect to the height, with the integration of the normalized distribution density resulting in the value of 1. In our estimations, the distribution density of tree branches in the canopy follows a linear decline with increasing height, while the distribution density of leaves exhibits a parabolic relationship with the height. The corresponding extinction coefficient and the absorption coefficient of the vegetation are illustrated in Fig. 14 as a function of the height.
+
+### C. Results and Discussions
+
+Fig. 15 shows the comparison between the model simulations and the measured brightness temperatures. Green star dots show the simulation results from the uniform model, red circle dots present the simulation results from the layered model with Case 1 structure, while black square dots refer to the simulation results with the continuous profile structure as specified in Fig. 13. The SMAPVEX12 measurements are shown by their dynamic range from minimum to maximum and their mean values in blue lines and blue cross-shaped markers, respectively. The results indicate that the uniform model substantially underestimates the brightness temperature, whereas the layered model estimates comparable brightness temperatures with the measured values. The root-mean-square error (RMSE) between the average measurement values and simulations from the uniform model for both vertical and horizontal polarizations are recorded as 11.20 K and 9.02 K, respectively. However, the RMSE between the averaged measurements and simulations from the continuous profile model is reduced to 3.45 K and 3.42 K for vertical and horizontal polarizations, respectively. This indicates that the vertical structure of the vegetation has a considerable impact on the accuracy of brightness temperature predictions. Additionally, the RMSE between the average measurement values and simulations from the Case 1 staircase structure is calculated as 2.85 K for vertical polarization and 3.64 K for horizontal polarization. This indicates that incorporating vertical continuous profiles into the model is not obligatory for accurate brightness temperature predictions. A simple layered structure, such as a four-layer structure, is sufficient to characterize the impact of vegetation vertical structures on the corresponding brightness temperatures. However, it remains an issue to be examined on how to simplify a continuous vertical profile of the vegetation into staircase layers.
+
+## V. CONCLUSION
+
+In this article, a multiple scattering model based on RT theory incorporating vegetation vertical heterogeneity has been introduced to accurately predict the brightness temperature of vegetated land scenarios especially for forested areas. By considering the effects of multiple scattering and vertical heterogeneity within the vegetation canopy, the proposed model provides a valuable tool for understanding the influence of vertical vegetation structure on the brightness temperature. Incorporating vertical heterogeneity into the model is achieved through the adjustment of the distribution range of vegetation scattering components in the vertical direction, resulting in height-dependent characteristics of vegetation scattering. Within a forest scene, our findings reveal that the vertical structure of vegetation has a substantial impact on the observed brightness temperatures. The brightness temperature contributions from the vegetation layer are primarily influenced by the vertical vegetation structure, while the contributions from the underlying soil are less affected.
+
+The model provides novel and distinctive insights into the individual contribution from a tree component in the scene to microwave intensities at various heights. Our study demonstrates that variations in the vertical distribution range of vegetation components substantially alter their contributions to the intensity at different heights. Notably, the components distributed in the upper layer of vegetation significantly contribute to the scene brightness temperature, particularly emerging as the dominant contributors as the observation angle increases.
+
+The proposed multiple scattering model incorporating vegetation vertical heterogeneity is also parameterized in the form of an equivalent zero-order albedo-tau model. The derived equivalent parameters encompass the impact of multiple scattering and vegetation vertical heterogeneity. Upon considering the effects of multiple scattering, it is observed that vegetation structure has minimal influence on equivalent optical thickness and vegetation transmittance, but has a notable effect on the equivalent albedo. Accounting for vertical heterogeneity leads to a derived equivalent albedo that closely aligns with the values utilized in inversion algorithms applied in the SMAP/SMOS campaign, emphasizing the importance of incorporating vertical structure when determining the albedo values. This suggests that our model establishes a more robust theoretical basis for the selection of inversion parameters. Furthermore, the derived equivalent albedo exhibits variations for different vegetation structures, potentially opening avenues for utilizing the equivalent albedo in vegetation vertical structure inversion.
+
+Validation of the proposed multiple scattering model with vertical heterogeneity is performed using ground measurement data from the SMAPVEX12 mission in forested areas, with the results illustrating that vertical structure significantly alters the predicted brightness temperatures. Moreover, the predictions made by the layered structure model and the continuous profile model closely match the measured brightness temperatures, highlighting the significance of including vertical structure to accurately simulate the scene brightness temperatures.
+
+To examine the potential of utilizing multiple frequencies to retrieve vegetation and soil parameters, it is advisable to evaluate the proposed model and analyze the impacts of vertical structure on brightness temperatures across various frequencies. Additionally, extending the type of vegetation to crops would be interesting. The methodology and results presented in this article will contribute to enhancing the interpretability of the scattering mechanisms in vegetated land surfaces. While this article assumes a homogeneous scene in developing the models and conducting the analysis, scene heterogeneity at a satellite observation scale would introduce more complexities to forward modeling that deserve further investigations.
+
+## ACKNOWLEDGMENT
+
+The authors acknowledge Dr. Yiwen Fang for her help in polishing the paper. This work was led by Principal Supervisor Dr. Shurun Tan.
+
+## REFERENCES
+
+[1] E. Njoku and D. Entekhabi, “Passive microwave remote sensing of soil moisture,” *J. Hydrol.*, vol. 184, nos. 1–2, pp. 101–129, Oct. 1996.
+
+[2] J.-P. Wigneron, T. Schmugge, A. Chanzy, J.-C. Calvet, and Y. Kerr, “Use of passive microwave remote sensing to monitor soil moisture,” *Agronomie*, vol. 18, no. 1, pp. 27–43, 1998.
+
+[3] C. Ma, X. Li, J. Wang, C. Wang, Q. Duan, and W. Wang, “A comprehensive evaluation of microwave emissivity and brightness temperature sensitivities to soil parameters using qualitative and quantitative sensitivity analyses,” *IEEE Trans. Geosci. Remote Sens.*, vol. 55, no. 2, pp. 1025–1038, Feb. 2017.
+
+[4] H. Huang, L. Tsang, E. G. Njoku, A. Colliander, T.-H. Liao, and K.-H. Ding, “Propagation and scattering by a layer of randomly distributed dielectric cylinders using Monte Carlo simulations of 3D Maxwell equations with applications in microwave interactions with vegetation,” *IEEE Access*, vol. 5, pp. 11985–12003, 2017.
+
+[5] H. Huang, L. Tsang, A. Colliander, and S. H. Yueh, “Propagation of waves in randomly distributed cylinders using three-dimensional vector cylindrical wave expansions in Foldy–Lax equations,” *IEEE J. Multiscale Multiphys. Comput. Techn.*, vol. 4, pp. 214–226, 2019.
+
+[6] W. Gu, L. Tsang, A. Colliander, and S. H. Yueh, “Wave propagation in vegetation field using a hybrid method,” *IEEE Trans. Antennas Propag.*, vol. 69, no. 10, pp. 6752–6761, Oct. 2021.
+
+[7] W. Gu, L. Tsang, A. Colliander, and S. H. Yueh, “Multifrequency full-wave simulations of vegetation using a hybrid method,” *IEEE Trans. Microw. Theory Techn.*, vol. 70, no. 1, pp. 275–285, Jan. 2022.
+
+[8] J. Jeong, L. Tsang, A. Colliander, and S. Yueh, “Full-wave electromagnetic simulations of forests at L-band by using fast hybrid method,” *Prog. Electromagn. Res.*, vol. 178, pp. 111–127, 2023.
+
+[9] M. Bracaglia, P. Ferrazzoli, and L. Guerriero, “A fully polarimetric multiple scattering model for crops,” *Remote Sens. Environ.*, vol. 54, no. 3, pp. 170–179, Dec. 1995.
+
+[10] T.-H. Liao, S.-B. Kim, S. Tan, L. Tsang, C. Su, and T. J. Jackson, “Multiple scattering effects with cyclical correction in active remote sensing of vegetated surface using vector radiative transfer theory,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 9, no. 4, pp. 1414–1429, Apr. 2016.
+
+[11] M. Salim, S. Tan, R. D. De Roo, A. Colliander, and K. Sarabandi, “Passive and active multiple scattering of forests using radiative transfer theory with an iterative approach and cyclical corrections,” *IEEE Trans. Geosci. Remote Sens.*, vol. 60, pp. 1–16, 2021.
+
+[12] P. Ferrazzoli, L. Guerriero, and J.-P. Wigneron, “Simulating L-band emission of forests in view of future satellite applications,” *IEEE Trans. Geosci. Remote Sens.*, vol. 40, no. 12, pp. 2700–2708, Dec. 2002.
+
+[13] M. Kurum, “Quantifying scattering albedo in microwave emission of vegetated terrain,” *Remote Sens. Environ.*, vol. 129, pp. 66–74, Feb. 2013.
+
+[14] H. Zhao, Y. Zeng, J. G. Hofste, T. Duan, J. Wen, and Z. Su, “Modelling of multi-frequency microwave backscatter and emission of land surface by a community land active passive microwave radiative transfer modelling platform (CLAP),” *Hydrol. Earth Syst. Sci. Discuss.*, pp. 1–48, 2022, doi: 10.5194/hess-2022-333.
+
+[15] F. T. Ulaby, K. Sarabandi, K. McDonald, M. Whitt, and M. C. Dobson, “Michigan microwave canopy scattering model,” *Int. J. Remote Sens.*, vol. 11, no. 7, pp. 1223–1253, Jul. 1990.
+
+[16] P. Ferrazzoli and L. Guerriero, “Passive microwave remote sensing of forests: A model investigation,” *IEEE Trans. Geosci. Remote Sens.*, vol. 34, no. 2, pp. 433–443, Mar. 1996.
+
+[17] P. Liang, M. Moghaddam, L. E. Pierce, and R. M. Lucas, “Radar backscattering model for multilayer mixed-species forests,” *IEEE Trans. Geosci. Remote Sens.*, vol. 43, no. 11, pp. 2612–2626, Nov. 2005.
+
+[18] M. Burgin, D. Clewley, R. M. Lucas, and M. Moghaddam, “A generalized radar backscattering model based on wave theory for multilayer multispecies vegetation,” *IEEE Trans. Geosci. Remote Sens.*, vol. 49, no. 12, pp. 4832–4845, Dec. 2011.
+
+[19] P. C. Vermunt, S. C. Steele-Dunne, S. Khabbazan, V. Kumar, and J. Judge, “Towards understanding the influence of vertical water distribution on radar backscatter from vegetation using a multi-layer water cloud model,” *Remote Sens.*, vol. 14, no. 16, p. 3867, Aug. 2022.
+
+[20] J. G. Hofste, R. van der Velde, P. Ferrazzoli, and Z. Su, “Microwave scattering (1–10 GHz) from a vertically heterogeneous grass canopy,” *IEEE Trans. Geosci. Remote Sens.*, vol. 60, 2022, Art. no. 2008617.
+
+[21] S. Tan, W. Chang, L. Tsang, J. Lemmetyinen, and M. Proksch, “Modeling both active and passive microwave remote sensing of snow using dense media radiative transfer (DMRT) theory with multiple scattering and backscattering enhancement,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 8, no. 9, pp. 4418–4430, Sep. 2015.
+
+[22] L. Tsang, J. Pan, D. Liang, Z. Li, D. W. Cline, and Y. Tan, “Modeling active microwave remote sensing of snow using dense media radiative transfer (DMRT) theory with multiple-scattering effects,” *IEEE Trans. Geosci. Remote Sens.*, vol. 45, no. 4, pp. 990–1004, Apr. 2007.
+
+[23] G. Picard, T. Le Toan, S. Quegan, Y. Caraglio, and T. Castel, “Radiative transfer modeling of cross-polarized backscatter from a pine forest using the discrete ordinate and eigenvalue method,” *IEEE Trans. Geosci. Remote Sens.*, vol. 42, no. 8, pp. 1720–1730, Aug. 2004.
+
+[24] K. Chen and S. Tan, “An efficient multiple scattering solution to radiative transfer equations in strong forward scattering environments for vegetated land emission and its representation through an equivalent albedo-tau formalism,” *IEEE Trans. Geosci. Remote Sens.*, vol. 62, 2024, Art. no. 4401015.
+
+[25] H. McNairn et al., “The soil moisture active passive validation experiment 2012 (SMAPVEX12): Prelaunch calibration and validation of the SMAP soil moisture algorithms,” *IEEE Trans. Geosci. Remote Sens.*, vol. 53, no. 5, pp. 2784–2801, May 2015.
+
+[26] T. Mo, B. J. Choudhury, T. J. Schmugge, J. R. Wang, and T. J. Jackson, “A model for microwave emission from vegetation-Covered fields,” *J. Geophys. Res., Oceans*, vol. 87, no. 13, pp. 11229–11237, Dec. 1982.
+
+[27] M. Kurum, R. H. Lang, P. E. O’Neill, A. T. Joseph, T. J. Jackson, and M. H. Cosh, “A first-order radiative transfer model for microwave radiometry of forest canopies at L-band,” *IEEE Trans. Geosci. Remote Sens.*, vol. 49, no. 9, pp. 3167–3179, Sep. 2011.
+
+[28] E. Santi, S. Paloscia, P. Pampaloni, and S. Pettinato, “Ground-based microwave investigations of forest plots in Italy,” *IEEE Trans. Geosci. Remote Sens.*, vol. 47, no. 9, pp. 3016–3025, Sep. 2009.
+
+[29] A. Colliander et al., “SMAP detects soil moisture under temperate forest canopies,” *Geophys. Res. Lett.*, vol. 47, no. 19, Oct. 2020, Art. no. e2020GL089697.
+
+[30] J. Zhang et al., “Characterizing the channel dependence of vegetation effects on microwave emissions from soils,” *Geo-Spatial Inf. Sci.*, vol. 26, pp. 1–17, Nov. 2023.
+
+[31] A. Colliander et al., “Development of SMAP retrievals for forested regions: SMAPVEX19–22 and SMAPVEX22-boreal,” in *Proc. IGARSS IEEE Int. Geosci. Remote Sens. Symp.*, 2022, pp. 4228–4231.
+
+[32] X. Li et al., “Compared performances of SMOS-IC soil moisture and vegetation optical depth retrievals based on tau-omega and two-stream microwave emission models,” *Remote Sens. Environ.*, vol. 236, Jan. 2020, Art. no. 111502.
+
+[33] J.-P. Wigneron, J.-C. Calvet, Y. Kerr, A. Chanzy, and A. Lopes, “Microwave emission of vegetation: Sensitivity to leaf characteristics,” *IEEE Trans. Geosci. Remote Sens.*, vol. 31, no. 3, pp. 716–726, May 1993.
+
+[34] L. Tsang and J. A. Kong, *Scattering of Electromagnetic Waves: Advanced Topics.* Hoboken, NJ, USA: Wiley, 2004.
+
+[35] L. Tsang, J. A. Kong, and K.-H. Ding, *Scattering of Electromagnetic Waves: Theories and Applications.* Hoboken, NJ, USA: Wiley, 2004.
+
+[36] L. Tsang, J. A. Kong, and R. T. Shin, *Theory of Microwave Remote Sensing.* Hoboken, NJ, USA: Wiley, 1985.
+
+[37] F. Ulaby and M. El-rayes, “Microwave dielectric spectrum of vegetation–Part II: Dual-dispersion model,” *IEEE Trans. Geosci. Remote Sens.*, vol. GE-25, no. 5, pp. 550–557, Sep. 1987.
+
+[38] V. L. Mironov, M. C. Dobson, V. H. Kaupp, S. A. Komarov, and V. N. Kleshchenko, “Generalized refractive mixing dielectric model for moist soils,” *IEEE Trans. Geosci. Remote Sens.*, vol. 42, no. 4, pp. 773–785, Apr. 2004.
+
+[39] J.-P. Wigneron et al., “Modelling the passive microwave signature from land surfaces: A review of recent results and application to the L-band SMOS & SMAP soil moisture retrieval algorithms,” *Remote Sens. Environ.*, vol. 192, pp. 238–262, Apr. 2017.
+
+![Photo of Kaiqi Chen]
+**Kaiqi Chen** (Graduate Student Member, IEEE) received the B.E. degree in electronic engineering from Ningbo University, Ningbo, China, in 2021. He is currently pursuing the Ph.D. degree in electronics science and technology with the College of Information Science and Electronic Engineering, Zhejiang University, Hangzhou, China.
+
+His research interests include electromagnetic scattering of random media, microwave radar, and radiometric remote sensing of natural environments.
+
+![Photo of Shurun Tan]
+**Shurun Tan** (Member, IEEE) received the B.E. degree in information engineering and the M.Sc. degree in electromagnetic field and microwave techniques from Southeast University, Nanjing, China, in 2009 and 2012, respectively, and the Ph.D. degree in electrical engineering from the University of Michigan, Ann Arbor, MI, USA, in December 2016.
+
+He is an Assistant Professor with Zhejiang University–University of Illinois Urbana–Champaign Institute, Zhejiang University, Haining, China. His research interests include electromagnetic scattering of random media and periodic structures, microwave remote sensing of natural environments, electromagnetic information systems with electromagnetic wave-functional devices, electromagnetic integrity in high-speed and high-density electronic integration, electromagnetic environment, and the associated reliability of complex electronic systems.

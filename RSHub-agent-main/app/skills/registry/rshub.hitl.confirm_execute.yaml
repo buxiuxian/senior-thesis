@@ -1,0 +1,23 @@
+id: rshub.hitl.confirm_execute
+short_description: User confirmed — submit using TaskSpec from prior assistant message; do not re-collect parameters.
+tags: [hitl, execute]
+bound_tool: submit_rshub_task
+requires_confirmation: false
+full_doc: |
+  ## HITL — CONFIRMATION TURN (EXECUTE)
+
+  The user's latest message is an **explicit confirmation** to run a task that was already planned in this session.
+
+  **Accepted confirmation keywords:** "confirm", "yes", "提交", "确认" (exact match, case-insensitive).  
+  **Accepted rejection keywords:** "cancel", "no", "取消", "拒绝" (exact match, case-insensitive).
+
+  **You MUST:**
+  1. Locate the **TaskSpec** from your **immediately previous assistant message** (same chat), especially any JSON block or structured summary you already produced.
+  2. Map that TaskSpec to `submit_rshub_task` arguments: `project_name`, `task_name`, and `task_data` (scenario_flag, algorithm, output_var, fGHz, angle, and other fields as required by the tool schema).
+  3. Call `submit_rshub_task` **once** with those values.
+  4. **Do NOT** ask the user to re-enter parameters they already confirmed.
+
+  If you cannot find a TaskSpec in the prior assistant turn, briefly apologize and ask **one** clarifying question — do not invent parameters.
+input_schema: {}
+output_schema: {}
+examples: []

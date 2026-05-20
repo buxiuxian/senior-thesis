@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "RSHub FullStack: Backend Debug + Frontend Dev",
+      "type": "debugpy",
+      "request": "launch",
+      "preLaunchTask": "Prepare FullStack Debug",
+      "python": "${workspaceFolder}/RSHub-agent-main/.venv/Scripts/python.exe",
+      "program": "${workspaceFolder}/RSHub-agent-main/start.py",
+      "cwd": "${workspaceFolder}/RSHub-agent-main",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "envFile": "${workspaceFolder}/RSHub-agent-main/.env",
+      "env": {
+        "RELOAD": "false",
+        "LOG_LEVEL": "DEBUG"
+      }
+    }
+  ]
+}

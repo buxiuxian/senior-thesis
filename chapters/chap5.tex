@@ -1,0 +1,180 @@
+% ============================================
+% Chapter 5: Software Testing and Analysis Report
+% ============================================
+\chapter{Software Testing and Analysis Report}
+\label{ch:testing-report}
+
+This chapter reports the experimental evaluation of three core contributions:
+(1) HITL collaboration confirmation mechanism,
+(2) GitHub--PyPI automated synchronization, and
+(3) skill architecture with token optimization.
+An additional small-scale end-to-end stability evaluation is included as an integrated view.
+
+\section{HITL Collaboration Confirmation Test}
+\label{sec:test-hitl}
+
+Objective: validate whether task submission is strictly gated by explicit confirmation and whether credit accounting is consistent with observed runtime behavior.
+
+\subsection{Source-code Logic of HITL}
+\label{sec:hitl-code-logic}
+
+The HITL mechanism is implemented in the agent orchestration layer with an explicit state machine:
+\texttt{IDLE $\rightarrow$ PENDING\_CONFIRMATION $\rightarrow$ CONFIRMED $\rightarrow$ SUBMITTED}.
+At runtime, when a task-like plan is detected in the assistant output, the session enters
+\texttt{PENDING\_CONFIRMATION}. In this phase, user input is strictly matched against exact confirmation/rejection keywords
+(\texttt{confirm/yes} vs. \texttt{cancel/no}); non-matching inputs are short-circuited and do not proceed to tool execution.
+
+The submit tool is additionally gated at execution time: \texttt{submit\_rshub\_task} is blocked unless the HITL state is
+\texttt{CONFIRMED}. After successful submission, credits are deducted through the credit service and the state is marked as
+\texttt{SUBMITTED}. Therefore, the current implementation should be validated with two views:
+(1) logical workflow expectation (plan-stage + execution-stage accounting), and
+(2) observed code behavior (submission-stage deduction after successful execution).
+
+\subsection{A-Test Observations}
+Based on the latest A-test run, the following behavior is observed:
+\begin{itemize}
+	\item \textbf{Confirm path}: submission succeeds when the user provides exact confirmation keywords.
+	\item \textbf{Cancel path}: task is not submitted and no credit is deducted.
+	\item \textbf{Timeout path}: currently observed as no submission and no credit deduction; however, a full timeout-triggered auto-cancel case has not been reached within the three-day test window.
+	\item \textbf{Keyword strictness}: only strict confirm/cancel keywords are accepted; non-matching user inputs do not trigger submission.
+	\item \textbf{Credit behavior}: one successful submission currently deducts \textbf{1 credit} in observed runs.
+\end{itemize}
+
+\begin{table}[htbp]
+	\centering
+	\caption{HITL behavior correctness (A-test snapshot)}
+	\label{tab:hitl-behavior}
+	{\small
+		\setlength{\tabcolsep}{4pt}
+		\begin{tabular}{llllll}
+			\hline
+			Case ID & User Action & Task Submitted & Credit Deducted & Expected & Pass/Fail \\
+			\hline
+			H1 & confirm & Y & 1 & Submit + deduct & Pass \\
+			H2 & cancel & N & 0 & No submit + no deduct & Pass \\
+			H3 & timeout & N & 0 & No submit + no deduct & Pass$^\ast$ \\
+			H4 & non-keyword input & N & 0 & No submit + no deduct & Pass \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
+
+\noindent\textit{$^\ast$Limited evidence: explicit long-wait timeout trigger not fully observed in the current test window.}
+
+\subsection{Credit Consistency Table}
+\begin{table}[htbp]
+	\centering
+	\caption{Observed credit accounting consistency}
+	\label{tab:credit-consistency}
+	\begin{tabular}{llll}
+		\hline
+		Scenario & Submission Result & Observed Deduction & Consistency \\
+		\hline
+		Confirmed submission & Success & 1 credit & Consistent \\
+		Cancelled before submit & No submission & 0 credit & Consistent \\
+		Timeout / no submission & No submission & 0 credit & Consistent \\
+		Invalid keyword input & No submission & 0 credit & Consistent \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{GitHub-PyPI Auto Sync Test}
+\label{sec:test-sync}
+
+Objective: validate the automated synchronization behavior when the remote repository has new commits:
+\texttt{fetch $\rightarrow$ pull/merge $\rightarrow$ build $\rightarrow$ publish}.
+
+\subsection{Planned Metrics}
+\begin{itemize}
+	\item Remote update detection accuracy
+	\item Auto pull \& merge success rate
+	\item Conflict detection and fallback behavior
+	\item Release pipeline success rate
+	\item End-to-end release latency
+\end{itemize}
+
+\subsection{Result Table Template}
+\begin{table}[H]
+	\centering
+	\caption{GitHub--PyPI synchronization evaluation}
+	\label{tab:sync-eval}
+	{\small
+		\setlength{\tabcolsep}{3pt}
+		\renewcommand{\arraystretch}{1.25}
+		\begin{tabular}{p{2.0cm}p{2.2cm}p{2.7cm}p{3.6cm}p{2.4cm}p{1.5cm}}
+			\hline
+			Scenario & Remote Status & Auto Pull/Merge & Conflict Handling & Release Result & Pass/Fail \\
+			\hline
+			No update & Up-to-date & Not triggered & Not applicable & Not triggered & Pass \\
+			Fast-forward update & Behind only (no conflict) & Auto success (ff-only) & Not applicable & Released successfully & Pass \\
+			Merge update & Diverged but mergeable & Auto/interactive merge success & Merge completed without conflict & Released successfully & Pass \\
+			Conflict update & Diverged with conflict & Auto merge fails & Explicit conflict warning; manual confirmation required & Not released & Pass \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
+\noindent\textit{Pass/Fail criterion: ``Pass'' indicates that the observed system behavior matches the expected behavior for each scenario, rather than implying that all scenarios end with a successful release.}
+
+
+\section{Skill Architecture and Token Optimization Test}
+\label{sec:test-skill-token}
+
+Objective: validate the effect of replacing long monolithic prompts with tiered skill loading.
+
+\subsection{Observed Result Table}
+\begin{table}[H]
+	\centering
+	\caption{Skill architecture comparison (baseline vs tiered loading)}
+	\label{tab:skill-token}
+	{\footnotesize
+		\setlength{\tabcolsep}{2.5pt}
+		\renewcommand{\arraystretch}{1.1}
+		\begin{tabular}{p{2.4cm}p{2.6cm}p{2.6cm}p{4.4cm}p{1.1cm}}
+			\hline
+			Scenario & Baseline (long prompt) & Tiered skill loading & Observation & Pass/Fail \\
+			\hline
+			Single-turn QA & Works & Works & No quality regression observed & Pass \\
+			DMRT paper summary & Works & Works & No quality regression observed & Pass \\
+			Task planning & Works & Works & No quality regression observed & Pass \\
+			Multi-turn continuity & Context loss in some A-tests & Stable & Tiered mode improves context retention & Pass \\
+			\hline
+		\end{tabular}
+	}
+\end{table}
+\noindent\textit{Measurement note: quantitative token and latency values are not instrumented in this run. The main observed gap is context continuity: baseline mode occasionally loses prior submission context (e.g., ``not submitted''), while tiered mode remains stable under the same task set.}
+
+\section{End-to-End Stability (Small Scale)}
+\label{sec:test-e2e}
+
+Objective: run 20--50 realistic tasks and report integrated operational stability.
+
+\subsection{Planned Metrics}
+\begin{itemize}
+	\item End-to-end success rate
+	\item Average total completion time
+	\item Failure-cause distribution (e.g., parameter error, network issue, platform queueing)
+\end{itemize}
+
+\subsection{Result Table Template (to fill)}
+\begin{table}[htbp]
+	\centering
+	\caption{End-to-end stability summary}
+	\label{tab:e2e-stability}
+	\begin{tabular}{lllll}
+		\hline
+		Task Count & Success Rate & Avg. Time(s) & Top Failure Cause & Notes \\
+		\hline
+		pending & pending & pending & pending & pending \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Chapter Summary}
+
+This chapter evaluates three implementation-focused improvements and reports their current validation status.
+For HITL confirmation, observed behavior is consistent with the enforced safety rule: submission is gated by explicit confirmation, and credits are deducted only on successful submission (1 credit).
+For GitHub--PyPI synchronization, the tested scenarios show expected branch-state handling, including fast-forward success, merge-capable divergence handling, and fail-fast conflict reporting with manual confirmation requirements.
+For skill architecture optimization, baseline and tiered modes both complete single-turn tasks, while tiered loading shows more stable multi-turn context continuity in repeated tests.
+
+Overall, the implemented changes improve behavioral correctness and operational reliability in the current iteration.
+Remaining work is mainly quantitative expansion, including full end-to-end stability statistics and finer-grained token/latency instrumentation.

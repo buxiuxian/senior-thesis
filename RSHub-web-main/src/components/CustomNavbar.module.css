@@ -1,0 +1,239 @@
+.navbar {
+  display: none !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0.5rem 0;
+}
+
+.navbarContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.navbarBrand {
+  display: flex;
+  align-items: center;
+}
+
+.navbarLogo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+.brandText {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.navbarItems {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbarItem {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.navbarItem:hover {
+  color: #2e8555;
+}
+
+.navbarRight {
+  display: flex;
+  align-items: center;
+}
+
+.loginButton {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.loginButton:hover {
+  background-color: rgba(46, 133, 85, 0.1);
+  color: #2e8555;
+}
+
+.loginIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.userSection {
+  position: relative;
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.userButton:hover {
+  background-color: rgba(46, 133, 85, 0.1);
+}
+
+.userAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.username {
+  font-weight: 500;
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.dropdownArrow {
+  font-size: 0.8rem;
+  color: #666;
+  transition: transform 0.3s ease;
+}
+
+.userButton:hover .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 1001;
+  margin-top: 0.5rem;
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: #333;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownItem:hover {
+  background-color: rgba(46, 133, 85, 0.1);
+  color: #2e8555;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .navbarContainer {
+    padding: 0 0.5rem;
+  }
+  
+  .navbarItems {
+    display: none; /* 在移动端隐藏导航项 */
+  }
+  
+  .brandText {
+    font-size: 1rem;
+  }
+  
+  .logo {
+    height: 32px;
+  }
+  
+  .username {
+    display: none; /* 在移动端隐藏用户名 */
+  }
+  
+  .dropdown {
+    right: -1rem;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbarContainer {
+    padding: 0 0.25rem;
+  }
+  
+  .brandText {
+    display: none; /* 在很小的屏幕上隐藏品牌文字 */
+  }
+  
+  .userButton {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .loginButton {
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* 确保内容不被导航栏遮挡 */
+body {
+  padding-top: 0px !important;
+}
+
+/* 针对不同缩放级别的优化 */
+@media (max-width: 1200px) {
+  .navbarContainer {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  .navbarItems {
+    gap: 1rem;
+  }
+}
+
+/* 确保在缩放时文字不会被遮挡 */
+.navbarItem,
+.username,
+.brandText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+} 

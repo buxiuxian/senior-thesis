@@ -1,0 +1,238 @@
+\chapter{Introduction}
+
+\setstretch{2}
+{\fontspec{Times New Roman}\fontsize{12pt}{14pt}\selectfont
+	
+	\section{Background and Motivation}
+	The rapid growth of remote sensing technologies has resulted in increasingly complex and high-volume geospatial datasets. Traditional data processing approaches, which rely on manual configuration and rule-based methods, are insufficient to handle the scale and heterogeneity of modern remote sensing data efficiently [3][4]. These limitations motivate the development of intelligent systems capable of automating complex workflows while maintaining accuracy and reproducibility [5]. Large language model (LLM) agents offer potential to bridge this gap by interpreting human instructions and orchestrating multi-step computational tasks, providing a practical interface between users and computational platforms [6][7].
+	
+	Building upon this foundation, the summer research project explored practical deployment of the RSHub 2.0 platform. In this context, task bottlenecks and parameter tuning challenges were identified in real-world multi-modal remote sensing scenarios. This hands-on exploration highlighted the importance of modular skill management and structured workflow design in intelligent agent systems.
+	
+	\section{Challenges in Remote Sensing Data Processing}
+	Processing multi-source and multi-modal data presents several technical challenges. Microwave scattering models for snow, soil, and vegetation surfaces involve numerous interdependent parameters, making manual tuning inefficient and error-prone [8][9]. LLM-based agents introduce additional constraints due to token limits and long-context management, particularly for multi-step tasks [10][11]. Figure~\ref{fig:data-challenges} illustrates these challenges schematically.
+	
+	The summer project demonstrated that task input errors and sequential dependencies could propagate through automated workflows, affecting final output quality. Observing these effects emphasized the need for dynamic task management and careful workflow design.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[
+			node distance=1.1cm,
+			>=Stealth,
+			layerlabel/.style={
+				rectangle,
+				rounded corners=2pt,
+				draw=black!50,
+				fill=gray!15,
+				minimum width=2.6cm,
+				minimum height=0.9cm,
+				font=\bfseries\small,
+				align=center
+			},
+			databox/.style={
+				rectangle,
+				rounded corners=4pt,
+				draw=blue!60!black,
+				fill=blue!10,
+				minimum width=11cm,
+				minimum height=1.8cm,
+				text width=10.2cm,
+				align=left,
+				inner sep=8pt
+			},
+			workflowbox/.style={
+				rectangle,
+				rounded corners=4pt,
+				draw=green!50!black,
+				fill=green!10,
+				minimum width=11cm,
+				minimum height=1.8cm,
+				text width=10.2cm,
+				align=left,
+				inner sep=8pt
+			},
+			challengebox/.style={
+				rectangle,
+				rounded corners=4pt,
+				draw=red!60!black,
+				fill=red!10,
+				minimum width=11cm,
+				minimum height=2.1cm,
+				text width=10.2cm,
+				align=left,
+				inner sep=8pt
+			},
+			flowarrow/.style={
+				->,
+				thick,
+				draw=black!70
+			}
+			]
+			
+			% --- Main boxes ---
+			\node[databox] (data) {
+				\textbf{Multi-modal Remote Sensing Data}\\
+				SAR, optical, infrared, and other data sources introduce heterogeneity in format, scale, and feature representation.
+			};
+			
+			\node[workflowbox, below=of data] (workflow) {
+				\textbf{Task Execution Workflow}\\
+				Multi-step remote sensing analysis requires parameter selection, model execution, intermediate result handling, and output generation.
+			};
+			
+			\node[challengebox, below=of workflow] (challenge) {
+				\textbf{Key Challenges}\\
+				\begin{itemize}
+					\item Token overflow in long-context tasks
+					\item Context loss during multi-step execution
+					\item Parameter inconsistency and error propagation
+				\end{itemize}
+			};
+			
+			% --- Left layer labels ---
+			\node[layerlabel, left=0.8cm of data] (label1) {Data\\Layer};
+			\node[layerlabel, left=0.8cm of workflow] (label2) {Workflow\\Layer};
+			\node[layerlabel, left=0.8cm of challenge] (label3) {Challenge\\Layer};
+			
+			% --- Arrows between main boxes ---
+			\draw[flowarrow] (data.south) -- (workflow.north);
+			\draw[flowarrow] (workflow.south) -- (challenge.north);
+			
+			% --- Dashed arrows from labels to boxes ---
+			\draw[dashed, gray!70] (label1.east) -- (data.west);
+			\draw[dashed, gray!70] (label2.east) -- (workflow.west);
+			\draw[dashed, gray!70] (label3.east) -- (challenge.west);
+			
+		\end{tikzpicture}
+		\caption{Challenges in remote sensing data processing and LLM token limitations. The figure summarizes the complexity of multi-modal data, the multi-step workflow structure, and the main execution challenges observed during the summer project [8][10].}
+		\label{fig:data-challenges}
+	\end{figure}
+	
+	\section{LLM-driven Agent Approaches}
+	LLM-driven agents can decompose tasks, invoke external tools, and access domain knowledge via retrieval-augmented generation (RAG), enhancing performance and maintaining contextual relevance [12][13]. Human-in-the-loop mechanisms in prior studies have demonstrated improved reliability, and this project adopts selective HITL confirmation for resource-sensitive operations [14]. Multi-agent systems such as GeoLLM-Squad achieve higher task correctness, while modular single-agent systems like RS-Agent maintain simpler control flow with high planning accuracy [1][3]. Table~\ref{tab:agent-performance} summarizes conceptual performance metrics across representative systems [1][2][3].
+	
+	\begin{table}[h!]
+		\centering
+		\footnotesize
+		\caption{Performance comparison of LLM-driven agent architectures (conceptual)}
+		\label{tab:agent-performance}
+		\begin{tabular}{lccc}
+			\hline
+			System & Architecture & Task Planning Accuracy & Notes \\
+			\hline
+			GeoLLM-Squad [1] & Multi-agent & 97\% & Urban monitoring, Forestry \\
+			RS-Agent [3] & Modular single-agent & 95\% & Scene classification, Object counting \\
+			GraphCogent [2] & Multi-agent & 98.5\% & Graph reasoning, Token optimization \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	Practical experimentation during the summer project confirmed that modular task decomposition and real-time workflow management improved execution efficiency and reduced error propagation in multi-step remote sensing tasks.
+	
+	\section{RSHub-agent System Overview}
+	RSHub-agent is implemented as a modular, skill-based architecture on the RSHub 2.0 platform [3][5]. The system employs a \textbf{two-layer skill loading strategy} to optimize token usage and workflow efficiency:
+	
+	\subsection{Layered Skill Architecture}
+	\begin{itemize}
+		\item \textbf{Layer 1 – Skill Catalog:} A lightweight directory containing skill IDs, short descriptions, tags, and bound tools [6][7]. The catalog remains in memory for rapid retrieval without consuming excessive tokens.
+		\item \textbf{Layer 2 – Full Skill Documents:} Complete skill documentation is loaded on-demand only when selected by the routing mechanism [7]. This prevents prompt overflow and ensures precise knowledge injection.
+	\end{itemize}
+	
+	\subsection{Skill Routing and Execution Flow}
+	Skills are routed deterministically based on keyword matching and task context. During the summer project, only the necessary skills were activated for each step, reducing redundant processing. Core skills, including tool policy enforcement and response formatting, were always active to maintain consistent operation.
+	
+	\subsection{Input-Output Management and User Interaction}
+	The system provides a structured interface for task specification and execution. Users submit tasks via natural language commands, and the agent converts them into structured task specifications. The Web front-end manages session state, tracks task progress, and provides real-time feedback. Experiments showed that multiple tasks could be processed concurrently while maintaining context consistency.
+	
+	\subsection{Workflow Flowchart}
+	
+	The following flowchart illustrates the complete multi-step task execution process of RS-agent, as well as the operation of the Layered Skill architecture observed during the summer project.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{tikzpicture}[
+			node distance=1cm and 1.2cm,
+			>=Stealth,
+			inputbox/.style={rectangle, draw=blue!60!black, fill=blue!10, minimum width=3.2cm, minimum height=0.9cm, align=center, font=\small},
+			layerbox/.style={rectangle, draw=green!50!black, fill=green!10, minimum width=3.2cm, minimum height=0.9cm, align=center, font=\small},
+			execbox/.style={rectangle, draw=orange!60!black, fill=orange!10, minimum width=3.2cm, minimum height=0.9cm, align=center, font=\small},
+			outputbox/.style={rectangle, draw=purple!60!black, fill=purple!10, minimum width=3.2cm, minimum height=0.9cm, align=center, font=\small},
+			flowarrow/.style={->, thick, draw=black!75}
+			]
+			
+			% Row 1
+			\node[inputbox] (task) {Task Input};
+			\node[inputbox, right=of task] (skill) {Skill Selection};
+			
+			% Row 2
+			\node[layerbox, below=1.5cm of skill] (layer1) {Layer 1 Loading};
+			\node[layerbox, right=of layer1] (layer2) {Layer 2 Loading};
+			
+			% Row 3
+			\node[execbox, below=1.5cm of layer2] (execution) {Skill Execution};
+			
+			% Row 4
+			\node[outputbox, left=of execution] (output) {Output Generation};
+			\node[outputbox, left=of output] (response) {Response to User};
+			
+			% Arrows
+			\draw[flowarrow] (task) -- (skill);
+			\draw[flowarrow] (layer1) -- (layer2);
+			\draw[flowarrow] (skill) -- (layer1);
+			\draw[flowarrow] (layer2) -- (execution);
+			\draw[flowarrow] (execution) -- (output);
+			\draw[flowarrow] (output) -- (response);
+			
+		\end{tikzpicture}
+		\caption{RS-agent multi-step workflow and Layered Skill architecture with improved layout.}
+		\label{fig:workflow-flowchart}
+	\end{figure}
+	
+	\subsection{Stepwise Workflow Description}
+	
+	\begin{table}[H]
+		\centering
+		\footnotesize
+		\caption{RS-agent workflow steps}
+		\label{tab:workflow-steps}
+		\begin{tabular}{l l p{8cm}}
+			\hline
+			Step & Name & Description \\
+			\hline
+			1 & Task Input & User submits a task request. \\
+			2 & Skill Selection & The agent analyzes user intent and determines required skills. \\
+			3 & Layer 1 Loading & Loads a lightweight catalog of all skills (ID, short description, tags). \\
+			4 & Layer 2 Loading & Loads full documentation for selected skills (detailed description, input/output schema, examples). \\
+			5 & Skill Execution & Executes the bound tool or skill logic. \\
+			6 & Output Generation & Aggregates execution results to produce the final response. \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Advantages of the Layered Skill Architecture}
+	
+	\textbf{Layer 1 (Catalog)} – lightweight catalog for fast skill discovery and routing decisions:
+	\begin{itemize}
+		\item Low memory footprint: only skill metadata loaded
+		\item Fast matching: intents matched using tags and descriptions
+	\end{itemize}
+	
+	\textbf{Layer 2 (Full Docs)} – full documentation loaded on demand for precise execution:
+	\begin{itemize}
+		\item Detailed parameters: includes complete input/output schema
+		\item Usage examples: provides concrete call examples
+		\item Dynamic loading: only loaded when selected, conserving context window
+	\end{itemize}
+	
+\section{Research Objectives and Contributions}
+This thesis focuses on improving practical reliability for multi-step remote sensing workflows in RS-agent. Based on iterative use during the summer project, three recurring issues were prioritized: ambiguous submission control, manual synchronization overhead, and prompt/context inflation in long interactions.
+
+The contribution of this work is therefore implementation-oriented rather than architecture-replacement-oriented:
+\begin{enumerate}
+	\item \textbf{HITL confirmation hardening}: strict confirm/cancel gating for submission-sensitive operations, with billing tied only to successful submission.
+	\item \textbf{Git synchronization workflow}: repository-state-aware sync logic with explicit handling for fast-forward, divergence, and conflict paths.
+	\item \textbf{Tiered skill loading}: layer-1 catalog plus selective layer-2 document injection to reduce unnecessary prompt payload.
+\end{enumerate}
+
+These contributions are evaluated in Chapter~\ref{ch:testing-report} with a focus on behavior correctness and operational consistency.
+	
+}

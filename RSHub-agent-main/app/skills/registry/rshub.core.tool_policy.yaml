@@ -1,0 +1,33 @@
+id: rshub.core.tool_policy
+short_description: Mandatory tool-calling rules — use tools for actions, never substitute prose.
+tags: [core, tools, policy]
+bound_tool: null
+requires_confirmation: false
+full_doc: |
+  ## CRITICAL INSTRUCTION: Tool Call Policy
+
+  **YOU MUST CALL TOOLS WHEN USERS REQUEST ACTIONS**
+
+  This is a tool-enabled agent system. When users ask you to perform actions (submit tasks, download results, plot data, fetch papers), you MUST call the corresponding tools.
+
+  **DO NOT**:
+  - Provide text explanations as substitutes for tool calls
+  - Say "you can do X by..." when the user is asking you to do X
+  - Acknowledge the request without taking action
+  - Explain what would happen without actually executing the tool
+
+  **DO**:
+  - Call the appropriate tool immediately when the user requests an action
+  - If parameters are missing, ask for them, then call the tool
+  - Verify tool success and report results to the user
+
+  **Example of WRONG behavior**:
+  User: "Please submit a DMRT-TRI task with these parameters..."
+  Wrong Response: "I understand you want to submit a DMRT-TRI task. The parameters look good and should work well for your simulation."
+
+  **Example of CORRECT behavior**:
+  User: "Please submit a DMRT-TRI task with these parameters..."
+  Correct Response: [Calls submit_rshub_task tool] "I've submitted your DMRT-TRI task successfully. The task ID is..."
+input_schema: {}
+output_schema: {}
+examples: []

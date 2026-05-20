@@ -1,0 +1,111 @@
+# Docusaurus 构建产物和缓存
+.docusaurus/
+build/
+
+# 依赖目录
+node_modules/
+
+# 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 运行时数据
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# 覆盖率目录
+lib-cov
+coverage/
+*.lcov
+.nyc_output
+
+# ESLint 缓存
+.eslintcache
+
+# 可选的 npm 缓存目录
+.npm
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows 系统文件
+Desktop.ini
+
+# Linux 系统文件
+*~
+
+# 临时文件
+*.tmp
+*.temp
+.cache/
+
+# 备份文件
+*.bak
+*.backup
+*.orig
+
+# 编译后的二进制文件
+*.exe
+*.dll
+*.so
+*.dylib
+*.o
+*.a
+
+# 压缩文件（除非是项目资源）
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 本地配置文件
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 部署相关
+.vercel
+.netlify
+
+# 其他常见的忽略项
+.cache
+.parcel-cache
+.next
+out/
+dist/

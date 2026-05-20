@@ -1,0 +1,477 @@
+# Geometric Representation of Wet Snow through A Tri-Continuous Random Composite and Its Scattering Characterization with The Discrete Dipole Approximation
+
+**Jiayi Du**, **Xin Lv**, **Yuanhao Cao**, **Jian Cheng Shi**, *Fellow, IEEE* and **Shurun Tan***, *Member, IEEE*
+
+August 25, 2025
+
+***
+
+**Abstract—Building upon the previously developed bicontinuous random medium model for dry snow, this study presents an enhanced electromagnetic scattering model for wet snow, incorporating explicit treatment of water morphology. The model distinguishes among ice, water, and air phases, and further separates liquid water into discrete droplets and continuous water films through morphological thresholds during structural generation. To analyze the electromagnetic scattering behavior of this three-phase medium, the Discrete Dipole Approximation (DDA) method is employed to solve the volume integral equations. Feasibility of the DDA approach to characterize wet snow scattering is examined. This work then investigates the scattering properties and the effective permittivity of the random media composites at 37 GHz, considering variations in structural parameters, water content, and water morphology. The study further examines how these variations influence the brightness temperatures and backscatter coefficients arising from a wet snow layer. Model performance is then evaluated at Ku- and Ka-bands through comparisons with field observations from the NoSREx 2011 campaign, enabling validation for both active and passive microwave simulations, respectively. The wet snow electromagnetic scattering model developed in this research directly links the wet snow microstructure to its scattering behaviors, and it provides valuable insights for enhancing microwave remote sensing capabilities in snow-covered regions.**
+
+**Index Terms—Wet snow modeling, tri-continuous random medium, DDA, scattering characterization, active and passive microwave remote sensing.**
+
+***
+
+## I. INTRODUCTION
+
+SNOW water equivalent (SWE), the amount of water stored within a snowpack, represents a critical parameter for hydrological forecasting, climatological assessments, and water resource management, including hydropower generation and flood mitigation [1]–[3]. Among various remote sensing techniques, microwave observations are uniquely suited for large-scale SWE monitoring due to their capability to penetrate cloud cover and operate independently of solar illumination. Under dry snow conditions, SWE retrieval primarily relies on volume scattering from ice grains and is influenced by multiple factors, including grain size [4], depth [5], surface roughness, and vegetation cover [6].
+
+Meanwhile, the presence of liquid water within the snowpack introduces significant complexity to SWE retrieval. Mechanically, wet snow exhibits reduced structural stability [7], thereby increasing avalanche risk in mountainous regions [8]. Electromagnetically, the inclusion of liquid water leads to a substantial increase in the complex effective dielectric constant of the snowpack [9], [10], which enhances absorption, increases microwave emission, and suppresses volume scattering. The resulting reduction in penetration depth by over an order of magnitude as liquid water content increases from 0 to 0.5% [11] limits the sensor’s ability to probe deeper snow layers. The elevated permittivity contrast between snow and air further accentuates the interface reflectivity and complicates signal interpretation. Notably, laboratory experiments have shown that snow structural instability can occur at liquid water content levels as low as 0.013 $m^3m^{-3}$ [12], underscoring the importance of accurately capturing phase transitions within the snowpack. The combination of shallow penetration, high electromagnetic sensitivity, and structural instability under wet conditions poses a fundamental challenge to current SWE retrieval algorithms. These limitations motivate the development of advanced physical models that can explicitly represent the microstructure and multiphase composition of wet snow.
+
+In wet snow electromagnetic scattering modeling, geometric characterization of the snow structure is a fundamental step towards accurately representing its intricate internal composition. Several approaches have been proposed to describe the microstructure of wet snow. One commonly used model is the coated-sphere approach, in which ice grains are surrounded by thin layers of liquid water. This geometry has been analyzed using the Quasi-Crystalline Approximation (QCA), as demonstrated in [13], [14], to model electromagnetic wave propagation in melting snow, wet snow, and other composite media. By varying the inner and outer radii of the coated spheres, the model enables control over the water film thickness, thereby capturing its effect on the scattering behavior of the snowpack. Other models simplify wet snow as a two-phase mixture of dry snow and water inclusions, particularly in semi-empirical models such as MEMLS [15], or in theoretical frameworks like the Strong Fluctuation Theory (SFT) [16].
+
+Building on these structural representations, the dielectric properties of wet snow, particularly its effective permittivity, are typically estimated using classical dielectric mixing formulas [17]. Most existing models assume dry snow as the host medium and liquid water as inclusions. For example, the microwave emission model of layered snowpacks (MEMLS) V3 [18] uses the Maxwell-Garnett (MG) dielectric mixing rule [19] with depolarization factors derived from experimental studies by Hallikainen et al. (1986) and Mätzler et al. (1984) [20], [21] to represent prolate spheroidal water inclusions. Besides MG, some models employ the Polder–Van Santen (PVS) mixing rule in conjunction with empirical power-law relations to mix the permittivity of dry snow and water [22]–[24]. Notably, the PVS rule is also capable of modeling three-phase systems directly. For instance, Colbeck (1980) extended it to handle dielectric mixing of air, ice, and liquid water directly, selecting the host medium according to the snow’s physical regime using empirical thresholds based on snow density and liquid water content [25].
+
+Despite the broad use of such mixing models, their simplified assumptions about inclusion geometry and phase connectivity limit their ability to capture the full heterogeneity of wet snow. These dielectric mixing models also neglect the multiple scattering effects within the medium which can potentially be strong at high frequencies. To address these limitations, the present study derives the effective permittivity directly from the full-wave electromagnetic scattering behavior of tri-continuous microstructures. This physics-based approach allows for a more realistic and consistent representation of the interactions between electromagnetic waves and the complex microstructure of wet snow.
+
+Building upon the bi-continuous random medium framework widely used for dry snow [26]–[30], this study proposes a tri-continuous model that explicitly represents wet snow as a three-phase medium consisting of interconnected ice, water and air. The model further separates liquid water into discrete droplets and continuous water films through morphological thresholds during structural generation. The bicontinuous random media framework integrates radiative transfer theory with full-wave analysis to compute the scene backscatter and brightness temperature, and has been successfully validated against multi-channel microwave observations under a variety of snow conditions [27], [31], [32]. By extending this model to include the geometry of liquid water, we aim to better capture the complexity of the microstructure of wet snow. Furthermore, we incorporate the Discrete Dipole Approximation (DDA) into our modeling framework to resolve the scattering properties of irregular structures with varying water morphologies. This enables a more detailed and physically grounded treatment of microwave interactions with wet snow. The focus on Ku and Ka bands is driven by the relatively lower computational demand of the DDA method at these higher frequencies in view of the permittivity contrast and wavelength.
+
+Recent work by Huang et al. [33] introduced a similar tri-continuous model that represents wet snow as a composite medium consisting of interconnected ice, water and air, and applied it to L-band simulations. While their approach shares structural similarities with ours, there are several key differences. First, the Huang et al. model does not distinguish between different water morphologies. Second, the Huang et al. model computes electromagnetic scattering using a finite-difference frequency-domain (FDFD) method. Moreover, the two studies differ in how the effective permittivity of the tri-continuous medium is derived. Huang et al. matches the absorption and total scattering cross sections of the medium to those obtained from Mie scattering, whereas our model determines the effective permittivity by matching the coherent scattering field of the random media with Mie scattering and explicitly links the imaginary part of the effective wavenumber in the medium to the extinction coefficients. A comparative analysis of both permittivity estimation approaches applied at Ka band is presented in Section III-C.
+
+This paper is organized as follows. Section II describes the geometric representation of the wet snow microstructure through the tri-continuous random media. Section III outlines the methodology for scattering characterization of the tri-continuous media, covering the theoretical basis, the derivation of the phase matrix, the scattering and absorption coefficients, and the effective permittivity. Section IV investigates the impacts of various parameters, including the ice microstructure, liquid water content, and water morphology, on snow scattering properties and microwave observations. Section V presents the validation of the proposed tri-continuous model using NoSREx field data [34]. The conclusions are summarized in Section VI. Furthermore, Appendix A assesses the applicability of the DDA to tri-continuous media with high dielectric contrasts, while Appendix B presents convergence analyses on several model’s numerical parameters to justify their choice in simulations.
+
+---
+*Manuscript received xxx; revised xxx.*
+*This work was supported by the National Key Research and Development Program of China under Grant 2022YFB3903300 and Grant 2022YFB3903303. It was also supported by the start-up funds of Zhejiang University.*
+*J. Du, X. Lv, Y. Cao, and S. Tan are with the Zhejiang University-University of Illinois Urbana-Champaign Institute, Zhejiang University, Haining, Zhejiang 314400, China. e-mail: jiayidu@intl.zju.edu.cn*
+*J. C. Shi is with the National Space Science Center, Chinese Academy of Sciences. e-mail: shijc@radi.ac.cn*
+*S. Tan is also with the State Key Laboratory of Extreme Photonics and Instrumentation, Zhejiang University, College of Information Science and Electronic Engineering, Zhejiang University, Hangzhou 310027, China, and the Department of Electrical and Computer Engineering, University of Illinois Urbana-Champaign, Urbana, IL 61801, USA. email: srtan@intl.zju.edu.cn*
+
+## II. GEOMETRIC REPRESENTATION OF WET SNOW MICROSTRUCTURE THROUGH A TRI-CONTINUOUS COMPOSITE
+
+Generating a tri-continuous medium involves transitioning from a two-phase structure of air and ice particles to a three-phase structure comprising air, ice particles, and water (in the form of either water films or independent water droplets). Thus, the most crucial aspect is determining the cutting levels. As illustrated in Fig. 1, $S(\bar{r})$ represents a random process that controls the formation of the snow microstructure. In the tri-continuous medium, the cutting levels $\alpha$, $\beta$, and $\gamma$ are introduced to separate the different components in wet snow, as defined in Eq.(1).
+
+$$
+\text{Medium} = \begin{cases} 
+\text{ice}, & \text{if } S(\bar{r}) \geq \alpha \\
+\text{water film}, & \text{if } \beta \leq S(\bar{r}) < \alpha \\
+\text{air}, & \text{if } \gamma \leq S(\bar{r}) < \beta \\
+\text{water droplet}, & \text{if } S(\bar{r}) < \gamma
+\end{cases} \tag{1}
+$$
+
+![Figure 1: Illustration of the cutting levels in the tri-continuous three-phase random media](Figure_1_Description)
+*Fig. 1: Illustration of the cutting levels in the tri-continuous three-phase random media*
+
+Equation (2) describes the generation of the random process $S(\bar{r})$ [13].
+
+$$
+S(\bar{r}) = \frac{1}{\sqrt{N}} \sum_{n=1}^{N} \cos(\bar{\zeta}_n \cdot \bar{r} + \phi_n) \tag{2}
+$$
+
+The function $S(\bar{r})$ serves as a stochastic process dictating the generation of the snow structure, where $\bar{\zeta}_n = \zeta_n \hat{\zeta}_n$ is a random wave vector with a direction uniformly distributed in 3D space, and $\phi_n$ is a random phase uniformly distributed between 0 and $2\pi$. $N$ is a large integer and assumes a value of $10^4$ in the following reported results. $\langle\zeta\rangle$ and $b$ specifies the distribution of the random variable $\zeta$, i.e., the magnitude of the wave vector, as shown in Eq. (3). $\zeta$ is typically chosen to follow a Gamma distribution with a probability density function $p_G(\zeta)$ [26], [35].
+
+$$
+p_G(\zeta) = \frac{b+1}{\Gamma(b+1)\langle\zeta\rangle} \left[ (b+1) \frac{\zeta}{\langle\zeta\rangle} \right]^b \exp \left( -(b+1) \frac{\zeta}{\langle\zeta\rangle} \right) \tag{3}
+$$
+
+The key to establishing the structure of wet snow is determining the cutting levels. The volume fractions for each substance are linked to the cutting levels as reported in Eq. (4), where $\text{erf}(\cdot)$ is the error function, $f_v^{\text{ice}}$ is the fractional volume of ice, $f_v^{\text{water film}}$ is the fractional volume of water films, and $f_v^{\text{water drop}}$ is the fractional volume of water drop, respectively.
+
+$$
+\begin{cases}
+f_v^{\text{ice}} &= \frac{1}{2} [1 - \text{erf}(\alpha)] \\
+f_v^{\text{water film}} &= \frac{1}{2} [(\text{erf}(\alpha) - \text{erf}(\beta))] \\
+f_v^{\text{water drop}} &= \frac{1}{2} [1 - \text{erf}(-\gamma)]
+\end{cases} \tag{4}
+$$
+
+Once the structural parameters $b$, $\langle\zeta\rangle$, $\alpha$, $\beta$, and $\gamma$ are specified, the microstructural characteristics of wet snow are fully described. As illustrated in Fig. 2, various combinations of $b$ and $\langle\zeta\rangle$, along with different liquid water content levels, are used to generate the corresponding cross-sectional views of the wet snow structure. All simulations are conducted with a sample size of $L = 10 \text{ mm}$, an ice volume fraction of 0.3, a liquid water fraction of 0.02 and 0.1, respectively, with droplets and film in a 3:7 ratio. In Fig. 2, the media are discretized into elementary cubes with a size length $d = 0.05 \text{ mm}$, and the sample is truncated into a spherical shape.
+
+![Figure 2: Visualization of cross sectional structures and the corresponding internal field distribution pattern associated with the tri-continuous random media.](Figure_2_Description)
+*Fig. 2: Visualization of cross sectional structures and the corresponding internal field distribution pattern associated with the tri-continuous random media.*
+
+The linkage between the tri-continuous random medium parameters and in situ snow field observations are summarized as follows. (i) The total liquid water content $\text{lwc} = f_v^{\text{water}} = f_v^{\text{water film}} + f_v^{\text{water drop}}$, while the total liquid water content can be potentially measured through heat capacity measurement or through indirect measurement of the effective permittivity of the wet snow at a low frequency. (ii) The density of wet snow $\rho$ is related to the volume fractions through $\rho = f_v^{\text{ice}} \rho_{\text{ice}} + f_v^{\text{water}} \rho_{\text{water}}$ where $\rho_{\text{ice}}$ and $\rho_{\text{water}}$ are the densities of ice and water, respectively. (iii) The structural parameters $b$ and $\langle\zeta\rangle$ are linked to the ice grain morphology. As the tri-continuous media microstructure can be viewed as a perturbation to the bicontinuous random media of the same $f_v^{\text{ice}}$, $\langle\zeta\rangle$ and $b$, earlier experiences in determining $\langle\zeta\rangle$ and $b$ for the bicontinuous media [32] can be adopted. The inverse grain size parameter $\langle\zeta\rangle$ is considered to be inversely proportional to the ice grain size, while the shape parameter $b$ is related to the ice grain size distribution with a large $b$ linked to more uniformly distributed grain sizes. (iv) The separation of the total liquid water content $\text{lwc} = f_v^{\text{water}}$ into water film $f_v^{\text{water film}}$ and water drop $f_v^{\text{water drop}}$ can be potentially linked to an empirical mean water film thickness, which can be multiplied to the specific surface area (SSA) of the underlying bicontinuous media to figure out the water film volume fraction. The relation between SSA, defined as the ice surface area per unit volume, and the structural parameter of the bicontinuous media is reported in [26] and restated in Eq. (5) correcting a typo in the exponent in [26]. How the water component in wet snow affects the measurements of SSA is worth further examination.
+
+$$
+SSA = \frac{2\langle\zeta\rangle}{\pi\sqrt{3}} \sqrt{\frac{b+2}{b+1}} e^{-\alpha^2} \tag{5}
+$$
+
+## III. SCATTERING CHARACTERIZATION OF THE TRI-CONTINUOUS MEDIA AND RADIATIVE TRANSFER MODELING OF A WET SNOWPACK
+
+### A. Field Analysis of The Tri-Continuous Composite through Discrete Dipole Approximation
+
+Field analysis of a three-phase tri-continuous media structure is used to simulate microwave scattering in wet snow. A time convention of $\exp(-i\omega t)$ is adopted in the formulation for the wave analysis. By solving the volume integral equation Eq. (6), we can get the electric field distribution $\bar{E}(\bar{r})$ of the medium in space:
+
+$$
+\bar{E}(\bar{r}) = \bar{E}^{\text{inc}}(\bar{r}) + \frac{k^2}{\varepsilon} \int_{V} d\bar{r}' \bar{\bar{G}}(\bar{r}, \bar{r}') \cdot [\varepsilon_r(\bar{r}) - \varepsilon]\bar{E}(\bar{r}') \tag{6}
+$$
+
+where $k = \omega\sqrt{\mu\varepsilon}$ is the wavenumber in free space, representing the background media, $\bar{E}^{\text{inc}}$ is the incident electric field, and $\bar{\bar{G}}(\bar{r}, \bar{r}')$ is the dyadic Green’s function in the background media with permittivity $\varepsilon$ and permeability $\mu$. The permittivity distribution $\varepsilon_r(\bar{r})$ depends on the medium indicator function $\Theta(\bar{r})$:
+
+$$
+\varepsilon_r(\bar{r}) = \begin{cases}
+\varepsilon & \Theta(\bar{r}) = \text{air} \\
+\varepsilon_i & \Theta(\bar{r}) = \text{ice} \\
+\varepsilon_w & \Theta(\bar{r}) = \text{water}
+\end{cases} \tag{7}
+$$
+
+where $\varepsilon_i$ and $\varepsilon_w$ are relative permittivities of ice and water, respectively. A snow block of volume $V$ is subdivided into $N$ cubic units of equal volume where $\Delta V = V/N = d^3$ and $d$ is the length of each elementary cube. The dipole moment in the $i$th cube is
+
+$$
+\bar{p}_i = \Delta V (\varepsilon_{ri} - \varepsilon)\bar{E}(\bar{r}_i) \tag{8}
+$$
+
+in which $\bar{r}_i$ is the center of the $i$th cube. The excited dipole moment $\bar{p}_i$ in each cubic element is computed by solving the VIE, Eq. (6), through discrete dipole approximation (DDA), Eq. (9) [26].
+
+$$
+\bar{p}_i = \alpha_i \bar{E}^{\text{inc}}(\bar{r}_i) - \alpha_i \sum_{j=1, j\neq i}^{N} \bar{\bar{A}}_{ij} \cdot \bar{p}_j \tag{9}
+$$
+
+where the matrix elements $\bar{\bar{A}}_{ij} = -\frac{k^2}{\varepsilon} \bar{\bar{G}}(\bar{r}_i, \bar{r}_j)$, $\alpha_i$ is the polarizability of the $i$th elementary cube,
+
+$$
+\alpha_i = \frac{\alpha_i^C}{1 - \frac{\alpha_i^C}{4\pi\varepsilon d^3} [(\frac{4\pi}{3})^{\frac{1}{3}} k^2 d^2 + \frac{i2k^3d^3}{3}]} \tag{10}
+$$
+
+where
+
+$$
+\alpha_i^C = 3\varepsilon d^3 \frac{\varepsilon_r(\bar{r}_i) - \varepsilon}{\varepsilon_r(\bar{r}_i) + 2\varepsilon} \tag{11}
+$$
+
+Fast algorithms utilizing Fast Fourier Transforms (FFTs) are employed to accelerate the matrix-vector multiplication $\bar{\bar{A}}\bar{p}$ within a Generalized Minimal Residual (GMRES) iterative solver [36].
+
+To characterize the scattering properties of the tri-continuous medium, the random media sample is truncated into spherical shapes with a diameter on the order of wavelengths. The spherical truncation shape is chosen to maximize symmetry and to facilitate the computing of effective permittivity to be presented in Section III-C. A plane wave propagating along the $\hat{z}$-axis is used as the incident field without loss of generality, given the statistical isotropy of the medium. The electric field of the incident wave is chosen as $\bar{E}_{\text{inc}}(\bar{r}) = \hat{y}e^{ikz}$. A Monte Carlo procedure is then followed on multiple random media samples to derive stochastic scattering properties of the random medium. The feasibility of DDA in handling water components with large permittivity contrast as encountered in wet snow scattering is examined in Appendix A.
+
+After $\bar{p}_i$ is solved by Eq. (9), the internal field $\bar{E}(\bar{r}_i)$ and far field $\bar{E}_s(\bar{r}_i)$ in the 1-2 polarization frame [37], [38] can be deduced. Figure 2 visualizes the spatial distribution of the internal field within representative tri-continuous medium structures. It is observed that regions with higher permittivity, such as liquid water, exhibit lower internal field magnitudes due to increased attenuation. Conversely, field intensities are enhanced in the vicinity of dielectric interfaces, especially around water droplets, where strong permittivity contrast leads to localized field concentration. These internal field patterns provide physical insight into the interaction mechanisms between electromagnetic waves and the heterogeneous microstructure of wet snow.
+
+$$
+\bar{E}(\bar{r}_i) = \begin{cases}
+\bar{E}^{\text{inc}}(\bar{r}_i) + \sum_{j=1, j\neq i}^{N} \bar{\bar{A}}_{ij} \bar{p}_j & \Theta(\bar{r}_i) = \text{air} \\
+\frac{1}{\Delta V (\varepsilon_{ri} - \varepsilon)} \bar{p}_i & \Theta(\bar{r}_i) = \text{ice or water}
+\end{cases} \tag{12}
+$$
+
+The scattering far field $\bar{E}_s(\bar{r}_i)$ is computed from Eq. (13) through a far field approximation of the dyadic Green’s function [26],
+
+$$
+\bar{E}_s(\bar{r}) = \frac{\exp(ikr)}{4\pi r} \frac{k^2}{\varepsilon} (\hat{1}_s \hat{1}_s + \hat{2}_s \hat{2}_s) \cdot \sum_{n} \exp(-i \bar{k}_s \cdot \bar{r}_n) \bar{p}_n \tag{13}
+$$
+
+where $\hat{1}_i = \hat{1}_s = \frac{\hat{k}_s \times \hat{k}_i}{|\hat{k}_s \times \hat{k}_i|}$, $\hat{2}_i = \hat{k}_i \times \hat{1}_i$, $\hat{2}_s = \hat{k}_s \times \hat{1}_s$ defines the 1-2 frame. $\hat{k}_i$ and $\hat{k}_s$ represent the propagation direction of the incident field and the scattered field, respectively. The scattering field $\bar{E}_s(\bar{r}_i)$ is linked to the scattering amplitude $f(\hat{k}_i, \hat{k}_s)$ through
+
+$$
+\bar{E}_s(\bar{r}) = \hat{e}_s f(\hat{k}_i, \hat{k}_s) E_0 \exp\left(\frac{ikr}{r}\right) \tag{14}
+$$
+
+### B. Phase Matrix, Scattering Coefficient, and Absorption Coefficient
+
+The derivation of the scattering characteristics of tri-continuous random composites, including the phase matrix, the scattering coefficient, and the absorption coefficient, resembles that of the bicontinuous media as documented in [26]. The procedure is briefly summarized in this subsection for completeness.
+
+The random media redistributes the power of coherent waves into the incoherent field. To separate coherent and incoherent components, we compute the ensemble average of the scattering amplitude over $N_r$ samples to obtain the coherent component [37],
+
+$$
+f^{\text{coh}}(\hat{k}_s, \hat{k}_i) = \frac{1}{N_r} \sum_{n=1}^{N_r} f^{(n)}(\hat{k}_s, \hat{k}_i) \tag{15}
+$$
+
+where $f^{(n)}(\hat{k}_s, \hat{k}_i)$ represents the scattering amplitude of the $n$th sample. For each realization $n$, the incoherent scattering amplitude is defined as the deviation from the coherent average [37],
+
+$$
+f^{\text{inc}, (n)}(\hat{k}_s, \hat{k}_i) = f^{(n)}(\hat{k}_s, \hat{k}_i) - f^{\text{coh}}(\hat{k}_s, \hat{k}_i) \tag{16}
+$$
+
+The incoherent bistatic scattering cross section is linked to the intensity of the incoherent scattered field through [37]:
+
+$$
+\sigma_{bi}(\hat{k}_s, \hat{k}_i) = \frac{1}{N_r} \sum_{n=1}^{N_r} \left| f^{\text{inc}, (n)}(\hat{k}_s, \hat{k}_i) \right|^2 \tag{17}
+$$
+
+The phase matrix $P(\hat{k}_s, \hat{k}_i)$ is defined as the incoherent bistatic scattering cross-section per unit volume [37]:
+
+$$
+P(\hat{k}_s, \hat{k}_i) = \frac{1}{V} \sigma_{bi}(\hat{k}_s, \hat{k}_i) \tag{18}
+$$
+
+where $V$ is the volume of the truncated spherical random medium sample. The scattering coefficient is obtained by integrating the phase matrix over the $4\pi$ solid angle [37], [38],
+
+$$
+\kappa_s = \pi \int_{0}^{\pi} d\Theta \sin\Theta \left( P_{11}(\Theta) + P_{22}(\Theta) + P_{12}(\Theta) + P_{21}(\Theta) \right) \tag{19}
+$$
+
+utilizing the polarized components of the phase matrix $P$ in the 1-2 frame and averaged over the two incident polarizations. The absorption coefficient is derived from the internal field in the medium through an ensemble average $\langle\cdot\rangle$ [37],
+
+$$
+\kappa_a = \frac{1}{V} \frac{k}{\varepsilon} \frac{1}{|\bar{E}^{\text{inc}}|^2} \left\langle \int_{V} \varepsilon''_p(\bar{r}') |\bar{E}_{\text{int}}(\bar{r}')|^2 \right\rangle \tag{20}
+$$
+
+The extinction coefficient $\kappa_e$ is obtained by adding up the scattering coefficient and the absorption coefficient,
+
+$$
+\kappa_e = \kappa_s + \kappa_a \tag{21}
+$$
+
+### C. The Effective Permittivity
+
+This section details a physics-based approach to deriving the effective permittivity of tri-continuous media. Rather than relying on simplified shape assumptions and dielectric mixing rules, the method estimates permittivity directly from the full wave electromagnetic scattering characteristics of the tri-continuous medium.
+
+Figure 3 illustrates the methodology to compute the effective permittivity of the tri-continuous media. The effective permittivity is linked to the effective wavenumber $K = K' + iK''$ of the composite through $\varepsilon_{\text{eff}} = (K/k)^2$ later referred to as Method M1-2. The real part of the wavenumber $K'$ is calculated by matching the coherent scattering field of the random media $\bar{E}^{\text{coh}}_s(\Theta)$ with the scattering field from a homogeneous sphere $\bar{E}^{\text{Mie}}_s(\Theta; \varepsilon_s)$ with a complex permittivity $\varepsilon_s$ as described in Eq. (22) and Eq. (23), The resulting effective permittivity $\hat{\varepsilon}_{\text{eff}}$ in Eq. (22) is labeled as Method M1-1.
+
+$$
+\hat{\varepsilon}_{\text{eff}} = \arg \min_{\varepsilon_s} \int_{0}^{\pi} d\Theta \left| \bar{E}^{\text{coh}}_s(\Theta) - \bar{E}^{\text{Mie}}_s(\Theta; \varepsilon_s) \right|^2 \tag{22}
+$$
+
+$$
+K' = \Re(k\sqrt{\hat{\varepsilon}_{\text{eff}}}) \tag{23}
+$$
+
+where $\Theta$ is the scattering angle in the 1-2 frame [37], [38], and $\Re(\cdot)$ represents taking the real part of a complex number. The imaginary part of the wavenumber $K''$ is calculated from the extinction coefficient $\kappa_e$ through $K'' = \kappa_e/2$.
+
+![Figure 3: The methodology of deriving effective permittivity](Figure_3_Description)
+*Fig. 3: The methodology of deriving effective permittivity*
+
+An alternative approach, Method M-2, is also implemented to estimate the effective permittivity of the tri-continuous media, following the methodology in [33]. This method determines the complex effective permittivity of the random composite by matching its normalized absorption cross section $Q^{\text{abs}}_{\text{Med}}$ and the normalized total scattering cross section $Q^{\text{sca}}_{\text{Med}}$ with those of a homogeneous sphere, $Q^{\text{abs}}_{\text{Mie}}(\varepsilon_s)$ and $Q^{\text{sca}}_{\text{Mie}}(\varepsilon_s)$, respectively, with a complex permittivity $\varepsilon_s$, as computed using the Mie theory,
+
+$$
+\varepsilon_{\text{eff}} = \arg \min_{\varepsilon_s} \left( \left| \frac{Q^{\text{abs}}_{\text{Med}} - Q^{\text{abs}}_{\text{Mie}}(\varepsilon_s)}{Q^{\text{abs}}_{\text{Med}}} \right| + \left| \frac{Q^{\text{sca}}_{\text{Med}} - Q^{\text{sca}}_{\text{Mie}}(\varepsilon_s)}{Q^{\text{sca}}_{\text{Med}}} \right| \right) \tag{24}
+$$
+
+where $Q^{\text{sca}}_{\text{Med}} = \sigma_a/\sigma_g$ and $Q^{\text{sca}}_{\text{Med}} = \sigma^{\text{tot}}_s/\sigma_g$ in which $\sigma_g = \pi(L/2)^2$ is the geometric cross section of the truncating sphere. $L$ represents the sample size, i.e., the diameter of the truncating sphere, $\sigma_a = V\kappa_a$ is the averaged absorption cross section of the truncated random media sample, and $\sigma^{\text{tot}}_s = \iint d\Omega_s \langle |f(\hat{k}_s, \hat{k}_i)|^2 \rangle$ represents the averaged total scattering cross section of the truncated random media sample. Note $\sigma^{\text{tot}}_s$ can be estimated following a similar procedure to Eqs. (17-19) and $\sigma_s = V\kappa_s$ by replacing $f^{\text{inc}, (n)}$ in Eq. (17) to $f^{(n)}$.
+
+Figure 4(a) compares the effective permittivities derived from Methods M1-1, M1-2, and M2, respectively. The tri-continuous media parameters are specified as $f_v^{\text{ice}} = 0.3$, $b = 1.2$, $\langle\zeta\rangle = 10000$, and the water film and water drop ratio is 7:3. The results are computed at 37 GHz. It is noted that the real parts of the derived permittivities show strong consistency, while imaginary components vary across the approaches (M1-2 > M1-1 > M2). Figure 4(b) illustrates the scattering amplitudes of the matching spheres with these several $\varepsilon_{\text{eff}}$ corresponding to the random media. The scattering amplitudes are all highly consistent with the coherent scattering field of the random medium sample. This confirms that the coherent scattering field matching effectively determines the real part of the permittivity, but exhibits limited sensitivity to the imaginary component. Finally, Fig. 4(c) compares the absorption coefficient $\kappa_a$ and the extinction coefficient $\kappa_e$ directly derived from DDA simulations with $2K''$ computed from the effective permittivities. As expected, M1-2 derived $2K''$ matches DDA-computed $\kappa_e$ exactly across all wetness levels. In contrast, the $2K''$ values obtained from Methods M1-1 and M2 show no clear correlation with either $\kappa_a$ and $\kappa_e$. These results demonstrate that the proposed method enforces the physical linkage between the bulk extinction behavior of random media and its effective permittivity.
+
+The methodology presented in the previous several subsections involves a few numerical parameters, including the number of random realizations in the Monte Carlo simulation ($N_r$), the sample size ($L$), and the discretization precision of the random media ($d$). To balance accuracy and computational efficiency in deriving the scattering properties of the tri-continuous random media, a comprehensive convergence analysis is conducted and presented in Appendix B to assess the sensitivity of the random media scattering characteristics to these numerical parameters. The analysis informs the selection of model parameters throughout this study.
+
+### D. Predicting The Microwave Observables of A Wet Snowpack
+
+A multi-layered radiative transfer framework [39] is adopted to derive the brightness temperatures and radar scattering coefficients from a wet snowpack. The radiative transfer equation, as illustrated in Eq. (25),
+
+$$
+\frac{dI(\bar{r}, \hat{s})}{ds} = -\kappa_e I(\bar{r}, \hat{s}) + \int ds' P(\hat{s}, \hat{s}') I(\bar{r}, \hat{s}') + \kappa_a C T \tag{25}
+$$
+
+governs the microwave intensity $I(\bar{r}, \hat{s})$ inside a snowpack and takes the scattering characteristic parameters of the tri-continuous media, representing snow in different layers, to specify the equation.
+
+In Eq. (25), the intensity $I(\bar{r}, \hat{s}')$ is a function of the position $\bar{r}$ and the propagation direction $\hat{s}'$. $P(\hat{s}, \hat{s}')$ is the phase matrix defined in the principal frame, linked to the phase matrix in 1-2 frame through a coordinate transformation [39], which quantifies the scattering of radiation from direction $\hat{s}$ to $\hat{s}'$. The term $\kappa_a CT$ represents emissions from the random medium itself, where $T$ denotes the physical temperature of the medium in Kelvin, and $C = (K'/k)^2 K_B/\lambda^2$, where $K_B$ is the Boltzmann constant, $\lambda$ is the free-space wavelength, $k$ is the free-space wavenumber, and $K'$ is the real part of the effective propagation constant (or wavenumber) of the random media.
+
+## IV. RESULTS AND DISCUSSION
+
+The results are organized into two primary parts to provide a clear and systematic analysis of the scattering and emission characteristics of wet snow using the tri-continuous medium model. The first part addresses the impact of ice microstructure, exploring how variations in grain size and aggregation affect microwave scattering properties. The second part investigates the effects of wetness and water morphology, focusing on how liquid water content and its formation influence the scattering and microwave properties. All simulations are conducted at 37GHz, assuming an ice volume fraction of 0.3 and a snowpack depth of 5cm over a flat soil surface. The ground temperature is set to 273K, with a soil moisture content of 0.2 and a clay fraction of 0.3. The soil permittivity is calculated using a physically and mineralogically based spectroscopic dielectric model (MBSDM) [40]. Surface backscattering is computed using the Oh (OH) model [41]. The bottom interface reflectivity is calculated using a Quasi-Specular (QH) model, with effective Q and H parameters adjusted to correspond to an RMS roughness based on an empirical relationship between Q, H and surface roughness [42]. For wet snow scenarios, water content and morphology are varied while maintaining other parameters, allowing for direct comparison of different cases.
+
+### A. Effects of Ice Microstructure on Snow Scattering Characteristics and Microwave Observations
+
+Based on the convergence analysis of DDA parameters, the optimal numerical settings—number of realizations ($N_r = 200$), discretization size ($d = 0.05 \text{ mm}$), and sample size ($L = 10 \text{ mm}$)—are selected to solve the volume integral equation for the tri-continuous medium and to analyze its scattering characteristics. This section examines the impact of structural parameters $b$ and $\langle\zeta\rangle$ on scattering properties and microwave observations at 37 GHz. Three scenarios were tested: a liquid water content of 0, 0.02, 0.1, each with an ice volume fraction of 0.3 and a water-drop film ratio of 3 : 7. The parameter ranges were set as $b \in [0.5, 1.2, 2]$, and the value range of $\langle\zeta\rangle$ in $[5000, 10000, 15000]$.
+
+Results in Fig. 5 show that increasing $\langle\zeta\rangle$ leads to a decrease in both $\kappa_s$ and $\kappa_a$. The aggregation parameter $b$ mainly affects the $\kappa_s$ with less impact on $\kappa_a$. At lower wetness, ice crystals dominate, so changes in $b$ have a significant impact on $\kappa_s$. As wetness increases, the $\kappa_s$ decreases and becomes less sensitive to both $b$ and $\langle\zeta\rangle$. However, $\langle\zeta\rangle$ still has a notable impact on $\kappa_a$ when the wetness is high. As $\langle\zeta\rangle$ increases, the specific surface area (SSA) also increases, altering the interaction of snow with water. With a constant water content, this results in a thinner water film and reduces absorption. The thinner water film diminishes the effective interaction between microwave radiation and the snow medium, leading to lower absorption values. The results of Fig. 6 reveal that both $b$ and $\langle\zeta\rangle$ have the same impact on the copolarized (co-po) and cross-polarized (cross-po) phase matrices. It is also noted that the wetness has a more profound impact on the co-pol phase matrix elements than the cross-pol counterparts. Regarding permittivity (Fig. 7), both the real and imaginary parts of permittivity are significantly influenced by $\langle\zeta\rangle$, with $\langle\zeta\rangle$ having a greater impact compared to $b$.
+
+![Figure 4: Comparison of Methods M1-1, M1-2 and M2 in deriving the effective permittivity.](Figure_4_Description)
+*Fig. 4: Comparison of Methods M1-1, M1-2 and M2 in deriving the effective permittivity. (a) Real part and imaginary of the effective permittivity $\varepsilon_{\text{eff}}$; (b) Scattering amplitudes; (c) Relationship between $2k''$ linked to the effective permittivity and the random media absorption coefficient $\kappa_a$ and extinction coefficient $\kappa_e$*
+
+![Figure 5: Effects of ice microstructure on tri-continuous media absorption and scattering coefficient](Figure_5_Description)
+*Fig. 5: Effects of ice microstructure on tri-continuous media absorption and scattering coefficient*
+
+To gain insights into the effects of snow structure on microwave observations, we conducted simplified simulations using a uniform 5 cm snow layer. It is crucial to note that real snowpacks are typically more complex, consisting of multiple layers with varying densities, grain sizes, and wetness profiles, especially during melting. Therefore, these simulations offer qualitative insight rather than an exact replication of natural conditions.
+
+Figure 8 illustrates that at lower wetness levels, lower $b$ and higher $\langle\zeta\rangle$ lead to higher brightness temperatures ($T_b$). However, as wetness increases, the sensitivity of $T_b$ to changes in structural parameters diminishes, indicating that microwave emission becomes increasingly dominated by liquid water content rather than microstructural variability. In contrast, as shown in Fig. 9, the radar backscattering coefficient ($\sigma$) consistently decreases with greater $\langle\zeta\rangle$ and lower $b$, regardless of wetness level. This highlights that radar backscatter remains sensitive to snow microstructure even under wet conditions.
+
+### B. Effects of Wetness and Water Morphology on Snow Scattering Characteristics and Microwave Observations
+
+To investigate the influence of wetness and water morphology on microwave scattering properties, we fix structural parameters $b$ and $\langle\zeta\rangle$ and systematically vary the water content and its morphological form. Figure 10 illustrates the effects of wetness on $\kappa_a$ and $\kappa_s$ under different water morphologies. Our results show that both wetness and water morphology significantly influence the scattering characteristics of wet snow, a phenomenon largely overlooked by MEMLS [15], which assumes wetness has minimal impact on scattering. Notably, the tri-continuous model reveals a non-monotonic relationship between scattering and wetness, especially under varying morphological configurations. This underscores a major advancement of our model in capturing complex snow–microwave interactions that legacy models fail to represent.
+
+![Figure 6: Effects of ice microstructure on tri-continuous media phase matrix](Figure_6_Description)
+*Fig. 6: Effects of ice microstructure on tri-continuous media phase matrix*
+
+![Figure 7: Effects of ice microstructure on tri-continuous Media permittivity](Figure_7_Description)
+*Fig. 7: Effects of ice microstructure on tri-continuous Media permittivity*
+
+Figure 11 demonstrates the impact of wetness and water morphology on effective permittivity, showing that water morphology has a larger impact on the imaginary part of permittivity than on the real part. The imaginary part is more sensitive to changes in water morphology, particularly as water content increases. This behavior can be attributed to the enhanced absorption of microwave radiation, which is more closely linked to the imaginary component of permittivity. As water morphology transitions from film to droplet, the absorption characteristics of the tri-continuous medium are influenced by the size and distribution of water, leading to noticeable changes in the imaginary part.
+
+The influence of water morphology on the scattering phase matrix is shown in Fig. 12. We find that its effect is more pronounced at lower wetness levels, indicating that subtle changes in the spatial distribution of water have greater implications in the early stages of melting. This provides valuable insight into how water-phase related scattering varies across melting cycles.
+
+![Figure 8: Effects of ice microstructure on tri-continuous media brightness temperature](Figure_8_Description)
+*Fig. 8: Effects of ice microstructure on tri-continuous media brightness temperature*
+
+![Figure 9: Effects of ice microstructure on tri-continuous media backscatter coefficient](Figure_9_Description)
+*Fig. 9: Effects of ice microstructure on tri-continuous media backscatter coefficient*
+
+Figure 13 further quantifies how $\kappa_a$ and $\kappa_s$ evolve with droplet volume. At low liquid water contents, increasing droplet volume leads to higher absorption and lower scattering. However, at higher wetness, both coefficients exhibit non-monotonic trends, initially decreasing before rising again. This complex behavior, accurately captured by our tri-continuous framework, reflects how the microstructural configuration of water within the snowpack modulates electromagnetic interactions across varying melting conditions.
+
+To further understand the impact of wetness and water morphology on microwave signatures, simplified simulations of a single snow layer with a uniform thickness of 5cm are conducted. The results in Fig. 14 indicate that as water content increases, Tb initially rises and then decreases. The influence of water phase on Tb is most pronounced when water content is between 1% and 4%. For the radar backscatter $\sigma$, it decreases as water content increases, with the effect of water morphology being more significant when water content is between 2% and 6%.
+
+Figure 15 shows that changes in water morphology lead to a maximum difference of 6K in Tb and 7dB in backscatter at 2% wetness. As wetness increases, the effect of water droplet proportion on microwave signatures diminishes. These findings contribute to improving the interpretation of microwave observations and provide a solid foundation for enhancing SWE retrieval accuracy.
+
+However, this level of sensitivity is not universal across all snow configurations. Structural parameters such as the ice volume fraction, grain size $\langle\zeta\rangle$, and aggregation parameter ($b$) influence how water morphology (film vs. droplet) interacts with microwave radiation. These parameters affect the spatial distribution and connectivity of liquid water, potentially altering how strongly a change in morphology impacts the brightness temperature and radar backscatter. As a result, the sensitivity of water morphology may vary depending on the underlying structural parameters, highlighting the complex interplay between snow structure and wetness in determining microwave responses.
+
+![Figure 10: Effects of wetness on tri-continuous media absorption and scattering coefficient](Figure_10_Description)
+*Fig. 10: Effects of wetness on tri-continuous media absorption and scattering coefficient*
+
+![Figure 11: Effects of wetness on tri-continuous media permittivity](Figure_11_Description)
+*Fig. 11: Effects of wetness on tri-continuous media permittivity*
+
+## V. MODEL VALIDATION WITH NOSREX DATA
+
+To validate the proposed model, we compare simulated microwave observables with field measurements from the Nordic Snow Radar Experiment (NoSREx), conducted by the Finnish Meteorological Institute (FMI) and supported by the European Space Agency (ESA) between 2009 and 2012 [34]. For this analysis, we selected a representative dataset from a wet snow period in November 2010. The NoSREx dataset provides comprehensive snowpack information, including multi-layer snow density, snow depth, grain size, and temperature profiles. The dataset also includes brightness temperature observations across the L, X, Ku, Ka, and W bands, as well as radar backscatter measurements at X and Ku bands. The model validation with the NoSREx dataset are conducted at 37GHz and 16.7GHz for passive and active microwave observations, respectively.
+
+![Figure 12: Effects of wetness on tri-continuous media phase matrix](Figure_12_Description)
+*Fig. 12: Effects of wetness on tri-continuous media phase matrix*
+
+![Figure 13: Effects of water morphology on tri-continuous media absorption and scattering coefficient](Figure_13_Description)
+*Fig. 13: Effects of water morphology on tri-continuous media absorption and scattering coefficient: Use left and right vertical axes for wetness of 2% and 10%, respectively.*
+
+![Figure 14: Effects of wetness on brightness temperature and scattering coefficient](Figure_14_Description)
+*Fig. 14: Effects of wetness on brightness temperature and scattering coefficient*
+
+![Figure 15: Effects of water morphology on tri-continuous media brightness temperature and backscatter coefficient](Figure_15_Description)
+*Fig. 15: Effects of water morphology on tri-continuous media brightness temperature and backscatter coefficient*
+
+The validation of the proposed wet snow model is designed to systematically analyze the individual contributions of the wet snow layer and the underlying dry snow layers to the microwave signature. To this end, four distinct simulation scenarios are employed: (i) the full-physics tri-continuous media model, which incorporates realistic scattering and absorption effects of wet snow; (ii) a no-scattering scenario that isolates absorption by explicitly setting scattering coefficients and phase matrix elements to zero in the first scenario; (iii) a dry-snow scattering scenario that combines dry snow scattering with wet snow absorption to evaluate the impact of inaccurate scattering assumptions; and (iv) a dry snow model as a baseline comparison reference. This strategy is adopted to clarify the complex interactions between scattering and absorption mechanisms in wet snowpacks, which are often difficult to disentangle in a coupled system. Due to the high computational cost and storage demands associated with parameter optimization particularly when using the tri-continuous media - DDA method, the microstructure parameters and water morphology are pre-determined in simulation. Specifically, the structural parameter $b$ was fixed at 1.2, while $\langle\zeta\rangle$ is estimated using an empirical relationship with grain size, $\langle\zeta\rangle = \eta/a$, where $a$ is the visual grain size in meters from in situ snowpack measurements, and the coefficient $\eta$ is set to 15, following [32]. For consistency, the water drop morphology is used to represent liquid water in wet snow across all scenarios.
+
+The snowpack profile used in all simulations consists of six layers with a total depth of approximately 56 cm as shown in Fig. 16. The top and bottom layers exhibit relatively higher wetness values, while the snow density generally decreases with depth, reflecting typical late winter conditions. Notably, the wetness of the bottom snow layer may be influenced by the underlying soil, introducing uncertainty into both in situ measurements and model inputs for that layer. To ensure consistency, the same snowpack configuration is applied across all scenarios. Additionally, due to variability in surface and snow conditions across incidence angles, it is impractical to optimize a single set of model parameters that performs well for all cases. Therefore, parameter optimization was performed at a 40° incidence angle, and the resulting parameters are then applied across the full angular range of 30°–60°. All simulations are conducted under consistent surface and environmental boundary conditions, including a ground temperature of 273 K, snow/soil interface roughness with an RMS height of 0.2 cm, soil moisture content of 0.2, and a clay fraction of 0.3. The soil permittivity and surface scattering models are the same as those employed in Section IV.
+
+Figure 17 shows the results of passive microwave simulations at 37 GHz. When the scattering coefficients were set to zero, isolating the contribution from absorption, the simulated Tb remained very close to those obtained from the full-physics tri-continuous wet snow model. This indicates that, under the given conditions, absorption dominates the radiative transfer process, while scattering plays only a minimal role in the passive microwave response at this frequency. Furthermore, replacing the scattering properties of wet snow with those of dry snow did not lead to a notable change in Tb. Although the underlying snow layers have lower wetness and larger grain sizes, which theoretically enhance scattering, the surface snow layer with a liquid water content of 2.6% reduces the microwave penetration depth to approximately 3 cm, thereby limiting the sensor’s sensitivity primarily to the uppermost snow layer where absorption dominates. A similar trend is observed at 16.7 GHz, as shown in Fig.18, where the simulated Tb values for scenarios (i), (ii), and (iii) remain consistently close to those at 37 GHz. This reinforces the conclusion that absorption dominates the microwave response under wet surface conditions, even at lower frequency 16.7GHz. Finally, in terms of validation against real observations at 37GHz, the full-physics tri-continuous wet snow model demonstrates strong agreement: at a 40° incidence angle, the simulation yields differences of less than 2K in H-polarization and less than 1K in V-polarization, as summarized in Table II. These results confirm that the model effectively captures the surface-layer absorption characteristics governing passive microwave emission from wet snowpacks at this frequency.
+
+Figure 19 presents the active microwave simulation results at 37 GHz across a range of observation angles, while the detailed decomposition of backscatter components is summarized in Table I. The volume scattering is found to be the dominant contributor to the total backscatter in active microwave simulations at 37GHz of all scenarios. When the wet snow model (scenarios i) was modified by substituting its scattering properties with those from dry snow (scenarios iii), the simulated VV-polarized backscatter increased by approximately 5 dB. This confirms that, scattering plays a crucial role in the active microwave response in contrast to passive microwave. This distinction arises from the different mechanisms underlying active and passive systems: passive sensors measure naturally emitted radiation dominated by absorption, whereas active sensors measure returned signals, which are highly sensitive to volume and surface scattering processes.
+
+Due to the availability of real observations at 16.7 GHz, a corresponding simulation is performed at this frequency and compared to measurements. As shown in Fig. 20 and Table I, the simulated VV backscatter at 16.7 GHz is approximately 4 dB lower than that at 37 GHz, consistent with decreased snow volume scattering and increased soil surface scattering at lower frequencies. The same relative trends are observed across the four model scenarios. However, a discrepancy between the simulated and observed backscatter remains, with the model underestimating the volume scattering. This mismatch may be attributed to the uncertainties in the measured snow wetness. To address this, an adjusted simulation is performed wherein the bottom three snow layers are modeled as dry snow to account for potential measurement imperfections. This adjustment increases the volume scattering and the predicted backscatter closely matches the observed data. At a 40° observation angle, the difference between simulated and observed backscatter is reduced to within 1 dB across all four polarization channels, as detailed in Table II.
+
+Overall, these results highlight the different roles of absorption and scattering in passive versus active microwave remote sensing of wet snow. At 37 GHz and 16.7 GHz, surface layer absorption dominates the passive responses, meanwhile the active system remains more sensitive to scattering processes. These findings underscore the value of combining full-physics radiative transfer models with measurement uncertainties to improve model consistency across multiple microwave frequencies.
+
+![Figure 16: Vertical profiles of the original measured snow wetness and density for a stratified snow pit.](Figure_16_Description)
+*Fig. 16: Vertical profiles of the original measured snow wetness and density for a stratified snow pit. Depth increases downward from the snow surface.*
+
+![Figure 17: Comparison between simulated Tb among four scenarios and observed passive microwave measurements over the observation angle range of 30°–60° at 37GHz.](Figure_17_Description)
+*Fig. 17: Comparison between simulated Tb among four scenarios and observed passive microwave measurements over the observation angle range of 30°–60° at 37GHz.*
+
+![Figure 18: Comparison between simulated Tb among four scenarios over the observation angle range of 30°–60° at 16.7GHz.](Figure_18_Description)
+*Fig. 18: Comparison between simulated Tb among four scenarios over the observation angle range of 30°–60° at 16.7GHz.*
+
+![Figure 19: Comparison of simulated sigma among four scenarios over the observation angle range of 30°–60° at 37GHz.](Figure_19_Description)
+*Fig. 19: Comparison of simulated $\sigma$ among four scenarios over the observation angle range of 30°–60° at 37GHz.*
+
+![Figure 20: Comparison between simulated sigma among four scenarios and observed passive microwave measurements over the observation angle range of 30°–60° at 16.7GHz.](Figure_20_Description)
+*Fig. 20: Comparison between simulated $\sigma$ among four scenarios and observed passive microwave measurements over the observation angle range of 30°–60° at 16.7GHz.*
+
+## VI. CONCLUSIONS
+
+Building upon the bi-continuous random medium framework previously established for dry snow, this study develops a tri-continuous model that explicitly represents wet snow as a three-phase medium comprising interconnected ice, water, and air, with a novel treatment of liquid water morphology through its separation into water films and droplets. To accurately characterize the electromagnetic response of this complex structure, the Discrete Dipole Approximation (DDA) is incorporated into the modeling framework. This allows physics-driven computation of scattering, absorption, phase matrix, and effective permittivity under varying microstructural and wetness conditions, leading to a more physically grounded representation of microwave interactions with wet snow.
+
+**TABLE I: Simulated VV-polarized backscatter components at 40° incidence angle of different scenarios**
+
+| fGHz | Component | Wet Snow | Absorption only | Scattering from dry snow | Dry Snow | Best Match | Observed |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **37** | Volume (dB) | -22.72 | 0 | -16.33 | -3.08 | / | / |
+| | Surface (dB) | -167.05 | -137.38 | -194.83 | -71.94 | / | / |
+| | Total (dB) | -22.72 | -137.38 | -16.33 | -3.08 | / | / |
+| **16.7** | Volume (dB) | -26.49 | 0 | -21.00 | -7.11 | -18.86 | / |
+| | Surface (dB) | -66.96 | -65.57 | -68.91 | -16.8 | -27.41 | / |
+| | Total (dB) | -26.48 | -65.57 | -21.00 | -6.67 | -18.29 | -17.50 |
+
+**TABLE II: Differences between simulated and observed microwave signals at 40° incidence angle**
+
+| Passive (Tb) | H | V | | |
+| :--- | :---: | :---: | :---: | :---: |
+| **Error** | 1.43 K | 0.88 K | | |
+| **Active ($\sigma$)** | VV | VH | HH | HV |
+| **Error** | 0.95 dB | 0.24 dB | 0.69 dB | 0.77 dB |
+
+In contrast to recent work by Huang et al. [33], our study differs in both the geometric representation and the derivation of scattering properties of wet snow. While both adopt a tri-continuous random media framework, we explicitly separate liquid water into films and droplets, whereas the Huang model treats water as a single film phase. Numerically, the Huang model applies the finite-difference frequency-domain (FDFD) method at L-band, while we use DDA, which is practical at higher frequencies including Ku and Ka bands. Our permittivity derivation is based on coherent field and extinction matching, compared to the absorption and total scattering cross-section matching in the Huang et al’s model. Comparison between our method (M1) and Huang et al.’s approach (M2) at Ka band shows that both yield comparable real part of the effective permittivity under varying wetness. Meanwhile, our proposed method yields a relatively larger imaginary part of the effective permittivity that is more consistent with the extinction behavior of the random media.
+
+The derived electromagnetic parameters, including the scattering and absorption coefficients, phase matrix, and effective permittivity, are used to investigate the sensitivity of microwave signals to variations in wetness, ice microstructure, and water morphology. The results demonstrate that water morphology (film vs. droplet) has a notable influence on scattering coefficients, indicating a nonmonotonic wetness–scattering relationship that is absent in conventional semi-empirical models like MEMLS. This highlights the importance of accounting for detailed wet snow microstructure when interpreting microwave observations.
+
+To assess the model performance, simulations were validated against field measurements in the NoSREx campaign. Passive microwave simulations at 37 GHz showed high consistency with observed brightness temperatures, with errors within 2 K, confirming that surface-layer absorption dominates the radiative response in wet snow conditions. Active microwave simulations reveal strong volume scattering contributions at both 37 GHz and 16.7 GHz, with higher intensity observed at 37 GHz. At 16.7 GHz, the radar signal becomes more sensitive to the full snowpack profile, making it more susceptible to uncertainty in measured snow properties.
+
+These results confirm that the proposed tri-continuous model, with its explicit morphological representation and scattering characterization, offers a robust and physically grounded framework for radiative transfer modeling of wet snow in both passive and active microwave remote sensing. Future work will focus on expanding the model’s frequency coverage, optimizing its computational performance, and integrating the model into operational SWE retrieval systems. Additional field validations across different snow regimes and climates will help further assess the generalizability of the model and its practical applicability. A recent wet snow micrwoave measurement campaign [43] was conducted in Altay, Xinjiang, China during the snow season 2024-2025 to support further validation of the model and the data are currently being processed and analyzed. Methods or rules to explicitly link the tricontinuous media structural parameters to in situ snowpack observations are also worth examination. The proposed model has been integrated into our recently developed microwave modeling platform, the RSHub [44], to facilitate access from potential users.
+
+## APPENDIX A: FEASIBILITY OF DDA IN HANDLING LARGE PERMITTIVITY CONTRAST
+
+The DDA method is typically used to handle small to moderate permittivity contrast like that encountered in dry snow consisting of air and ice. When adopting to wet snow scattering, the applicability of the method to deal with large permittivity contrast arsing from the water component needs to be evaluated. In this appendix, the DDA numerical method was applied to calculate the scattering field Eq. (13) and internal field Eq. (12) of homogeneous spheres with permittivity of $3.2 + 0.0035i$ (ice) and $10 + 20i$ (liquid water), both in the air background. These values are rounded from those computed using empirical dielectric models at 273 K and 37 GHz: Mätzler (2006) for ice [45] and Liebe (1991) for water [46]. The DDA simulations are conducted for spheres with a diameter of 10 mm, using various discretization sizes $d$ to evaluate numerical accuracy. A plane wave propagating along the $\hat{z}$-axis is used as the incident field. Computations are performed at 37 GHz and the results are compared with those from the analytical Mie theroy to examine the effectiveness of the DDA method.
+
+The scattering amplitude results are reported in Fig. 21 and Fig. 22 for the ice and water spheres, respectively, under varying discretization sizes and GMRES convergence tolerances (tol). The comparison demonstrates that the DDA method yields accurate results for the ice sphere across a range of discretization settings. In contrast, reduced accuracy is observed for the water sphere, which has a much higher permittivity. This highlights two critical factors influencing DDA performance in high-permittivity-contrast media: (1) the convergence tolerance of the GMRES solver, and (2) the discretization size $d$. Improved accuracy was achieved by decreasing the tolerance of GMRES and the discretization size $d$. A tolerance of $10^{-3}$ was found to be sufficient for stable and reliable results, therefore, all GMRES-based calculations in this study adopt this tolerance setting.
+
+The total scattering and absorption cross sections of the water sphere, computed using both the DDA method and Mie theory, are presented in Table III. The total scattering cross section derived from the DDA method demonstrates closer agreement with Mie theory than the absorption cross section. Meanwhile, the DDA discretization size significantly influences the absorption results, which can be further analyzed by visualizing the internal electromagnetic field, as absorption is directly related to the field distribution within the medium. Figure 23 and Figure 24 illustrates cross sectional images of the internal fields of a 10mm diameter ice and water sphere in both the $ZY$- and $XY$-planes, with the incident wave propagating along the positive Z-axis. The internal field distributions within water and ice spheres differ markedly due to their distinct dielectric properties at 37 GHz. Water, characterized by a high complex permittivity and significant absorption, exhibits strong attenuation, resulting in negligible internal fields except near the boundary. Conversely, ice, a low-loss dielectric, permits wave propagation and supports multiple internal reflections, producing interference patterns and spatial field fluctuations. The DDA method exhibits increased error when applied to high-permittivity media such as water, primarily due to challenges in accurately resolving the steep field gradients near the surface. Nevertheless, decreasing the discretization size $d$) significantly improves the agreement between DDA and Mie theory.
+
+![Figure 21: Mie scattering test for ice sphere](Figure_21_Description)
+*Fig. 21: Mie scattering test for ice sphere*
+
+![Figure 22: Mie scattering test for water sphere](Figure_22_Description)
+*Fig. 22: Mie scattering test for water sphere*
+
+**TABLE III: Scattering and absorption cross section of the water sphere derived from DDA and Mie scattering**
+
+| | $\sigma_a$ | $\sigma_s^{tot}$ |
+| :--- | :---: | :---: |
+| $Mie$ | $7.0963^{-5}$ | $1.3615^{-4}$ |
+| $DDA(d = 0.05mm, tol = 10^{-1})$ | $1.4285^{-4}$ | $4.6425^{-5}$ |
+| $DDA(d = 0.05mm, tol = 10^{-3})$ | $7.3636^{-5}$ | $1.3651^{-4}$ |
+| $DDA(d = 0.05mm, tol = 10^{-5})$ | $7.3682^{-5}$ | $1.3650^{-4}$ |
+| $DDA(d = 0.1mm, tol = 10^{-3})$ | $7.6212^{-5}$ | $1.3663^{-4}$ |
+
+## APPENDIX B: CONVERGENCE TEST
+
+Deriving the scattering characteristics of the tri-continuous media using the DDA method involves three critical numerical parameters, including the stochastic ensemble size of the random media samples, i.e., the number of realization ($N_r$), the physical dimension of the random media sample, i.e., the sample size ($L$), and the discretization of the random media sample, characterized by the cube edge length $d$ as the elementary dipole size. In this appendix, the convergence behavior of the scattering characteristics of the tri-continuous media is examined with respect to these numerical parameters for varying wetness conditions. The convergence behavior on the bicontinuous media for dry snow is also examined as a comparison baseline. In the following simulation at 37GHz, the tri-continuous random media parameters are set as $f_v^{\text{ice}} = 0.3, b = 1.2$, and $\langle\zeta\rangle = 10000$ with a water film and water droplet ratio 7:3.
+
+In electromagnetic simulations of random media, $N_r$ is critical for accurately capturing statistical variability. While larger $N_r$ values improve the representation of scattering behavior, they also impose higher computational costs. Convergence analysis (Figures 25(a), 26(a), and 27(a)) shows that the $\kappa_a$, $\kappa_s$, and $\varepsilon$ stabilize when $N_r$ exceeds 200. The phase matrix, shown in Fig. 28, takes the random media parameters with $L = 10mm$, $d = 0.1mm$, and wetness of 2% as an example, and also exhibits negligible differences between $N_r = 200$ and $N_r = 500$, indicating sufficient statistical reliability at $N_r = 200$.
+
+The sample size ($L$) and the discretization size ($d$) of the random medium sample further influence the numerical accuracy. A smaller $d$ captures microstructural features such as thin water films more accurately at the expense of increased computational demand. Figures 25(b) and 26(b) show that both $\kappa_a$ and $\kappa_s$ increase with $L$ before gradually approaching saturation and the followed reduction as a result of shadowing. This highlights the importance of sufficient and appropriate sample volume for fully capturing multiple scattering effects. Similarly, $\varepsilon$ stabilizes when $L > 3 \text{ mm}$, as shown in Fig. 27(b). For a fixed $L$, smaller $d$ lead to higher $\kappa_a$ and lower $\kappa_s$, suggesting more accurate modeling of electromagnetic interactions due to improved resolution of water morphology. This behavior is consistent with the sensitivity analysis discussed in Appendix A. Based on the convergence behavior, the parameters $N_r = 200$, $L = 10 \text{ mm}$, and $d = 0.05 \text{ mm}$ are selected as optimal numerical settings to characterize tri-continuous random media scattering at Ka band. The same numerical parameters are adopted at Ku band to balance the computing efficiency and accuracy.
+
+![Figure 23: Internal field cross section difference between DDA and Mie scattering theory for ice sphere.](Figure_23_Description)
+*Fig. 23: Internal field cross section difference between DDA and Mie scattering theory for ice sphere. (a)-(f) ZY-plane, (g)-(l) XY-plane, (a)-(c) and (g)-(i) d=0.1mm,(d)-(f) and (j)-(k) d=0.05mm*
+
+![Figure 24: Internal field cross section difference between DDA and Mie scattering theory for water sphere.](Figure_24_Description)
+*Fig. 24: Internal field cross section difference between DDA and Mie scattering theory for water sphere. (a)-(f) ZY-plane, (g)-(l) XY-plane, (a)-(c) and (g)-(i) d=0.1mm, (d)-(f) and (j)-(k) d=0.05mm*
+
+![Figure 25: Convergence behavior of kappa_a](Figure_25_Description)
+*Fig. 25: Convergence behavior of $\kappa_a$ on (a) the number of realization, (b) the diameter of media ($L$), and the discretizations density ($d$)*
+
+### ACKNOWLEDGMENT
+
+The authors express their gratitude to the Finnish Meteorological Institute for the NoSREx data set used in this study. The authors also acknowledge the Altay field campaign team for their support for further model validation. The authors also thank Kaiqi Chen for deployment of a parallel computing environment to support this work.
+
+### REFERENCES
+
+[1] A. T. Chang, J. L. Foster, D. K. Hall, A. Rango, and B. K. Hartline, “Snow water equivalent estimation by microwave radiometry,” *Cold Regions Science and Technology*, vol. 5, no. 3, pp. 259–267, 1982.
+[2] J. Pulliainen and M. Hallikainen, “Retrieval of regional snow water equivalent from space-borne passive microwave observations,” *Remote Sensing of Environment*, vol. 75, no. 1, pp. 76–85, 2001.
+[3] J. Shi, C. Xiong, and L. Jiang, “Review of snow water equivalent microwave remote sensing,” *Science China Earth Sciences*, vol. 59, pp. 731–745, 2016.
+[4] R. E. Kelly, A. T. Chang, L. Tsang, and J. L. Foster, “A prototype amsr-e global snow area and snow depth algorithm,” *IEEE Trans. Geosci. Remote Sens.*, vol. 41, pp. 230–242, 2003.
+[5] C. Derksen, P. Toose, A. Rees, L. Wang, M. English, A. Walker, and M. Sturm, “Development of a tundra-specific snow water equivalent retrieval algorithm for satellite passive microwave data,” *Remote Sens. Environ.*, vol. 114, pp. 1699–1709, 2010.
+[6] A. T. C. Chang, J. L. Foster, and D. K. Hall, “Effects of forest on the snow parameters derived from microwave measurements during the boreas winter field campaign,” *Hydrol. Processes*, vol. 10, no. 12, pp. 1565–1574, 1997.
+[7] P. A. Waldner, M. Schneebeli, U. Schultze-Zimmermann, and H. Flühler, “Effect of snow structure on water flow and solute transport,” *Hydrological Processes*, vol. 18, no. 7, pp. 1271–1290, May 2004.
+[8] C. Mitterer, H. Hirashima, and J. Schweizer, “Wet-snow instabilities: Comparison of measured and modelled liquid water content and snow stratigraphy,” *Annals of Glaciology*, vol. 52, no. 58, pp. 201–208, 2011.
+[9] F. T. Ulaby, W. H. Stiles, L. F. Dellwig, and B. C. Hanson, “Experiments on the radar backscatter of snow,” *IEEE Trans. Geosci. Electronics*, vol. 15, no. 4, pp. 185–189, 1977.
+[10] J. Shi and J. Dozier, “Mapping seasonal snow with sir-c/x-sar in mountainous areas,” *Remote Sens. Environ.*, vol. 59, no. 2, pp. 294–307, 1997.
+[11] W. Stiles and F. Ulaby, “Dielectric properties of snow,” NASA. Goddard Space Flight Center, Tech. Rep., 1981.
+[12] D. H. Kang, A. P. Barros, and S. J. Déry, “Evaluating passive microwave radiometry for the dynamical transition from dry to wet snowpacks,” *IEEE Transactions on Geoscience and Remote Sensing*, vol. 52, no. 1, pp. 3–15, 2014.
+[13] K. H. Ding and L. Tsang, “Effective propagation constants and attenuation rates in media of densely distributed coated dielectric particles with size distribution,” *Journal of Electromagnetic Waves Application*, vol. 5, no. 2, pp. 117–142, 1991.
+[14] Z. Li, “Modeling the passive microwave remote sensing of wet snow,” *Progress in Electromagnetics Research*, vol. 62, pp. 143–164, 2006.
+[15] A. Wiesmann and C. Mätzler, “Microwave emission model of layered snowpacks,” *Remote Sens. Environ.*, vol. 70, pp. 307–316, 1999.
+[16] A. Stogryn, “A study of the microwave brightness temperature of snow from the point of view of strong fluctuation theory,” *IEEE Trans. Geosci. Remote Sens.*, vol. 24, no. 2, pp. 220–231, 1986.
+[17] A. Hossan, A. Colliander, N. J. Schlegel, J. Harper, L. Andrews, J. Kolassa, and R. Cullather, “Evaluation of wet snow dielectric mixing models for l-band radiometric measurement of liquid water content in greenland’s percolation zone,” pp. 1–39, 2025.
+[18] C. Mätzler and A. Wiesmann, “Documentation for memls, version 3: Microwave emission model of layered snowpacks,” Tech. Rep., 2012.
+[19] J. C. Maxwell and B. A. Garnett, “Colours in metal glasses and in metallic films,” *Philos. Trans. R. Soc. London, Ser. A*, vol. 203, pp. 385–420, 1904.
+[20] M. T. Hallikainen, F. T. Ulaby, and M. Abdelrazik, “Dielectric properties of snow in the 3 to 37 ghz range,” *IEEE Transactions on Antennas and Propagation*, vol. 34, no. 11, pp. 1329–1340, 1986.
+[21] C. Mätzler, H. Aebischer, and E. Schanda, “Microwave dielectric properties of surface snow,” *IEEE Journal of Oceanic Engineering*, vol. 9, no. 5, pp. 366–371, 1984.
+[22] J. R. Birchak, C. G. Gardner, J. E. Hipp, and J. M. Victor, “High dielectric constant microwave probes for sensing soil moisture,” *Proceedings of the IEEE*, vol. 62, no. 1, pp. 93–98, 1974.
+[23] A. Sihvola, E. Nyfors, and M. Tiuri, “Mixing formulae and experimental results for the dielectric constant of snow,” *Journal of Glaciology*, vol. 31, pp. 163–170, 1985.
+[24] H. Looyenga, “Dielectric constants of heterogeneous mixtures,” *Physica*, vol. 31, no. 3, pp. 401–406, 1965.
+[25] S. C. Colbeck, “Liquid distribution and the dielectric constant of wet snow,” pp. 21–40, 1980.
+[26] K. H. Ding, X. Xu, and L. Tsang, “Electromagnetic scattering by bicontinuous random microstructures with discrete permittivities,” *IEEE Trans. Geosci. Remote Sens.*, vol. 48, no. 8, pp. 3139–3151, 2010.
+[27] S. Tan, W. Chang, L. Tsang, J. Lemmetyinen, and M. Proksch, “Modeling both active and passive microwave remote sensing of snow using dense media radiative transfer (dmrt) theory with multiple scattering and backscattering enhancement,” *IEEE J. Sel. Topics Appl. Earth Observ. Remote Sens.*, vol. 8, no. 9, pp. 4418–4430, 2015.
+[28] S. Tan, C. Xiong, X. Xu, and L. Tsang, “Uniaxial effective permittivity of anisotropic bicontinuous random media using nmm3d,” *IEEE Geosci. Remote Sens. Lett.*, vol. 13, no. 8, pp. 1168–1172, 2016.
+[29] S. Tan and L. Tsang, “Scattering of waves by a half-space of periodic scatterers using broadband green’s function,” *Opt. Lett.*, vol. 42, no. 22, pp. 4667–4670, 2017.
+[30] F. K. Borah, L. Tsang, and E. J. Kim, “Swe retrieval algorithms based on the parameterized bi-continuous dmrt model without priors on grain size or scattering albedo,” *Progress In Electromagnetics Research*, vol. 178, pp. 129–147, 2023.
+[31] X. Xu, L. Tsang, and S. Yueh, “Electromagnetic models of co/cross polarization of bicontinuous/dmrt in radar remote sensing of terrestrial snow at x- and ku-band for coreh2o and sclp applications,” *IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing*, vol. 5, no. 3, pp. 1024–1032, 2012.
+[32] W. Chang, S. Tan, J. Lemmetyinen, L. Tsang, X. Xu, and S. H. Yueh, “Dense media radiative transfer applied to snowscat and snowsar,” *IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing*, vol. 7, no. 9, pp. 3811–3825, 2014.
+
+![Figure 26: Convergence behavior of kappa_s](Figure_26_Description)
+*Fig. 26: Convergence behavior of $\kappa_s$ on (a) the number of realization, (b) the diameter of media ($L$), and the discretizations density ($d$)*
+
+![Figure 27: Convergence behavior of epsilon'](Figure_27_Description)
+*Fig. 27: Convergence behavior of $\varepsilon'$ on (a) the number of realization, (b) the diameter of media ($L$), and the discretizations density ($d$)*
+
+![Figure 28: Convergence behavior of phase matrix on the number of realization](Figure_28_Description)
+*Fig. 28: Convergence behavior of phase matrix on the number of realization*
+
+[33] Z. Hunag, H. Xu, F. Borah, L. Tsang, B. Medley, J. Johnson, and R. D. D. Roo, “L-band full wave simulations of the effective permittivity of bi/tri-continuous media with applications to firn aquifer in polar regions and terrestrial wet snow,” *IEEE Trans. Geosci. Remote Sens.*, vol. 62, no. 2006312, pp. 1–12, 2024.
+[34] J. Lemmetyinen, J. Pulliainen, A. Arslan, K. Rautiainen, J. Vehvilainen, A. Wiesmann, T. Nagler, H. Rott, M. Davidson, D. Schuettemeyer, and M. Kern, “Analysis of active and passive microwave observations from the nosrex campaign,” *2011 IEEE International Geoscience and Remote Sensing Symposium (IGARSS)*, pp. 2737–2740, 2011.
+[35] S.-H. Chen, S.-L. Chang, and R. Strey, “Simulation of bicontinuous microemulsions: comparison of simulated real-space microstructures with scattering experiments,” *Journal of Applied Crystallography*, vol. 24, no. 5, pp. 721–731, 1991.
+[36] Y. Saad and M. H. Schultz, “Gmres: A generalized minimal residual algorithm for solving nonsymmetric linear systems,” *SIAM Journal on Scientific and Statistical Computing*, vol. 7, no. 3, pp. 856–869, 1986.
+[37] L. Tsang, J. A. Kong, K.-H. Ding, and C. O. Ao, *Scattering of Electromagnetic Waves*. New York: Wiley-Interscience, 2001.
+[38] K. K. Tse, L. Tsang, C. H. Chan, K.-H. Ding, and K. W. Leung, “Multiple scattering of waves by dense random distributions of sticky particles for applications in microwave scattering by terrestrial snow,” *Radio Sci.*, vol. 42, no. 5, p. RS5 001, 2007.
+[39] L. Tsang, J. Pan, D. Liang, Z. Li, D. W. Cline, and Y. Tan, “Modeling active microwave remote sensing of snow using dense media radiative transfer (dmrt) theory with multiple-scattering effects,” *IEEE Transactions on Geoscience and Remote Sensing*, vol. 45, no. 4, pp. 990–1004, 2007.
+[40] V. L. Mironov, L. G. Kosolapova, and S. V. Fomin, “Physically and mineralogically based spectroscopic dielectric model for moist soils,” *IEEE Transactions on Geoscience and Remote Sensing*, vol. 47, no. 7, pp. 2059–2070, 2009.
+[41] K. Sarabandi and F. T. Ulaby, “Backscatter model for the dispersive behavior of soil dielectric constant,” *IEEE Transactions on Geoscience and Remote Sensing*, vol. 30, no. 2, pp. 370–381, 1992.
+[42] J. R. Wang and B. J. Choudhury, “Remote sensing of soil moisture content,” *Journal of Geophysical Research*, vol. 86, no. C6, pp. 5277–5282, 1981.
+[43] J. Du, Y. Cao, and S. Tan, “Electromagnetic modeling and validation of wet snow for passive and active microwave observations: Insights from the nosrex dataset and the altay field campaign,” in *2025 IEEE International Geoscience and Remote Sensing Symposium (IGARSS)*, Brisbane, Australia, 2025.
+[44] Y. Fang, K. Chen, X. Bai, Y. Cao, J. Du, I. Haider, J. Chen, R. Tjuahdi, D. Leonard, and S. Tan, “RSHub: A Remote Sensing Hub for Geophysical Microwave Scattering Modeling,” *IEEE Geoscience and Remote Sensing Magazine*, 2025, accepted for publication.
+[45] C. Mätzler, “Thermal microwave radiation: applications for remote sensing,” vol. 52, 2006.
+[46] H. J. Liebe, G. A. Hufford, and T. Manabe, “A model for the complex permittivity of water at frequencies below 1 thz,” *International Journal of Infrared and Millimeter Waves*, vol. 12, no. 12, pp. 659–675, 1991.

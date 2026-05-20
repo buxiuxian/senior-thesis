@@ -1,0 +1,528 @@
+# Backscattering Coefficients, Coherent Reflectivities, and Emissivities of Randomly Rough Soil Surfaces at L-Band for SMAP Applications Based on Numerical Solutions of Maxwell Equations in Three-Dimensional Simulations
+
+**Shaowu Huang, Student Member, IEEE, Leung Tsang, Fellow, IEEE, Eni G. Njoku, Fellow, IEEE, and Kun-Shan Chen, Fellow, IEEE**
+
+> **Abstract**—We used Numerical Maxwell Model in 3-D Simulations (NMM3D) to study the backscattering coefficients, coherent reflectivities, and emissivities of soil surfaces using Gaussian random rough surfaces with exponential correlation functions. The surface area used is 8 by 8 square wavelengths. A total of close to 200 cases are computed by varying rms height, correlation length, and soil permittivity. We consider a 40◦ incidence angle. For each case, 15 realizations of rough surface profiles are generated, and 30 solutions of Maxwell equations are computed because of two polarizations. The method for solving the Maxwell equations is based on the Method of Moments (MoM) with Rao–Wilton–Glisson (RWG) basis functions. The solutions are accelerated by the sparse matrix canonical grid method implemented on parallel computing. The rms height varies up to 0.126 wavelength. The results are compared with the Dubois formulation, Small Perturbation Method (SPM), Kirchhoff Approximation (KA), and Advanced Integral Equation Model (AIEM). The NMM3D results are also compared with VV and HH backscatter data of soil surfaces where ground truth rms heights and correlation lengths were both measured. Good agreement is found between the NMM3D results and experimental measurement data. Based on the computed cases, interpolation tables are derived that can be directly applied to L-band active and passive microwave remote sensing of soil moisture, such as for the upcoming Soil Moisture Active and Passive (SMAP) mission.
+
+**Index Terms**—Microwave remote sensing, soil moisture, random rough surface, NMM3D.
+
+---
+
+**Manuscript received October 18, 2009; revised December 22, 2009. Date of publication March 18, 2010; date of current version May 19, 2010. This work was supported by the National Aeronautics and Space Administration’s Soil Moisture Active and Passive mission.**
+
+**S. Huang and L. Tsang are with the Department of Electrical Engineering, University of Washington, Seattle, WA 98195 USA (e-mail: tsang@ee.washington.edu).**
+
+**E. G. Njoku is with the Jet Propulsion Laboratory, California Institute of Technology, Pasadena, CA 91109 USA.**
+
+**K. S. Chen is with the Center for Space and Remote Sensing Research, National Central University, Chung-Li 32054, Taiwan.**
+
+**Color versions of one or more of the figures in this paper are available online at http://ieeexplore.ieee.org.**
+
+**Digital Object Identifier 10.1109/TGRS.2010.2040748**
+
+---
+
+## I. INTRODUCTION
+
+THE NASA Soil Moisture Active and Passive (SMAP) mission [1] will enable global mapping of soil moisture with unprecedented spatial resolution and revisit time. Soil moisture is an important parameter of the Earth’s water, energy, and carbon cycles. Mapping of soil moisture is important for hydrologic modeling, climate prediction, and flood and drought monitoring. The SMAP mission uses a combined active and passive sensor at the frequencies of 1.26 and 1.41 GHz, respectively, at an incidence angle of 40◦. For the active sensor, VV, HH, and HV are measured, and for the passive sensor, V and H are measured.
+
+The study of microwave interaction with soil surfaces is an important problem for both bare soil surfaces and vegetated surfaces. The soil backscattering contributes to the radar return signals. In addition, the bistatic scattering of soil surfaces and coherent reflectivity form important boundary conditions for the double-bounce effects in vegetated surfaces.
+
+In studying backscattering from soil surfaces, experimental measurements have been conducted by investigators with both rms heights and correlation length measured [2]. Empirical formulas have been established with coefficients that are tuned to match these sets of data [2]–[4]. Physical models include Small Perturbation Method (SPM), Kirchhoff Approximation (KA) [5], and Advanced Integral Equation Model (AIEM) [6]. For passive remote sensing, empirical models include the Q/H model [7] tuned to match the measurement data. Physical models include SPM, KA, and AIEM.
+
+In the last decade, we have used numerical solutions of Maxwell equations, initially for 2-D problems and subsequently for 3-D problems. In this paper, we report results for which we used the Numerical Maxwell Model in 3-D Simulations (NMM3D) to study the backscattering coefficients, the coherent reflectivities, and the emissivities of soil surfaces at L-band using Gaussian random rough surfaces with exponential correlation functions. The rough surfaces are varying in both horizontal directions and are statistically isotropic. The surface area used is 8 by 8 square wavelengths. A total of close to 200 cases are computed for an incidence angle equal to 40◦ and by varying rms height, correlation lengths, and soil permittivity. For each case, we consider vertical and horizontal polarization incidences, and for each polarization, 15 realizations are simulated. Thus, a total of close to 6000 numerical solutions of Maxwell equations are computed. Based on these cases, interpolation tables are made up to obtain results within this range of parameters of rms heights, correlation lengths, and permittivity. Since the maximum rms height considered is 0.126 wavelength, thus the cases covered and the interpolations used can be applied to cover the range of interests for SMAP.
+
+Major advances have been made in the full-wave solutions of Maxwell equations of scattering by random rough surfaces because of the advances of computational electromagnetics and computation resources. We have done extensive 2-D simulations using exponential correlation functions [8]. The 3-D full-wave simulations began in the mid-1990s [9]–[11]. Numerical approaches include Method of Moments (MoM), Finite Element Method (FEM), Finite-Difference Time Domain (FDTD), and Extended Boundary Condition Method (EBCM) [12], [13].
+
+In the past decade, we have developed two fast numerical methods for the solution of the dense matrix equation that arise from MoM, the Sparse Matrix Canonical Grid (SMCG) method [9] and the multilevel UV method [14], [15]. In the SMCG method, the wave interactions are divided into near field and non-near field. The method decomposes the integral equation matrix into a sparse matrix, which represents near-field interactions, and the remainder of the matrix, which represents the non-near-field interaction part. The near-field interactions are computed directly. The non-near-field part of the matrix is rewritten in a Taylor series by expanding the Green’s function about a flat surface so that it can be calculated using Fast Fourier Transform (FFT). The computational complexity of the SMCG is $O(N \log N)$, where $N$ is the number of sampling points on the rough surface. This is much faster than the traditional method of matrix inversion that requires computational complexity of $O(N^3)$. Once the Taylor expansion is made on the flat surface, the impedance matrix becomes translational invariant, making it Toeplilz so that the matrix memory requirement is of $O(N)$ instead of the traditional requirement of $O(N^2)$. In the multilevel UV method, it is recognized that the matrix representing the near-field interaction is a full rank matrix, while for the non-near field interaction, the matrix is of much lower rank than the dimension of the matrix. The method also has an $O(N \log N)$ computational efficiency for surfaces with moderate size. We have also combined SMCG and UV efficiently into a hybrid UV–SMCG method [16].
+
+In an earlier paper, our NMM3D results for active remote sensing are reported in [17] and [18]. In that paper, the backscattering coefficient of wet soil surfaces is studied with the 3-D Monte Carlo simulations using the Stratton–Chu formulation, pulse basis functions, and point matching. However, the pulse basis functions, although accurate for surfaces with Gaussian correlation functions, are not accurate enough for exponential correlation functions as these surfaces have fine-scale features. In particular, energy conservation is not obeyed. Subsequently, in [19], we improved the accuracy by using Rao–Wilton–Glisson (RWG) basis functions and used SMCG to solve the matrix equation of Poggio–Miller–Chang–Harrington–Wu (PMCHW) integral equations. Energy conservation tests are satisfied to within 1%. In [19], a small number of case results were reported for emissivities of passive remote sensing. Results of backscattering of active remote sensing were not calculated. In the past, the role of NMM3D was merely to validate analytical models. However, this present paper shows that, based on the computed close to 200 cases, interpolation tables are made up for the full range of parameters that can be directly applied to L-band active and passive microwave remote sensing of soil moisture, such as in the upcoming SMAP mission. In this paper, to make NMM3D useful for the SMAP mission, we use the method in [19] to compute backscattering coefficients, coherent reflectivities, and emissivities for close to 200 cases. The tabulated results and the use of interpolation cover the full range of parameters of interest in the SMAP mission and are part of the data cube. A retrieval approach in SMAP uses a precomputed “data cube” as a lookup method for iterating to a fast retrieval solution with reduced real-time computation. The work on bare soil cross polarization in active and the U channel in passive are yet to be computed. The results are compared with Dubois formulation, SPM, AIEM, and KA. The NMM3D results are also compared with Michigan backscattering experimental data [2] where ground truth measurements of rms heights and correlation lengths were also made. Good agreements are found between the NMM3D results and the experimental data without adjustable parameters.
+
+In Section II, we present the methodology used and the steps of obtaining the backscattering coefficients, coherent reflectivity, and emissivity when NMM3D is performed on a random rough surface with finite surface area. In Section III, we show the results for backscattering coefficients, coherent reflectivities, and emissivities. Backscattering coefficients are compared with that of empirical models, analytic models, and measurement data. Comparisons of coherent reflectivities are made with that of KA. The emissivities are compared with that of analytic models.
+
+## II. METHODOLOGY
+
+### A. Bistatic Scattering of Random Rough Surface of Infinite Extent
+
+Consider a plane wave impinging on the random rough surface. The bistatic scattering coefficients are defined by [20]
+
+$$
+\gamma_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i) = \lim_{A\to\infty} \left( \lim_{r\to\infty} \frac{4\pi r^2 \left|E^s_{\beta}\right|^2}{|E^i_{\alpha}|^2 A \cos \theta_i} \right) \tag{1}
+$$
+
+where $E^s_{\beta}$ denotes the $\beta$ polarization component of the scattered electric field and $E^i_{\alpha}$ is the incident field with $\alpha$ polarization. In radar scattering (Fig. 1) and in thermal microwave emission from the random soil surfaces, the surface area is many microwave wavelengths in extent. For example, in spaceborne radar scattering, suppose that the surface size is 100 m and the wavelength is 0.25 m. This makes the area to be $400 \times 400 = 160\,000$ square wavelengths. Thus, the surfaces are well represented by random rough surfaces that are infinite in extent. Thus, the limit of $A$ equal to infinity is taken in (1). In Fig. 1, the incident and scattered directions $\hat{k}_i$ and $\hat{k}_s$ are
+
+$$
+\hat{k}_i = \sin \theta_i \cos \phi_i \hat{x} + \sin \theta_i \sin \phi_i \hat{y} - \cos \theta_i \hat{z} \tag{2a}
+$$
+$$
+\hat{k}_s = \sin \theta_s \cos \phi_s \hat{x} + \sin \theta_s \sin \phi_s \hat{y} + \cos \theta_s \hat{z}. \tag{2b}
+$$
+
+[Image: Fig. 1. Bistatic scattering with incident direction ($\theta_i, \phi_i$) and scattered direction ($\theta_s, \phi_s$). Area A of the rough surface is illuminated by the incident beam.]
+
+In the specular direction $\theta_s = \theta_i$ and $\phi_s = \phi_i$ and in the backscattering direction $\theta_s = \theta_i$ and $\phi_s = \pi + \phi_i$, the monostatic (backscattering) coefficient is defined as
+
+$$
+\sigma_{\beta\alpha}(\theta_i,\phi_i) = \cos \theta_i \gamma_{\beta\alpha}(\theta_s = \theta_i, \phi_s = \pi + \phi_i; \theta_i,\phi_i). \tag{3}
+$$
+
+It is well known from random media scattering theory [22], [23] that the bistatic scattering can be decomposed into two parts. In this paper, the random scattered field $E_s$ from the random rough surface is decomposed into a coherent scattered field $E^{\text{coh}}_{s}$ and an incoherent scattered field $E^{\text{incoh}}_{s}$
+
+$$
+E_s = E^{\text{coh}}_{s} + E^{\text{incoh}}_{s} \tag{4}
+$$
+
+with $\langle E^{\text{incoh}}_{s} \rangle = 0$, where the angular bracket represents ensemble average or average over realizations. The bistatic coefficient (BI) $\gamma_{\beta\alpha}$ is decomposed into coherent bistatic coefficient (CBI) $\gamma^{\text{coh}}_{\beta\alpha}$ and incoherent bistatic coefficient (IBI) $\gamma^{\text{incoh}}_{\beta\alpha}$
+
+$$
+\gamma_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i) = \gamma^{\text{coh}}_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i) + \gamma^{\text{incoh}}_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i). \tag{5}
+$$
+
+For the case of random rough surface of infinite extent, $\gamma^{\text{coh}}$ exists only in the specular direction and is given by
+
+$$
+\gamma^{\text{coh}}(\theta_s,\phi_s; \theta_i,\phi_i) = \gamma^{\text{coh}}_{0} \delta(k \sin \theta_i \cos \phi_i - k \sin \theta_s \cos \phi_s) \times \delta(k \sin \theta_i \sin \phi_i - k \sin \theta_s \sin \phi_s). \tag{6}
+$$
+
+On the other hand, $\gamma^{\text{incoh}}$ exists in all directions. Because the coherent field is only in the specular direction, radar backscattering only receives the incoherent field. When the rms height $h$ is large compared with the wavelength, $\gamma^{\text{coh}}_{0}$ is negligible as the large rms heights will make the phase random.
+
+### B. Tapered Incidence Fields for a Finite Surface
+
+In the numerical solutions of Maxwell equations, one uses a random rough surface of finite extent. Because the surface is finite in extent, the coherent field, instead of only in the specular direction, is spread out over an angular width. The angular width depends on the size of the rough surface and becomes narrower as the surface area increases. Although the surface is finite, nevertheless, it is possible, as described in the following, to extract $\gamma^{\text{coh}}_{0}$ and $\gamma^{\text{incoh}}$ for an infinite surface, from NMM3D of scattering of random rough surface of finite extent.
+
+Suppose a finite random rough surface. The incident wave in the direction $(\theta_i, \phi_i)$ is tapered in the wave vector domain. The spectrum of the incident wave $E(k_x, k_y)$ is
+
+$$
+\begin{align*}
+E(k_x, k_y) &= \frac{1}{4\pi^2} \int_{-\infty}^{+\infty} dx \int_{-\infty}^{+\infty} dy \exp(-ik_xx - ik_yy) \\
+&\quad \times \exp [i(k_{ix}x + k_{iy}y)(1 + w)] \exp(-t)
+\end{align*} \tag{7}
+$$
+
+where $k_{ix} = k \sin \theta_i \cos \phi_i$, $k_{iy} = k \sin \theta_i \sin \phi_i$
+
+$$
+t = t_x + t_y = (x^2 + y^2)/g^2 \tag{8}
+$$
+$$
+t_x = \frac{(\cos \theta_i \cos \phi_i x + \cos \theta_i \sin \phi_i y)^2}{g^2 \cos^2 \theta_i} \tag{9}
+$$
+$$
+t_y = \frac{(- \sin \phi_i x + \cos \phi_i y)^2}{g^2} \tag{10}
+$$
+$$
+w = \frac{1}{k^2} \left( \frac{2t_x - 1}{g^2 \cos^2 \theta_i} + \frac{2t_y - 1}{g^2} \right). \tag{11}
+$$
+
+The parameter $g$ controls the tapering of the incident wave. $k$ is the wavenumber of free space. In the spectral domain, the incident energy is centered around the incident angle and decreases quickly away from the incident angle.
+
+Given the spectrum, the incident field in the spatial domain on the rough surface is
+
+$$
+\bar{E}^{\text{inc}}(\bar{r}) = \int_{-\infty}^{+\infty} dk_x \int_{-\infty}^{+\infty} dk_y \exp(ik_xx + ik_yy - ik_zz) \times E(k_x, k_y) \hat{e}(-k_z). \tag{12a}
+$$
+$$
+\bar{H}^{\text{inc}}(\bar{r}) = - \frac{1}{\eta} \int_{-\infty}^{+\infty} dk_x \int_{-\infty}^{+\infty} dk_y \exp(ik_xx + ik_yy - ik_zz) \times E(k_x, k_y) \hat{h}(-k_z) \tag{12b}
+$$
+
+where $\eta$ is the wave impedance of free space. For horizontal polarization wave incidence
+
+$$
+\hat{e}(-k_z) = \frac{1}{k_\rho} (\hat{x}k_y - \hat{y}k_x) \tag{13a}
+$$
+$$
+\hat{h}(-k_z) = \frac{k_z}{kk_\rho} (\hat{x}k_x + \hat{y}k_y) + \frac{k_\rho}{k} \hat{z} \tag{13b}
+$$
+
+and for vertical polarization wave incidence
+
+$$
+\hat{e}(-k_z) = \frac{k_z}{kk_\rho} (\hat{x}k_x + \hat{y}k_y) + \frac{k_\rho}{k} \hat{z} \tag{14a}
+$$
+$$
+\hat{h}(-k_z) = - \frac{1}{k_\rho} (\hat{x}k_y - \hat{y}k_x) \tag{14b}
+$$
+
+with $k_\rho = \sqrt{k_x^2 + k_y^2}$, and $k_z = \sqrt{k^2 - k_\rho^2}$ for $k_\rho < k$ and $k_z = i \sqrt{k_\rho^2 - k^2}$ for $k_\rho > k$. The incident power of $\beta$ polarization $P^{\text{inc}}_{\beta}$ is the integral of the real part of one-half of the normal component of the complex Poynting vector of incident wave $\bar{S}^{\text{inc}}_{\beta} = \bar{E}^{\text{inc}}_{\beta} \times \bar{H}^{\text{inc}*}_{\beta}$ over the rough surface
+
+$$
+P^{\text{inc}}_{\beta} = \int_{A} ds \hat{n} \cdot \frac{1}{2} \text{Re} \bar{S}^{\text{inc}}_{\beta} \tag{15}
+$$
+
+where $\hat{n}$ is the normal vector of rough surface.
+
+### C. Bistatic Field of Rough Surface of Finite Extent Calculated by NMM3D
+
+With the tapered field incident on a finite surface, Maxwell equations can be expressed in surface integral equation by using PMCHW formulation, with medium 1 denoting the incident region and medium 2 for the region below the rough surface
+
+$$
+\bar{E}^{\text{inc}}(\bar{r})_{\tan} = (L_1 + L_2)\bar{J}(\bar{r})_{\tan} - (K_1 + K_2)\bar{M}(\bar{r})_{\tan} \tag{16a}
+$$
+$$
+\bar{H}^{\text{inc}}(\bar{r})_{\tan} = (K_1 + K_2)\bar{J}(\bar{r})_{\tan} + \left( \frac{1}{\eta_1^2}L_1 + \frac{1}{\eta_2^2}L_2 \right)\bar{M}(\bar{r})_{\tan} \tag{16b}
+$$
+
+where the operators $L_{1,2}$ and $K_{1,2}$ are defined by
+
+$$
+L_{1,2}\bar{X}(\bar{r}) = \int_{S} ds' \left[ - i\omega\mu_{1,2}\bar{X}(\bar{r}') + \frac{-i}{\omega\varepsilon_{1,2}} \nabla\nabla' \cdot \bar{X}(\bar{r}') \right] G_{1,2}(\bar{r}, \bar{r}') \tag{17}
+$$
+$$
+K_{1,2}\bar{X}(\bar{r}) = \int_{S} ds' \bar{X}(\bar{r}') \times \nabla G_{1,2}(\bar{r}, \bar{r}') \tag{18}
+$$
+
+with $G_{1,2}(\bar{r}, \bar{r}')$ being the scalar Green’s function in medium 1 and medium 2
+
+$$
+G_{1,2}(\bar{r}, \bar{r}') = \frac{\exp (ik_{1,2}|\bar{r} - \bar{r}'|)}{4\pi|\bar{r} - \bar{r}'|} \tag{19}
+$$
+
+and $\bar{J}(\bar{r})$ and $\bar{M}(\bar{r})$ are the tangential magnetic fields and tangential electric fields, respectively
+
+$$
+\bar{J}(\bar{r}) = \hat{n} \times \bar{H}_1(\bar{r}) \tag{20a}
+$$
+$$
+\bar{M}(\bar{r}) = - \hat{n} \times \bar{E}_1(\bar{r}). \tag{20b}
+$$
+
+Solving the surface integral equations (16a) and (16b) by MoM with RWG and accelerated by SMCG yields $\bar{J}$ and $\bar{M}$.
+
+Considering vertical polarized incidence at incident angle $(\theta_i, \phi_i)$, solving Maxwell equations gives tangential fields $\bar{J}_v(\theta_i, \phi_i)$ and $\bar{M}_v(\theta_i, \phi_i)$. Then, the vertical polarized and horizontal polarized bistatic fields are given, respectively, by
+
+$$
+E_{vv}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{ik}{4\pi} \int_{S} ds \left[ \hat{v}_s \cdot \eta\bar{J}_v(\theta_i,\phi_i) + \hat{h}_s \cdot \bar{M}_v(\theta_i,\phi_i) \right] \times \exp(-i\hat{k}_s \cdot \bar{r}') \tag{21a}
+$$
+$$
+E_{hv}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{ik}{4\pi} \int_{S} ds \left[ \hat{h}_s \cdot \eta\bar{J}_v(\theta_i,\phi_i) - \hat{v}_s \cdot \bar{M}_v(\theta_i,\phi_i) \right] \times \exp(-i\hat{k}_s \cdot \bar{r}') \tag{21b}
+$$
+
+where $\hat{v}_s = \cos \theta_s \cos \phi_s \hat{x} + \cos \theta_s \sin \phi_s \hat{y} - \sin \theta_s \hat{z}$ and $\hat{h}_s = - \sin \phi_s \hat{x} + \cos \phi_s \hat{y}$ denote vertical and horizontal polarizations.
+
+Considering horizontal polarized incidence, solving Maxwell equations gives tangential fields $\bar{J}_h(\theta_i, \phi_i)$ and $\bar{M}_h(\theta_i, \phi_i)$. Then, the vertical polarized and horizontal polarized bistatic fields are given, respectively, by
+
+$$
+E_{vh}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{ik}{4\pi} \int_{S} ds \left[ \hat{v}_s \cdot \eta\bar{J}_h(\theta_i,\phi_i) + \hat{h}_s \cdot \bar{M}_h(\theta_i,\phi_i) \right] \times \exp(-i\hat{k}_s \cdot \bar{r}') \tag{21c}
+$$
+$$
+E_{hh}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{ik}{4\pi} \int_{S} ds \left[ \hat{h}_s \cdot \eta\bar{J}_h(\theta_i,\phi_i) - \hat{v}_s \cdot \bar{M}_h(\theta_i,\phi_i) \right] \times \exp(-i\hat{k}_s \cdot \bar{r}'). \tag{21d}
+$$
+
+We generate a realization of random rough surface $f(x,y)$ with the height varying in both horizontal directions. For each $n$th realization, we solve the Maxwell equation as outlined earlier to calculate the bistatic field $E_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i)$. These are repeated for a total of $N$ number of realizations.
+
+### D. Calculation of $\gamma^{\text{coh}}_{0}$ and $\gamma^{\text{incoh}}$
+
+With $E_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i)$, $n = 1, 2, \dots, N$, where $N$ is the number of simulation realizations, the coherent bistatic fields are obtained by taking the realization average of the bistatic fields
+
+$$
+E^{\text{coh}}_{\beta\alpha,\text{finite}}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{1}{N} \sum_{n=1}^{N} E_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i). \tag{22}
+$$
+
+By decomposing the bistatic fields, we obtain the incoherent bistatic field for the $n$th realization
+
+$$
+E^{\text{incoh}}_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i) = E_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i) - E^{\text{coh}}_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i). \tag{23}
+$$
+
+The CBIs are
+
+$$
+\gamma^{\text{coh}}_{\beta\alpha,\text{finite}}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{\left|E^{\text{coh}}_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i)\right|^2}{2\eta P^{\text{inc}}_{\alpha}}. \tag{24}
+$$
+
+Note that, because of the finite surface used, there is angular spread of the CBIs, unlike that of infinite surface which has Dirac delta function in the specular direction for the CBIs. Thus, we use the subscript “finite” to distinguish. Moreover, the IBIs are given by
+
+$$
+\gamma^{\text{incoh}}_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{1}{N} \frac{1}{2\eta P^{\text{inc}}_{\alpha}} \sum_{n=1}^{N} \left|E^{\text{incoh}}_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i)\right|^2 \tag{25}
+$$
+
+and the BIs are
+
+$$
+\gamma_{\beta\alpha}(\theta_s,\phi_s; \theta_i,\phi_i) = \frac{1}{N} \frac{1}{2\eta P^{\text{inc}}_{\alpha}} \sum_{n=1}^{N} |E_{\beta\alpha,n}(\theta_s,\phi_s; \theta_i,\phi_i)|^2. \tag{26}
+$$
+
+From the IBIs, we have the backscattering coefficients
+
+$$
+\sigma_{\beta\alpha}(\theta_s = \theta_i, \phi_s = \phi_i + \pi; \theta_i, \phi_i) = \cos(\theta_i)\gamma^{\text{incoh}}_{\beta\alpha}(\theta_i, \phi_i + \pi; \theta_i, \phi_i). \tag{27}
+$$
+
+The backscattering coefficients of finite rough surface calculated from numerical simulations are the same as the bistatic scattering coefficients for infinite surface provided that a demonstration of convergence with surface area is shown. Thus, we use the same notations for the IBI. In implementation, depending on the surface roughness of rms height and correlation length, a surface area of 8 by 8 or 16 by 16 square wavelengths is sufficiently large for convergence.
+
+As noted earlier, the coherent reflected field is spread over in scattered directions $(\theta_s, \phi_s)$. To obtain the coherent reflection field for infinite surface, we can integrate the coherent bistatic field over all the scattering angles
+
+$$
+E^{\text{coh}}_{\beta\alpha,0}(\theta_s = \theta_i, \phi_s = \phi_i; \theta_i, \phi_i) = \int_{0}^{2\pi} d\phi_s \int_{0}^{\pi/2} d\theta_s \sin \theta_s E^{\text{coh}}_{\beta\alpha,\text{finite}}(\theta_s,\phi_s; \theta_i,\phi_i). \tag{28}
+$$
+
+The coherent reflection field of finite rough surface can be used to substitute for coherent scattered field of infinite rough surface. Then, the coherent reflectivity is calculated as follows:
+
+$$
+\gamma^{\text{coh}}_{0,\beta\alpha}(\theta_i,\phi_i) = \int_{0}^{2\pi} d\phi_s \int_{0}^{\pi/2} d\theta_s \sin \theta_s \gamma^{\text{coh}}_{\beta\alpha,\text{finite}}(\theta_s,\phi_s; \theta_i,\phi_i). \tag{29}
+$$
+
+Note that the decomposition into coherent and incoherent fields is customarily done for infinite surface or infinite volume [21], [22]. However, the method of decomposition for moderate finite volume in numerical simulations to extract results for infinite volume of the power in the coherent wave and the bistatic properties of the incoherent wave were done in [23] and [24].
+
+### E. Emissivities
+
+Considering vertical polarized incidence, the power absorbed $P^a_v$ is given by the integral of the real part of one-half of the normal component of the complex Poynting vector $\bar{S}_v$ over the illuminated rough surface
+
+$$
+P^a_v = \int_{A} ds \hat{n} \cdot \frac{1}{2} \text{Re}\bar{S}_v \tag{30}
+$$
+
+where $\hat{n} \cdot \bar{S}_v$ is calculated from the tangential fields $\bar{J}_v(\theta_i,\phi_i)$ and $\bar{M}_v(\theta_i,\phi_i)$ which are the numerical solutions of Maxwell equations for the $n$th realization. Then, the absorptivity $a_{v,n}(\theta_i,\phi_i)$ for vertical polarized incidence is obtained by
+
+$$
+a_{v,n}(\theta_i,\phi_i) = \frac{P^a_v}{P^{\text{inc}}_v}. \tag{31}
+$$
+
+The subscript $n$ denotes that this is done for each $n$th realization.
+
+Considering horizontal polarized incidence, the solution of Maxwell equations yields tangential fields $\bar{J}_h(\theta_i,\phi_i)$ and $\bar{M}_h(\theta_i,\phi_i)$. Then, the absorptivity $a_{h,n}(\theta_i,\phi_i)$ for horizontal polarized incidence for the $n$th realization is obtained by
+
+$$
+a_{h,n}(\theta_i,\phi_i) = \frac{P^a_h}{P^{\text{inc}}_h}. \tag{32}
+$$
+
+In the NMM3D solution of Maxwell equation, for each $n$th realization, the aforementioned procedure is applied to calculate both vertical polarized emissivity $e_{v,n}(\theta_i,\phi_i)$ and horizontal polarized emissivity $e_{h,n}(\theta_i,\phi_i)$. These are repeated for a total of $N$ number of realizations.
+
+With $\beta$ polarized emissivity of $n$th realization $e_{\beta,n}(\theta_i,\phi_i)$, where $n = 1, 2, \dots, N$ and $\beta = v, h$, the emissivities are calculated by taking the realization average
+
+$$
+e_{\beta}(\theta_i,\phi_i) = \frac{1}{N} \sum_{n=1}^{N} e_{\beta,n}(\theta_i,\phi_i). \tag{33}
+$$
+
+Another equation to calculate the emissivity is by
+
+$$
+e_{\beta}(\theta_i,\phi_i) = 1 - r_{\beta}(\theta_i,\phi_i) \tag{34}
+$$
+
+where $r_{\beta}(\theta_i,\phi_i)$ is the reflectivity of $\beta$ polarized incidence. $r_{\beta}(\theta_i,\phi_i)$ can be calculated by adding the coherent and the incoherent reflectivity computed by integration of IBIs over scattering angles.
+
+The advantage of NMM3D using RWG, in this paper, is that we have checked energy conservations which are obeyed to within 1%. Thus, absorptivity and one minus reflectivity agree to less than 1% which corresponds to 3 K in brightness temperatures. The accuracy is sufficient for the large majority of cases. On the other hand, analytic methods like Kirchoff approximation have poor energy conservation. In such analytic models, absorptivity is not equal to one minus reflectivity.
+
+## III. RESULTS AND DISCUSSION
+
+### A. Results for Backscattering Coefficients and Comparisons With Empirical Models, Analytic Models, and Experimental Data
+
+In this section, we show the results for backscattering coefficients and comparisons with empirical models, analytic models, and experimental data. The surface area used is 8 by 8 square wavelengths, with 96 266 surface field unknowns. A total of close to 200 cases are computed with different rms heights, correlation lengths, and permittivities. The rms height varies up to 0.126 wavelength. For the case of L-band, 0.126 wavelength corresponds to about 3 cm which is the range of interests for rms heights for soils. For each case, we consider vertical and horizontal polarization incidences, and for each case, 15 profiles of rough surfaces are generated, and 30 solutions of the Maxwell equations solved for two polarizations are combined. The results of these cases are used to create a lookup table by using interpolation. The interpolation differences are within 0.2 dB. The lookup table is created for NMM3D and is compared with Michigan data [2].
+
+The cross polarizations from bare soils are small. We have not reported the cross-polarization backscattering in this paper. In NMM3D, the results are small except for the cases of larger rms heights. We are presently investigating the cross-polarization results and convergence tests. Cross-polarization results of bare soils will be reported in future studies. In SMAP applications, cross-polarization backscattering usually arises from volume scattering from vegetation and from the double-bounce effects of interactions between vegetations and soils.
+
+[Image: Fig. 2. Comparison of VV-polarized and HH-polarized CBIs, IBIs, and BIs in decibels for two cases of simulations. (a) RMS height of case 1 = 0.0084 wavelength. (b) RMS height of case 2 = 0.105 wavelength. Relative permittivity = 5.46 + i * 0.37, and correlation length = 10 * rms height.]
+
+[Image: Fig. 3. Comparison of CBIs in decibels for surface sizes of 4 by 4, 8 by 8, and 16 by 16 square wavelengths. (a) VV (dB). (b) HH (dB). Fifteen realizations for each case, relative permittivity = 15.14 + i * 1.27, rms height = 0.021 wavelength, and correlation length = 10 * rms height.]
+
+1) *BIs:* Because of the use of finite surface, the BIs $\gamma$ in NMM3D are decomposed into CBIs $\gamma^{\text{coh}}_{\text{finite}}$ and IBIs $\gamma^{\text{incoh}}$. In Fig. 2(a) and (b), we illustrate the VV-polarized and HH-polarized BIs, CBIs, and IBIs for rms height = 0.0084 wavelength and rms height = 0.105 wavelength, respectively. At backscattering direction, the IBI is 12 dB smaller than the CBI for rms height = 0.0084 wavelength, while it is 9 dB larger than the CBI for rms height = 0.105 wavelength. The IBIs increase with the roughness. At backscattering direction, the incoherent fields dominate for large roughness, while the coherent fields dominate for small roughness. At forward direction, the CBIs dominate for both small and large roughnesses. The coherent fields decrease with the surface roughness. Coherent fields converge quickly at forward direction. The HH-polarized CBIs are larger than the VV-polarized CBIs. In Fig. 3(a) and (b), we show, respectively, the VV-polarized and HH-polarized CBIs for different surface sizes of 4 by 4, 8 by 8, and 16 by 16 square wavelengths. The angular widths of CBIs become smaller with the increase of surface sizes. In the limit of infinite surface, the CBIs will approach the Dirac delta functions in angular dependence. Thus, in real-life radar backscattering at 40◦ incident angle, only the incoherent wave backscattering is measured by the radar.
+
+2) *Convergence of Backscattering Coefficients:* In Fig. 4, we show the convergence of backscattering coefficients as a function of realizations of simulation. The backscattering coefficients for larger roughness of rms height = 0.105 wavelength converge quickly, while the backscattering coefficients for smaller roughness of rms height = 0.0084 wavelength converge also quickly. Table I shows the confidence intervals of backscattering coefficients for 15 realizations for the cases in Fig. 4, with degree of confidence equal to 70%. The statistical errors will become smaller with the decrease of surface roughness. For the cases shown here, 15 to 20 realizations can result in confidence intervals within about 1 dB. As shown in Fig. 4, the use of 15 realizations yields the convergence of backscattering coefficients for most cases of L-band NMM3D simulation using a rough surface area of 8 by 8 square wavelengths. Studies of realization convergence, sampling convergence, and surface size convergence are ongoing to show the accuracy of NMM3D.
+
+[Image: Fig. 4. Convergence of VV-polarized and HH-polarized backscattering coefficients in decibels as a function of realizations for two cases of simulations. RMS height of case 1 = 0.0084 wavelength, rms height of case 2 = 0.105 wavelength, relative permittivity = 5.46 + i * 0.37, and correlation length = 10 * rms height.]
+
+**TABLE I**
+**CONFIDENCE INTERVALS OF BACKSCATTERING COEFFICIENTS**
+
+| Confidence intervals in dB for 15 realizations | RMS height = 0.0084$\lambda$ | RMS height = 0.105$\lambda$ |
+| :--- | :--- | :--- |
+| VV | (-24.28, -23.32) | (-6.93, -5.58) |
+| HH | (-26.90, -25.93) | (-8.98, -7.35) |
+
+3) *Comparison of Backscattering Coefficients Between Different Methods:* In Fig. 5(a) and (b), we illustrate the comparison of the backscattering coefficients as a function of rms height for NMM3D, AIEM, SPM, and Dubois. For small roughness, the VV-polarized results of NMM3D, SPM, and AIEM agree, and the HH-polarized backscattering coefficients of NMM3D, SPM, and AIEM also agree. The empirical model Dubois formulation has larger backscattering coefficients than physical models for small roughness. The HH-polarized backscattering coefficients of Dubois are more than 5 dB larger compared with other models for small roughness. Thus, for small roughness, Dubois is not able to predict accurately, while NMM3D and SPM can give accurate predictions. In addition, for all models, the sensitivities of backscattering coefficients to surface roughness decrease with the surface roughness. With the increase of rms height, HH-polarized backscattering coefficients increase more than VV-polarized backscattering coefficients.
+
+[Image: Fig. 5. Comparison of VV-polarized (a) and HH-polarized (b) backscattering coefficients in decibels between NMM3D and analytical methods as a function of rms height. RMS heights are normalized in wavelength, relative permittivity = 5.46 + i * 0.37, and correlation length = 10 * rms height.]
+
+Fig. 6(a) and (b) shows the comparison of backscattering coefficients as a function of the real part of permittivity for different models. NMM3D, AIEM, and SPM have the same backscattering dynamic ranges for varying real-part permittivity from 3 to 30. They are 9 dB for VV-polarized backscattering coefficients and 7 dB for HH-polarized backscattering coefficients. The dynamic ranges of Dubois are 10.5 dB for VV-polarized backscattering coefficients and 6.5 dB for HH-polarized backscattering coefficients. The VV-polarized backscattering coefficients have larger dynamic ranges for soil moisture. For large permittivity, Dubois gives much larger backscattering for the HH polarizations. For small permittivity, the SPM predicts larger VV-polarized backscattering. The Dubois formulation shows that the dependence of backscattering coefficients on permittivity is constant, with 0.39 for VV polarizations and 0.23 for HH polarizations at 40◦ incidence. However, all physical models show that the sensitivity of backscattering coefficients to permittivity enhances when the permittivity becomes smaller; VV-polarized backscattering coefficients increase faster than HH-polarized backscattering coefficients with the increase of soil permittivity. It is better to use a more accurate model to represent the nonlinear relationship rather than a simple linear fit like Dubois. A linear fit to a nonlinear function will result in bias errors in the retrieval as a function of dielectric constant. Physical models are different from fitting functions. The results predicted by NMM3D are based on the numerical solutions of Maxwell equations. If the surface characteristics are known, the Maxwell equations provide the correct solutions to the physical problem.
+
+[Image: Fig. 6. Comparison of backscattering coefficients in decibels between NMM3D and analytical methods as a function of real part of soil relative permittivity. (a) VV. (b) HH. RMS height = 0.063 wavelength and correlation length = 6 * rms height.]
+
+Moreover, from Figs. 5 and 6, the analytical models tend to predict higher backscattering coefficients than NMM3D for most cases. The empirical Dubois formulation agrees with NMM3D for medium roughness and medium permittivity.
+
+4) *Comparison With Observation Data:* The observation data used in comparison are from Michigan’s POLARSCATTER Data-3. The backscattering coefficients in POLARSCATTER Data-3 were obtained by a truck-mounted polarimetric scatterometer [2]. Four different soil surfaces were generated by flattering, tilling, raking, and plowing four different agricultural fields located near Ypsilanti, Michigan. Surface roughness parameters of rms height and correlation length and moisture condition of soil permittivity were measured. The fitting process of the spectral density of soil surfaces was performed, and the exponential correlation function is found to be in good agreement. In our comparison, a total of 34 data points are picked out from the POLARSCATTER Data-3, with 1.25 GHz and 40◦ incidence. The real part of soil permittivity varies from 2.89 to 14.19. The rms height varies from 0.55 to 3.47 cm.
+
+We use the following definition of Root Mean Square Error (RMSE) to calculate the differences between simulation results and Michigan’s data
+
+$$
+RMSE = \sqrt{\frac{\sum_{i=1}^{N} (\sigma_i - \sigma'_i)^2}{N}}
+$$
+
+where $N$ is the number of data points, $\sigma_i$ is the backscattering coefficients of simulations in dB, $\sigma'_i$ is the Michigan data in dB.
+
+Fig. 7(a) and (b) shows the comparison of backscattering coefficients of NMM3D and the Michigan measurement data. The NMM3D results are from the interpolation lookup table. Good agreements are found between NMM3D and Michigan data. The rms differences are 1.49 dB for VV polarizations and 1.64 dB for HH polarizations. It is to be noted that, although we measure differences from the experimental measurements, nevertheless, experimental measurements can have errors. Questions in the measurement data, like dielectric models and how close are the roughness profiles to exponential correlation functions, remain open questions.
+
+[Image: Fig. 7. Comparison of VV-polarized (a) and HH-polarized (b) backscattering coefficients in decibels between NMM3D and Michigan measurement data.]
+
+Table II shows the rms differences of theoretical results of the different models compared with Michigan measurement data. The agreement between Dubois and experimental data is also good. However, it should be noted that the Dubois empirical parameters in the formulas were tuned to match Michigan’s experimental data, while NMM3D are based on theoretical Maxwell solutions without adjustable parameters. Table III shows the details of backscattering coefficients of Michigan data, NMM3D, and AIEM for the 34 data points used in our comparison. For NMM3D, the backscattering coefficients are from the interpolation table, where the ratio of real part to the imaginary part of permittivities is equal to about 12. NMM3D and Michigan data are compared with the same rms height, correlation lengths, and real part of soil permittivities.
+
+**TABLE II**
+**RMS DIFFERENCES OF THEORETICAL RESULTS COMPARED WITH OBSERVATION DATA**
+
+| RMS | RMS=0.55cm | RMS=0.94cm | RMS=1.78cm | RMS=3.47cm | Total 34 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| differences | CL=9.40cm | CL=6.90cm | CL=8.30cm | CL=11.00cm | data |
+| in dB | 10 data points | 6 data points | 11 data points | 7 data points | points |
+| NMM3D | VV 1.17 | VV 2.21 | VV 1.33 | VV 1.39 | VV 1.49 |
+| | HH 2.15 | HH 1.15 | HH 1.44 | HH 1.43 | HH 1.64 |
+| Dubois | VV 2.52 | VV 2.89 | VV 0.85 | VV 1.22 | VV 1.97 |
+| | HH 1.92 | HH 2.68 | HH 1.19 | HH 0.92 | HH 1.73 |
+| SPM | VV 2.11 | VV 4.29 | VV 4.74 | VV 5.23 | VV 4.18 |
+| | HH 1.11 | HH 2.11 | HH 2.25 | HH 1.58 | HH 1.86 |
+| AIEM | VV 1.19 | VV 2.55 | VV 1.54 | VV 1.84 | VV 1.74 |
+| | HH 1.76 | HH 1.52 | HH 2.78 | HH 1.90 | HH 2.14 |
+
+**TABLE III**
+**COMPARISON FOR THEORETICAL RESULTS AND MICHIGAN OBSERVATION DATA. (A) RMS HEIGHT = 0.55 cm, CORRELATION LENGTH = 9.40 cm. (B) RMS HEIGHT = 0.94 cm, CORRELATION LENGTH = 6.90 cm. (C) RMS HEIGHT = 1.78 cm, CORRELATION LENGTH = 8.30 cm. (D) RMS HEIGHT = 3.47 cm, CORRELATION LENGHT = 11.00 cm**
+
+**(a)**
+
+| Real | Imag | MICHIGAN DATA | NMM3D | AIEM |
+| :---: | :---: | :--- | :--- | :--- |
+| 3.61 | 0.24 | VV -23.56, HH -25.39 | VV -25.47, HH -28.50 | VV -24.95, HH -28.04 |
+| 3.73 | 0.26 | VV -26.14, HH -27.08 | VV -25.31, HH -28.34 | VV -24.73, HH -27.87 |
+| 3.76 | 0.26 | VV -23.76, HH -25.39 | VV -25.27, HH -28.30 | VV -24.67, HH -27.83 |
+| 4.31 | 0.32 | VV -22.30, HH -24.00 | VV -24.60, HH -27.66 | VV -23.81, HH -27.16 |
+| 5.40 | 0.44 | VV -23.51, HH -25.49 | VV -23.46, HH -26.66 | VV -22.55, HH -26.22 |
+| 6.42 | 0.55 | VV -23.74, HH -25.63 | VV -22.60, HH -26.01 | VV -21.72, HH -25.58 |
+| 12.39 | 1.10 | VV -19.80, HH -22.21 | VV -19.91, HH -24.14 | VV -19.29, HH -23.72 |
+| 12.39 | 1.10 | VV -19.46, HH -21.85 | VV -19.91, HH -24.14 | VV -19.29, HH -23.72 |
+| 12.39 | 1.10 | VV -20.45, HH -23.25 | VV -19.91, HH -24.14 | VV -19.29, HH -23.72 |
+| 12.39 | 1.10 | VV -20.07, HH -22.81 | VV -19.91, HH -24.14 | VV -19.29, HH -23.72 |
+
+**(b)**
+
+| Real | Imag | MICHIGAN DATA | NMM3D | AIEM |
+| :---: | :---: | :--- | :--- | :--- |
+| 2.89 | 0.15 | VV -23.84, HH -24.87 | VV -21.01, HH -24.32 | VV -21.53, HH -23.78 |
+| 3.61 | 0.24 | VV -20.94, HH -21.68 | VV -20.12, HH -23.08 | VV -19.87, HH -22.39 |
+| 4.18 | 0.31 | VV -22.54, HH -22.81 | VV -19.47, HH -22.29 | VV -18.94, HH -21.61 |
+| 4.31 | 0.32 | VV -20.35, HH -21.80 | VV -19.34, HH -22.14 | VV -18.76, HH -21.46 |
+| 5.40 | 0.44 | VV -19.34, HH -22.06 | VV -18.30, HH -21.10 | VV -17.56, HH -20.44 |
+| 6.42 | 0.55 | VV -20.49, HH -22.58 | VV -17.49, HH -20.50 | VV -16.77, HH -19.76 |
+
+**(c)**
+
+| Real | Imag | MICHIGAN DATA | NMM3D | AIEM |
+| :---: | :---: | :--- | :--- | :--- |
+| 2.94 | 0.16 | VV -16.07, HH -16.92 | VV -16.97, HH -20.22 | VV -17.41, HH -18.20 |
+| 3.32 | 0.20 | VV -16.18, HH -17.73 | VV -16.50, HH -19.50 | VV -16.56, HH -17.32 |
+| 3.64 | 0.24 | VV -17.55, HH -17.52 | VV -16.13, HH -18.95 | VV -15.98, HH -16.71 |
+| 3.82 | 0.27 | VV -17.08, HH -18.57 | VV -15.93, HH -18.67 | VV -15.69, HH -16.41 |
+| 4.15 | 0.30 | VV -15.94, HH -16.93 | VV -15.59, HH -18.20 | VV -15.23, HH -15.93 |
+| 11.27 | 1.00 | VV -12.22, HH -14.20 | VV -11.59, HH -14.82 | VV -11.31, HH -11.95 |
+| 13.68 | 1.21 | VV -12.38, HH -15.29 | VV -10.94, HH -14.35 | VV -10.71, HH -11.51 |
+| 13.68 | 1.21 | VV -12.26, HH -15.12 | VV -10.94, HH -14.35 | VV -10.71, HH -11.51 |
+| 13.68 | 1.21 | VV -12.72, HH -15.09 | VV -10.94, HH -14.35 | VV -10.71, HH -11.51 |
+| 13.68 | 1.21 | VV -13.57, HH -15.77 | VV -10.94, HH -14.35 | VV -10.71, HH -11.51 |
+| 14.19 | 1.26 | VV -11.65, HH -15.13 | VV -10.82, HH -14.27 | VV -10.59, HH -11.43 |
+
+**(d)**
+
+| Real | Imag | MICHIGAN DATA | NMM3D | AIEM |
+| :---: | :---: | :--- | :--- | :--- |
+| 2.94 | 0.16 | VV -15.14, HH -14.44 | VV -15.93, HH -15.05 | VV -15.59, HH -12.92 |
+| 3.34 | 0.21 | VV -12.51, HH -12.10 | VV -14.59, HH -14.39 | VV -14.82, HH -11.92 |
+| 3.64 | 0.24 | VV -11.98, HH -12.51 | VV -13.70, HH -13.94 | VV -14.35, HH -11.33 |
+| 4.15 | 0.30 | VV -11.85, HH -12.25 | VV -12.43, HH -13.28 | VV -13.66, HH -10.53 |
+| 4.63 | 0.36 | VV -10.35, HH -10.80 | VV -11.46, HH -12.75 | VV -13.10, HH -9.95 |
+| 11.27 | 1.00 | VV -10.29, HH -10.02 | VV -8.30, HH -9.47 | VV -9.01, HH -7.08 |
+| 14.19 | 1.26 | VV -7.98, HH -9.65 | VV -7.85, HH -8.40 | VV -8.17, HH -6.63 |
+
+For small roughness, the agreements of NMM3D, SPM, and AIEM with the observation data are good, but Dubois gives larger backscattering for the VV polarizations. For medium roughness, NMM3D and AIEM agree with the data, Dubois predicts larger backscattering for both HH polarizations and VV polarizations, and SPM gives larger VV-polarized backscattering. For large roughness, the agreements of Dubois and NMM3D with the data are very good, and AIEM can also agree, but SPM gives larger VV-polarized backscattering. Over all, both NMM3D and Dubois match Michigan data with acceptable difference. NMM3D should be able to give good predictions for L-band with soil permittivity condition similar to that in Michigan experiments.
+
+[Image: Fig. 8. Coherent reflectivities of NMM3D and KA as a function of rms height. Relative permittivity = 15.14 + i * 1.27, rms heights are normalized in wavelength, and correlation length = 10 * rms height.]
+
+[Image: Fig. 9. Emissivities of NMM3D and AIEM as a function of rms height. Relative permittivity = 23.10 + i * 1.99, rms heights are normalized in wavelength, and correlation length = 10 * rms height.]
+
+[Image: Fig. 10. Emissivities as a function of real part of soil relative permittivity. RMS height = 0.063 wavelength and correlation length = 6 * rms height.]
+
+### B. Results for Coherent Reflectivities and Comparisons With Analytic Models
+
+In Fig. 8, we compare the coherent reflectivities of NMM3D and that of analytic approach as a function of rms height. The results are useful for studying double-bounce effects for vegetated surfaces. Both NMM3D and KA have larger H-polarized coherent reflectivities than V-polarized coherent reflectivities. Horizontal polarizations can produce larger double bounce for vegetated surface. The V-polarized coherent reflectivities of NMM3D decrease slower than that of KA, and the H-polarized coherent reflectivities of NMM3D also decrease slower than that of KA, with the increase of surface roughness. The agreement between NMM3D and KA is good for small roughness, but the differences increase with surface roughness.
+
+### C. Results for Emissivities and Comparisons With Analytic Models
+
+In Fig. 9, we show the emissivities of NMM3D and AIEM, with varying rms heights. The three physical models exhibit the physical features: 1) V-polarized emissivities are larger than H-polarized emissivities; 2) both the H-polarized and V-polarized emissivities increase with the rms height; and 3) the V-polarized emissivity increases are small, while the H-polarized emissivity increases are large.
+
+In Fig. 10, we illustrate the emissivities of NMM3D and AIEM as a function of soil permittivity. Similar to Fig. 8, these physical models have some agreement: The V-polarized emissivities are larger than H-polarized emissivities with the same permittivity, both the H-polarized and V-polarized emissivities decrease with the permittivity, the V-polarized emissivities decrease more slowly than the H-polarized emissivities, the sensitivities to soil moisture increase with the decrease of moisture, and the H-polarized emissivities have larger dynamic range of emissivity as a function of permittivity than V-polarized. However, the difference between NMM3D and analytic models is larger for H-polarized emissivities than that for V-polarized emissivities. From real part of permittivity 5 to 30, the dynamic range of H-polarized emissivities of NMM3D is 0.35.
+
+Microwave interactions are governed exactly by Maxwell equations. In rough surface scattering, wave interactions can be grouped into coherent wave and incoherent wave interactions. Coherent wave interactions usually extend over wavelength scale. For example, for a wavelength of 0.25 m, coherent wave interactions in rough surface are limited to, for example, within 10 m. The exact distance over which coherent interactions should be tested through convergence studies of numerical solutions of Maxwell interactions and will be a subject of continual interest. Outside the range of coherent wave interactions, Maxwell equations can be approximated by incoherent superposition. Note that a BI is a dimensionless quantity as the bistatic scattering cross section per unit area. For such a case of heterogeneous surfaces, the backscattering coefficients are then approximated by $\sigma = (1/A) \sum_i \sigma_i A_i$, where $A_i$ is the area of each species and $\sigma_i$ is the backscattering coefficient for species $i$ as computed by NMM3D. As shown in the methodology of this paper, the numerical solutions of Maxwell equations are an intensive computational problem. Thus, the incoherent superposition approach is the practical approach in real-life applications of satellite remote sensing involving heterogeneous surfaces.
+
+## IV. CONCLUSION
+
+In this paper, NMM3D has been used to study the backscattering coefficients, the coherent reflectivities, and the emissivities of bare soil surfaces. A total of near 200 cases are simulated, and a data table is created. Results covering the full range of parameters required by SMAP are obtained by interpolation. The NMM3D results are compared with other models and with measurement data. The results agree well with the experimental data. Comparison will be done in the future between NMM3D and the H/Q rough surface parameterization and the other kinds of empirical parameterizations. This data cube could be used to investigate the correlation between backscatter and emissivity for bare soil surfaces. Future studies include using larger surface area, larger rms heights, and complete polarimetric signatures and employing faster computational algorithms such as UV/SMCG.
+
+## ACKNOWLEDGMENT
+
+The authors would like to thank NSF Teragrid for providing parallel computing facilities.
+
+## REFERENCES
+
+[1] D. Entekhabi, E. Njoku, P. O’Neill, K. Kellogg, W. Crow, W. Edelstein, J. Entin, S. Goodman, T. Jackson, J. Johnson, J. Kimball, J. Piepmeier, R. Koster, K. McDonald, M. Moghaddam, S. Moran, R. Reichle, J. C. Shi, M. Spencer, S. Thrman, L. Tsang, and J. van Zyl, “The Soil Moisture Active and Passive (SMAP) mission,” *Proc. IEEE*, May 2010, submitted for publication.
+
+[2] Y. Oh, K. Sarabandi, and F. T. Ulaby, “An empirical model and an inversion technique for radar scattering from bare soil surfaces,” *IEEE Trans. Geosci. Remote Sens.*, vol. 30, no. 2, pp. 370–381, Mar. 1992.
+
+[3] P. C. Dubois, J. van Zyl, and T. Engman, “Measuring soil moisture with imaging radars,” *IEEE Trans. Geosci. Remote Sens.*, vol. 33, no. 4, pp. 915–926, Nov. 1995, (Corrections).
+
+[4] J. Shi, J. Wang, A. Hsu, P. O’Neill, and E. T. Engman, “Estimation of bare surface soil moisture and surface roughness parameters using L-band SAR image data,” *IEEE Trans. Geosci. Remote Sens.*, vol. 35, no. 5, pp. 1254–1266, Sep. 1997.
+
+[5] L. Tsang and J. A. Kong, *Scattering of Electromagnetic Waves*, vol. 3, *Advanced Topics*. New York: Wiley-Interscience, 2001.
+
+[6] K. S. Chen, T. D. Wu, L. Tsang, Q. Li, J. C. Shi, and A. K. Fung, “Emission of rough surfaces calculated by the integral equation method with comparison to three-dimensional moment method simulations,” *IEEE Trans. Geosci. Remote Sens.*, vol. 41, no. 1, pp. 90–101, Jan. 2003.
+
+[7] E. Njoku and L. Li, “Retrieval of land surface parameters using passive microwave measurements at 6–18 GHz,” *IEEE Trans. Geosci. Remote Sens.*, vol. 37, no. 1, pp. 79–93, Jan. 1999.
+
+[8] P. Xu and L. Tsang, “Bistatic scattering and emissivities of lossy dielectric surfaces with exponential correlation functions,” *IEEE Trans. Geosci. Remote Sens.*, vol. 45, no. 1, pp. 62–72, Jan. 2007.
+
+[9] L. Tsang, C. H. Chan, and K. Pak, “Backscattering enhancement of a two-dimensional random rough surface (three-dimensional scattering) based on Monte Carlo simulations,” *J. Opt. Soc. Amer. A, Opt. Image Sci.*, vol. 11, no. 2, pp. 711–715, Feb. 1994.
+
+[10] J. T. Johnson, L. Tsang, R. T. Shin, K. Pak, C. H. Chan, A. Ishimaru, and Y. Kuga, “Backscattering enhancement of electromagnetic waves from two-dimensional perfectly conducting random rough surfaces: Comparison of Monte Carlo simulations with experimental data,” *IEEE Trans. Antennas Propag.*, vol. 44, no. 5, pp. 748–756, May 1996.
+
+[11] L. Tsang, J. A. Kong, K. H. Ding, and C. O. Ao, *Scattering of Electromagnetic Waves*, vol. 2, *Numerical Simulations*. New York: Wiley-Interscience, 2001.
+
+[12] L. Tsang, S. H. Lou, and C. H. Chan, “Application of the extended boundary condition method to Monte Carlo simulations of scattering of waves by two-dimensional random rough surfaces,” *Microw. Opt. Technol. Lett.*, vol. 4, no. 12, pp. 527–531, Nov. 1991.
+
+[13] C. H. Kuo and M. Moghaddam, “Scattering from multilayer rough surfaces based on the extended boundary condition method and truncated singular value decomposition,” *IEEE Trans. Antennas Propag.*, vol. 54, no. 10, pp. 2917–2929, Oct. 2006.
+
+[14] L. Tsang, Q. Li, P. Xu, D. Chen, and V. Jandhyala, “Wave scattering with UV multi-level partitioning method part II: 3D problem of NON-penetrable surface scattering,” *Radio Sci.*, vol. 39, no. 5, p. RS5 011, Oct. 2004.
+
+[15] L. Tsang, D. Chen, and Q. Li, “Fast solution of integral equations representing wave propagation,” U.S. Patent 7 359 929, Apr. 15, 2008.
+
+[16] P. Xu and L. Tsang, “Scattering by rough surface using a hybrid technique combining the multilevel UV method with the sparse-matrix canonical grid method,” *Radio Sci.*, vol. 40, no. 4, p. RS4 012, Aug. 2005.
+
+[17] Q. Li, L. Tsang, J. C. Shi, and C. H. Chan, “Application of physics-based two-grid method and sparse matrix canonical grid method for numerical simulations of emissivities of soils with rough surfaces at microwave frequencies,” *IEEE Trans. Geosci. Remote Sens.*, vol. 38, no. 4, pp. 1635–1643, Jul. 2000.
+
+[18] Q. Li, M. Y. Xia, L. Tsang, L. Zhou, C. H. Chan, and Z. X. Li, “Rough surface scattering: Numerical simulations and applications in microwave remote sensing,” in *Encyclopedia on RF and Microwave Engineering*, vol. 5. New York: Wiley-Interscience, 2005, pp. 4549–4584.
+
+[19] L. Zhou, L. Tsang, V. Jandhyala, Q. Li, and C. H. Chan, “Emissivity simulations in passive microwave remote sensing with 3-D numerical solutions of Maxwell equations,” *IEEE Trans. Geosci. Remote Sens.*, vol. 42, no. 8, pp. 1739–1748, Aug. 2004.
+
+[20] L. Tsang, J. A. Kong, and K. H. Ding, *Scattering of Electromagnetic Waves, vol. 1, Theory and Applications*. New York: Wiley-Interscience, 2000.
+
+[21] A. Ishimaru, *Wave Propagation and Scattering in Random Media, vol. 1, Single Scattering and Transport Theory*. New York: Academic, 1978.
+
+[22] L. Tsang, J. A. Kong, and R. T. Shin, *Theory of Microwave Remote Sensing*. New York: Wiley-Interscience, 1985.
+
+[23] L. Tsang, C. E. Mandt, and K. H. Ding, “Monte Carlo simulations of the extinction rate of dense media with randomly distributed dielectric spheres based on solution of Maxwell’s equations,” *Opt. Lett.*, vol. 17, no. 5, pp. 314–316, Mar. 1992.
+
+[24] K. K. Tse, L. Tsang, C. H. Chan, K. H. Ding, and K. W. Leung, “Multiple scattering of waves by dense random distribution of sticky particles for applications in microwave scattering by terrestrial snow,” *Radio Sci.*, vol. 42, no. 5, p. RS5 001, Sep. 2007.
+
+[Image: Photo of Shaowu Huang]
+**Shaowu Huang** (S’09) received the B.S. degree in physics science from Sun Yat-sen University, Guangzhou, China, in 2004 and the M.S. degree in electrical engineering from Peking University, Beijing, China, in 2008. He is currently working toward the Ph.D. degree at the University of Washington, Seattle.
+His research interests include electromagnetic wave propagation and scattering in random media and rough surfaces, remote sensing, and computational electromagnetics.
+
+[Image: Photo of Leung Tsang]
+**Leung Tsang** (S’73–M’75–SM’85–F’90) was born in Hong Kong. He received the B.S., M.S., and Ph.D. degrees from the Massachusetts Institute of Technology, Cambridge.
+He is currently a Professor and the Chair of the Department of Electrical Engineering, University of Washington, Seattle, where he has been teaching since 1983. Between 2001 and 2004, while on leave, he was the Professor Chair with the Department of Electronic Engineering, City University of Hong Kong, Hong Kong. He is the lead author of four books: *Theory of Microwave Remote Sensing* (Wiley Interscience, 1985) and *Scattering of Electromagnetic Waves* (Volumes 1, 2, and 3) (2001). His current research interests include remote sensing and geoscience applications, signal integrity in interconnects, and computational electromagnetics and optics.
+Dr. Tsang is a Fellow of the Optical Society of America. He was the President of the IEEE Geoscience and Remote Sensing Society for the two-year term 2006–2007. He is on the editorial board of the PROCEEDINGS OF THE IEEE. He was the Chair of the IEEE Technical Activities Board (TAB) Periodicals Committee in 2008–2009. He is currently the Chair of the IEEE TAB Periodicals Review and Advisory Committee. Since April 2008, he has been the President of the Electromagnetics Academy. From 1996 to 2001, he was the Editor-in-Chief of the IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING. He received the IEEE Geoscience and Remote Sensing Society Outstanding Service Award in 2000. He was the recipient of the IEEE Third Millennium Medal in 2000 and the Distinguished Achievement Award of the IEEE Geoscience and Remote Sensing Society in 2008.
+
+[Image: Photo of Eni G. Njoku]
+**Eni G. Njoku** (M’75–SM’83–F’95) received the B.A. degree in natural and electrical sciences from Cambridge University, Cambridge, U.K., in 1972 and the M.S. and Ph.D. degrees in electrical engineering from the Massachusetts Institute of Technology, Cambridge, in 1974 and 1976, respectively.
+From 1976 to 1977, he was a National Research Council Resident Research Associate. In 1977, he joined the Jet Propulsion Laboratory, California Institute of Technology, Pasadena, where he is currently a Senior Research Scientist and the Group Supervisor of the Water and Carbon Cycles Group and the Project Scientist for the Soil Moisture Active and Passive mission. He is a member of the Earth Observing System Aqua Advanced Microwave Scanning Radiometer Science Team. His research interests are in passive and active microwave sensing of land surfaces for hydrologic applications.
+Dr. Njoku is a member of the American Meteorological Society, the American Geophysical Union, the American Association for the Advancement of Science, Commission F of the International Union of Radio Science, and Sigma Xi. He has served the Geoscience and Remote Sensing Society as an Associate Editor of the IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING (1985–1988), the Technical Program Chairman for the 1994 International Geoscience and Remote Sensing Symposium, and a member of the Administrative Committee (1997–2000). He was the recipient of the 1980, 1982, and 1985 NASA Group Achievement Awards and the 1985 NASA Exceptional Service Medal.
+
+[Image: Photo of Kun-Shan Chen]
+**Kun-Shan Chen** (S’86–M’92–SM’98–F’07) received the B.S.E.E. degree in electrical engineering from the National Taiwan Institute of Technology, Taipei, Taiwan, in 1985 and the M.S. and Ph.D. degrees in electrical engineering from the University of Texas, Arlington, in 1987 and 1990, respectively.
+Since 1992, he has been with the faculty of the Center for Space and Remote Sensing Research, National Central University, Chung-Li, Taiwan, where he holds a remote sensing distinguished chair professorship and is the Director of the Communication Research Center. His research activities involve the areas of microwave remote sensing, image processing and analysis for remote sensing data, and radio and microwave propagation and scattering from terrain and ocean with applications to remote sensing and wireless communications.
+Dr. Chen is the Founding Chair of the IEEE Geoscience and Remote Sensing Society (GRSS)—Taipei Chapter. He is currently an Associate Editor of the IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING and the Deputy Editor-in-Chief of the IEEE JOURNAL OF SELECTED TOPICS IN APPLIED EARTH OBSERVATIONS AND REMOTE SENSING.
