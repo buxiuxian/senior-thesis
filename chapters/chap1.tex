@@ -224,15 +224,15 @@
 	\end{itemize}
 	
 \section{Research Objectives and Contributions}
-This thesis focuses on improving practical reliability for multi-step remote sensing workflows in RS-agent. Based on iterative use during the summer project, three recurring issues were prioritized: ambiguous submission control, manual synchronization overhead, and prompt/context inflation in long interactions.
+This thesis presents a system-level study of RSHub-agent as an integrated intelligent agent project for remote sensing workflows. Rather than framing the work around isolated feature patches, the focus is on how the full project is designed, implemented, and evaluated in practical usage scenarios.
 
-The contribution of this work is therefore implementation-oriented rather than architecture-replacement-oriented:
+Based on iterative development during the summer project, this thesis examines the complete project from architecture, workflow control, skill organization, and engineering operations. The contribution of this work is therefore implementation-oriented and project-oriented:
 \begin{enumerate}
-	\item \textbf{HITL confirmation hardening}: strict confirm/cancel gating for submission-sensitive operations, with billing tied only to successful submission.
-	\item \textbf{Git synchronization workflow}: repository-state-aware sync logic with explicit handling for fast-forward, divergence, and conflict paths.
-	\item \textbf{Tiered skill loading}: layer-1 catalog plus selective layer-2 document injection to reduce unnecessary prompt payload.
+	\item \textbf{Integrated project architecture}: a modular RSHub-agent framework covering frontend interaction, backend orchestration, tool execution, and external service integration.
+	\item \textbf{Reliable workflow control}: Human-in-the-Loop confirmation for submission-sensitive operations, with explicit execution boundaries and traceable billing behavior.
+	\item \textbf{Scalable engineering mechanisms}: repository-state-aware Git synchronization and tiered skill loading to improve maintainability, context efficiency, and operational consistency.
 \end{enumerate}
 
-These contributions are evaluated in Chapter~\ref{ch:testing-report} with a focus on behavior correctness and operational consistency.
+These aspects are discussed across subsequent chapters through system design, software specification, and testing results, with Chapter~\ref{ch:testing-report} emphasizing behavior correctness and operational consistency.
 	
 }

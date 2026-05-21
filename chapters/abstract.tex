@@ -1,0 +1,8 @@
+\centerline{\xiaoyi\bfseries Abstract}
+\vspace{2em}
+
+\noindent
+\setstretch{2}
+{\fontspec{Times New Roman}\fontsize{12pt}{14pt}\selectfont
+	This thesis presents RSHub-agent as a complete project-level intelligent agent system for remote sensing task assistance, built on the RSHub 2.0 platform. Instead of focusing on isolated feature changes, this work describes the full system construction path, including architecture design, workflow methodology, software components, API contracts, and engineering validation. The implemented system integrates a React-based frontend, a FastAPI backend, a ReAct-style agent core, modular skill and tool registries, and external service connectors for LLM inference and remote sensing task execution. To support reliable real-world operation, RSHub-agent adopts explicit Human-in-the-Loop workflow control for submission-sensitive actions, schema-driven task and state management, and tiered skill loading with deterministic routing for context-efficient multi-turn interaction. In addition, engineering-side automation such as repository-state-aware synchronization is incorporated to improve maintainability and operational consistency. Experimental and scenario-based evaluations show that the system can stably parse user intent, organize multi-step execution, enforce controllable submission behavior, and maintain coherent responses across practical task workflows. Overall, this work provides an integrated and extensible engineering framework for AI-assisted remote sensing computation, with improved clarity, reproducibility, and deployment readiness.
+	}

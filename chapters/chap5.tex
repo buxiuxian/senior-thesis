@@ -4,124 +4,150 @@
 \chapter{Software Testing and Analysis Report}
 \label{ch:testing-report}
 
-This chapter reports the experimental evaluation of three core contributions:
-(1) HITL collaboration confirmation mechanism,
-(2) GitHub--PyPI automated synchronization, and
-(3) skill architecture with token optimization.
-An additional small-scale end-to-end stability evaluation is included as an integrated view.
+This chapter reports system validation from two sources: (1) baseline capability tests inherited from the 2025 summer research report, and (2) the current skill-framework-specific evaluation added in this thesis. Following this arrangement, Sections 5.1--5.5 present the inherited baseline tests, while Section 5.6 reports the skill framework test retained in this work.
 
-\section{HITL Collaboration Confirmation Test}
-\label{sec:test-hitl}
+\section{Experiment Setup (Inherited Baseline)}
+\label{sec:test-env}
 
-Objective: validate whether task submission is strictly gated by explicit confirmation and whether credit accounting is consistent with observed runtime behavior.
+\subsection{Hardware and Software Environment}
+Baseline experiments were conducted in a Python 3.8 environment with the RS-agent stack integrated with RSHub 2.0. The reported environment includes Xeon-class server resources, GPU acceleration, FastAPI/LangChain service stack, and FAISS-based retrieval support.
 
-\subsection{Source-code Logic of HITL}
-\label{sec:hitl-code-logic}
-
-The HITL mechanism is implemented in the agent orchestration layer with an explicit state machine:
-\texttt{IDLE $\rightarrow$ PENDING\_CONFIRMATION $\rightarrow$ CONFIRMED $\rightarrow$ SUBMITTED}.
-At runtime, when a task-like plan is detected in the assistant output, the session enters
-\texttt{PENDING\_CONFIRMATION}. In this phase, user input is strictly matched against exact confirmation/rejection keywords
-(\texttt{confirm/yes} vs. \texttt{cancel/no}); non-matching inputs are short-circuited and do not proceed to tool execution.
-
-The submit tool is additionally gated at execution time: \texttt{submit\_rshub\_task} is blocked unless the HITL state is
-\texttt{CONFIRMED}. After successful submission, credits are deducted through the credit service and the state is marked as
-\texttt{SUBMITTED}. Therefore, the current implementation should be validated with two views:
-(1) logical workflow expectation (plan-stage + execution-stage accounting), and
-(2) observed code behavior (submission-stage deduction after successful execution).
-
-\subsection{A-Test Observations}
-Based on the latest A-test run, the following behavior is observed:
+\subsection{Datasets and Test Cases}
+The inherited test suite includes:
 \begin{itemize}
-	\item \textbf{Confirm path}: submission succeeds when the user provides exact confirmation keywords.
-	\item \textbf{Cancel path}: task is not submitted and no credit is deducted.
-	\item \textbf{Timeout path}: currently observed as no submission and no credit deduction; however, a full timeout-triggered auto-cancel case has not been reached within the three-day test window.
-	\item \textbf{Keyword strictness}: only strict confirm/cancel keywords are accepted; non-matching user inputs do not trigger submission.
-	\item \textbf{Credit behavior}: one successful submission currently deducts \textbf{1 credit} in observed runs.
+	\item knowledge corpus and workflow documents for snow, soil, and vegetation scenarios
+	\item a natural-language query set for intent classification and domain QA
+	\item multi-scenario modeling tasks for RSHub submission and completion validation
 \end{itemize}
 
+\section{Intent Recognition Evaluation}
+\label{sec:test-intent}
+
+\subsection{Objective}
+Evaluate whether the agent can correctly classify user requests into major interaction intents, including casual chat, knowledge QA, data modeling, and parameter inversion.
+
+\subsection{Results}
+According to the inherited report, overall intent-recognition accuracy reaches \textbf{86.2\%}. Performance by intent type is summarized in Table~\ref{tab:intent-eval}.
+
 \begin{table}[htbp]
 	\centering
-	\caption{HITL behavior correctness (A-test snapshot)}
-	\label{tab:hitl-behavior}
-	{\small
-		\setlength{\tabcolsep}{4pt}
-		\begin{tabular}{llllll}
-			\hline
-			Case ID & User Action & Task Submitted & Credit Deducted & Expected & Pass/Fail \\
-			\hline
-			H1 & confirm & Y & 1 & Submit + deduct & Pass \\
-			H2 & cancel & N & 0 & No submit + no deduct & Pass \\
-			H3 & timeout & N & 0 & No submit + no deduct & Pass$^\ast$ \\
-			H4 & non-keyword input & N & 0 & No submit + no deduct & Pass \\
-			\hline
-		\end{tabular}
-	}
-\end{table}
-
-\noindent\textit{$^\ast$Limited evidence: explicit long-wait timeout trigger not fully observed in the current test window.}
-
-\subsection{Credit Consistency Table}
-\begin{table}[htbp]
-	\centering
-	\caption{Observed credit accounting consistency}
-	\label{tab:credit-consistency}
-	\begin{tabular}{llll}
+	\caption{Intent recognition performance (inherited baseline)}
+	\label{tab:intent-eval}
+	\begin{tabular}{lll}
 		\hline
-		Scenario & Submission Result & Observed Deduction & Consistency \\
+		Intent Type & Accuracy & Avg. Response Time (s) \\
 		\hline
-		Confirmed submission & Success & 1 credit & Consistent \\
-		Cancelled before submit & No submission & 0 credit & Consistent \\
-		Timeout / no submission & No submission & 0 credit & Consistent \\
-		Invalid keyword input & No submission & 0 credit & Consistent \\
+		Casual chat (0) & 95.0\% & 1.26 \\
+		Knowledge QA (1) & 100.0\% & 1.26 \\
+		Data modeling (2) & 80.0\% & 1.26 \\
+		Parameter inversion (3) & 70.0\% & 1.26 \\
+		Overall average & 86.2\% & 1.26 \\
 		\hline
 	\end{tabular}
 \end{table}
 
-\section{GitHub-PyPI Auto Sync Test}
-\label{sec:test-sync}
+\section{Domain Knowledge QA Evaluation}
+\label{sec:test-qa}
 
-Objective: validate the automated synchronization behavior when the remote repository has new commits:
-\texttt{fetch $\rightarrow$ pull/merge $\rightarrow$ build $\rightarrow$ publish}.
+\subsection{Objective}
+Assess QA quality under RAG-based knowledge retrieval for microwave remote sensing topics.
 
-\subsection{Planned Metrics}
-\begin{itemize}
-	\item Remote update detection accuracy
-	\item Auto pull \& merge success rate
-	\item Conflict detection and fallback behavior
-	\item Release pipeline success rate
-	\item End-to-end release latency
-\end{itemize}
+\subsection{Results}
+The inherited report shows an overall QA accuracy of \textbf{80.2\%}. Detailed performance is shown in Table~\ref{tab:qa-eval}.
 
-\subsection{Result Table Template}
-\begin{table}[H]
+\begin{table}[htbp]
 	\centering
-	\caption{GitHub--PyPI synchronization evaluation}
-	\label{tab:sync-eval}
-	{\small
-		\setlength{\tabcolsep}{3pt}
-		\renewcommand{\arraystretch}{1.25}
-		\begin{tabular}{p{2.0cm}p{2.2cm}p{2.7cm}p{3.6cm}p{2.4cm}p{1.5cm}}
-			\hline
-			Scenario & Remote Status & Auto Pull/Merge & Conflict Handling & Release Result & Pass/Fail \\
-			\hline
-			No update & Up-to-date & Not triggered & Not applicable & Not triggered & Pass \\
-			Fast-forward update & Behind only (no conflict) & Auto success (ff-only) & Not applicable & Released successfully & Pass \\
-			Merge update & Diverged but mergeable & Auto/interactive merge success & Merge completed without conflict & Released successfully & Pass \\
-			Conflict update & Diverged with conflict & Auto merge fails & Explicit conflict warning; manual confirmation required & Not released & Pass \\
-			\hline
-		\end{tabular}
-	}
+	\caption{Knowledge QA performance by domain (inherited baseline)}
+	\label{tab:qa-eval}
+	\begin{tabular}{llll}
+		\hline
+		Knowledge Domain & Accuracy & Completeness & Relevance \\
+		\hline
+		Basic theory & 85.0\% & 82.1\% & 83.5\% \\
+		Model principles & 81.2\% & 79.4\% & 80.3\% \\
+		Parameter setting & 78.9\% & 76.7\% & 77.8\% \\
+		Application scenarios & 76.8\% & 74.2\% & 75.5\% \\
+		Result analysis & 79.1\% & 77.3\% & 78.2\% \\
+		Overall average & 80.2\% & 77.9\% & 79.1\% \\
+		\hline
+	\end{tabular}
 \end{table}
-\noindent\textit{Pass/Fail criterion: ``Pass'' indicates that the observed system behavior matches the expected behavior for each scenario, rather than implying that all scenarios end with a successful release.}
 
+\section{RSHub Submission and Execution Evaluation}
+\label{sec:test-submit}
 
-\section{Skill Architecture and Token Optimization Test}
+\subsection{Objective}
+Validate integration behavior of RS-agent with RSHub platform, including task submission, parameter parsing, and completion status.
+
+\subsection{Results}
+Across snow/soil/vegetation scenarios, the inherited report records \textbf{100\%} submission success, \textbf{90.0\%} average parameter parsing accuracy, and \textbf{80.6\%} average task completion rate.
+
+\begin{table}[htbp]
+	\centering
+	\caption{RSHub task submission performance (inherited baseline)}
+	\label{tab:submit-eval}
+	\begin{tabular}{llll}
+		\hline
+		Scene Type & Submission Success & Parameter Parsing Accuracy & Task Completion Rate \\
+		\hline
+		Snow & 100\% & 89.9\% & 79.9\% \\
+		Soil & 100\% & 90.0\% & 80.8\% \\
+		Vegetation & 100\% & 90.0\% & 81.0\% \\
+		Overall average & 100\% & 90.0\% & 80.6\% \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Modeling Capability and End-to-End Integration}
+\label{sec:test-e2e}
+
+\subsection{Modeling Capability Results}
+For representative modeling cases across snow/soil/vegetation, the inherited report indicates overall scores around mid-70\% level, with stronger behavior on snow/soil cases and relatively weaker performance on complex vegetation scenarios.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Modeling capability evaluation (inherited baseline)}
+	\label{tab:modeling-eval}
+	\begin{tabular}{lllll}
+		\hline
+		Case & Parameter Rationality & Result Accuracy & Computational Efficiency & Visualization Quality \\
+		\hline
+		Snow modeling & 76.8\% & 74.2\% & 75.1\% & 78.9\% \\
+		Soil modeling & 77.5\% & 75.8\% & 74.3\% & 81.2\% \\
+		Vegetation modeling & 70.7\% & 71.9\% & 72.8\% & 68.8\% \\
+		Overall average & 75.0\% & 74.0\% & 74.1\% & 76.3\% \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsection{Integrated Workflow Results}
+End-to-end workflow evaluation in the inherited report gives a task completion level of \textbf{91.2\%}, with stable multi-step execution in representative remote sensing workflows.
+
+\begin{table}[htbp]
+	\centering
+	\caption{System integration performance (inherited baseline)}
+	\label{tab:integration-eval}
+	\begin{tabular}{lll}
+		\hline
+		Metric & Value & Grade \\
+		\hline
+		Task completion & 91.2\% & Excellent \\
+		System stability & 88.5\% & Good \\
+		Result reliability & 89.7\% & Excellent \\
+		Execution efficiency & 85.4\% & Good \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Skill Framework and Token Optimization Test}
 \label{sec:test-skill-token}
 
-Objective: validate the effect of replacing long monolithic prompts with tiered skill loading.
+This section is retained as the thesis-specific evaluation of the current skill framework, and is intentionally placed at the end of this chapter.
 
-\subsection{Observed Result Table}
+\subsection{Objective}
+Evaluate the effect of replacing monolithic prompts with tiered skill loading (layer-1 catalog + selective layer-2 full documents).
+
+\subsection{Observed Results}
 \begin{table}[H]
 	\centering
 	\caption{Skill architecture comparison (baseline vs tiered loading)}
@@ -141,40 +167,11 @@ Objective: validate the effect of replacing long monolithic prompts with tiered 
 		\end{tabular}
 	}
 \end{table}
-\noindent\textit{Measurement note: quantitative token and latency values are not instrumented in this run. The main observed gap is context continuity: baseline mode occasionally loses prior submission context (e.g., ``not submitted''), while tiered mode remains stable under the same task set.}
-
-\section{End-to-End Stability (Small Scale)}
-\label{sec:test-e2e}
-
-Objective: run 20--50 realistic tasks and report integrated operational stability.
-
-\subsection{Planned Metrics}
-\begin{itemize}
-	\item End-to-end success rate
-	\item Average total completion time
-	\item Failure-cause distribution (e.g., parameter error, network issue, platform queueing)
-\end{itemize}
-
-\subsection{Result Table Template (to fill)}
-\begin{table}[htbp]
-	\centering
-	\caption{End-to-end stability summary}
-	\label{tab:e2e-stability}
-	\begin{tabular}{lllll}
-		\hline
-		Task Count & Success Rate & Avg. Time(s) & Top Failure Cause & Notes \\
-		\hline
-		pending & pending & pending & pending & pending \\
-		\hline
-	\end{tabular}
-\end{table}
+\noindent\textit{Measurement note: quantitative token/latency instrumentation is still limited in this run. The most visible difference is multi-turn context continuity under long interaction sequences.}
 
 \section{Chapter Summary}
 
-This chapter evaluates three implementation-focused improvements and reports their current validation status.
-For HITL confirmation, observed behavior is consistent with the enforced safety rule: submission is gated by explicit confirmation, and credits are deducted only on successful submission (1 credit).
-For GitHub--PyPI synchronization, the tested scenarios show expected branch-state handling, including fast-forward success, merge-capable divergence handling, and fail-fast conflict reporting with manual confirmation requirements.
-For skill architecture optimization, baseline and tiered modes both complete single-turn tasks, while tiered loading shows more stable multi-turn context continuity in repeated tests.
-
-Overall, the implemented changes improve behavioral correctness and operational reliability in the current iteration.
-Remaining work is mainly quantitative expansion, including full end-to-end stability statistics and finer-grained token/latency instrumentation.
+This chapter combines inherited baseline evaluation and current thesis-specific evaluation.
+The inherited baseline (Sections 5.1--5.5) confirms practical capability in intent recognition, domain QA, RSHub task integration, modeling workflow execution, and end-to-end stability.
+The retained thesis-specific test (Section 5.6) further shows that the skill framework improves context continuity while preserving response quality.
+Overall, these results support the project-level claim that RSHub-agent is operationally viable and extensible for practical remote sensing workflows.

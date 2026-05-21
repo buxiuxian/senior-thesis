@@ -4,48 +4,49 @@
 \chapter{Project Conclusion}
 \label{ch:conclusion}
 
-This chapter summarizes what was actually implemented and verified in this project iteration:
-\textbf{(1) HITL confirmation gating}, \textbf{(2) Git synchronization workflow}, and \textbf{(3) tiered skill loading for prompt control}.
+This chapter concludes the thesis from a \textbf{project-level perspective}. The focus is not only on individual feature improvements, but on how RSHub-agent is built and validated as an end-to-end engineering system for remote sensing task assistance.
 
-\section{Contribution 1: HITL Collaboration Confirmation}
-\label{sec:contrib-hitl}
-
-The first contribution is a stricter and more transparent HITL confirmation workflow for task submission.
-Relative to the baseline process established in the summer project, the current design clarifies billing boundaries and confirmation checkpoints.
-
-\subsection{Current Execution Flow}
-\begin{enumerate}
-	\item User provides task content.
-	\item Agent generates the execution plan.
-	\item HITL is triggered and asks user to input \texttt{CONFIRM} or \texttt{CANCEL}.
-	\item User inputs \texttt{CONFIRM}.
-	\item Task is submitted to the remote compute platform.
-	\item System deducts \textbf{1 credit} only after successful submission.
-\end{enumerate}
-
-\subsection{Credit Rule}
-The implemented rule is a single-credit policy tied to successful submission:
+\section{Overall Project Outcomes}
+Compared with the summer-project baseline, this iteration establishes a clearer full-stack path from user request to platform execution:
 \begin{itemize}
-	\item Confirmed and successfully submitted task: deduct 1 credit
-	\item Cancel / timeout / non-matching confirmation input: deduct 0 credit
+	\item frontend/backend integration for conversational and streaming interaction
+	\item ReAct-based orchestration with explicit HITL state control
+	\item modular skill and tool systems for scalable capability extension
+	\item engineering-side automation for synchronization and maintenance support
 \end{itemize}
 
-In practice, this rule removes ambiguous charging points and keeps billing behavior directly tied to a visible user action.
+These outcomes align with the objective defined in Chapter~1: presenting RSHub-agent as a complete project implementation rather than a set of isolated patches.
 
+\section{Core System Capabilities}
 
-\section{Contribution 2: GitHub-PyPI Automated Synchronization}
-\label{sec:contrib-sync}
+\subsection{Integrated Project Architecture}
+In the final implementation, RSHub-agent is organized as an integrated project architecture rather than isolated scripts. The system connects frontend interaction, backend orchestration, skill and tool registries, and external platform services through explicit interfaces.
 
-The second contribution is a safer synchronization workflow around repository divergence and local/remote consistency checks.
-Instead of always forcing a single sync path, the current implementation applies different actions based on repository state.
+This architecture-level integration enables a stable end-to-end path from user intent parsing to remote task execution and result return, which is the structural basis for the workflow and engineering mechanisms described below.
 
-\subsection{Core Behavior}
-The sync runner first validates prerequisites (\texttt{git}, optional \texttt{gh} auth, remote existence, clean working tree), then executes state-dependent actions:
+\subsection{Reliable Workflow Control}
+RSHub-agent enforces a controlled submission path through HITL gating. The operational flow remains explicit:
+\begin{enumerate}
+	\item user provides task intent and parameters
+	\item agent generates executable plan
+	\item HITL requests \texttt{CONFIRM}/\texttt{CANCEL}
+	\item submission proceeds only after confirmation
+	\item credit is deducted only on successful submission
+\end{enumerate}
+
+The billing rule is intentionally simple and transparent:
 \begin{itemize}
-    \item behind only: fast-forward merge (\texttt{merge --ff-only})
-    \item ahead only: push is allowed only after explicit confirmation
-    \item diverged: user must choose merge/rebase/force-with-lease/skip
-    \item unresolved conflict: workflow exits with explicit warning
+	\item successful confirmed submission: deduct 1 credit
+	\item cancel/timeout/non-matching input: deduct 0 credit
+\end{itemize}
+
+\subsection{Scalable Engineering Mechanisms}
+The GitSync component provides repository-state-aware synchronization behavior, so the system does not rely on a single forced sync strategy:
+\begin{itemize}
+    \item behind only: fast-forward update (\texttt{merge --ff-only})
+    \item ahead only: push requires explicit confirmation
+    \item diverged: merge/rebase/force-with-lease/skip is selected explicitly
+    \item unresolved conflicts: workflow exits with clear warning
 \end{itemize}
 
 \begin{lstlisting}[language=bash, basicstyle=\ttfamily\footnotesize]
@@ -54,89 +55,55 @@ git rev-list --left-right --count HEAD...origin/main
 git merge --ff-only origin/main
 \end{lstlisting}
 
-\subsection{Observed Engineering Value}
+This behavior improves operational reproducibility and reduces branch-state handling mistakes during routine maintenance.
+
+In addition, the deployed skill architecture uses tiered loading:
 \begin{itemize}
-    \item Fewer accidental sync mistakes caused by manual branch state judgment
-    \item Explicit stop conditions for conflict scenarios instead of silent continuation
-    \item Better reproducibility of sync decisions through logged command paths
+    \item \textbf{Layer 1 (always loaded)}: compact policy/index skills
+    \item \textbf{Layer 2 (on-demand)}: detailed domain skills loaded per turn
 \end{itemize}
 
-\section{Contribution 3: Skill Architecture and Token Optimization}
-\label{sec:contrib-skill-token}
+In practical usage, this structure lowers redundant prompt payload and improves instruction relevance in multi-turn, task-oriented sessions. Quantitative confirmation remains in Chapter~\ref{ch:testing-report}.
 
-The third contribution addresses oversized system prompts in the baseline agent.
-The previous approach loaded broad mixed instructions for most requests, while the current version routes skill documents by turn-level intent.
-
-\subsection{Problem}
-The original design relied on a long monolithic prompt containing mixed policy, workflow, and domain details.
-This resulted in high token usage, slower responses, and reduced retrieval relevance.
-
-\subsection{Optimization}
-A tiered skill architecture is adopted:
-\begin{itemize}
-    \item \textbf{Layer 1 (always loaded)}: compact policy and index skills
-    \item \textbf{Layer 2 (on-demand)}: detailed domain-specific skills
-\end{itemize}
-
-Only task-relevant skills are loaded into context, thereby reducing unnecessary prompt length.
-
-\subsection{Observed/Expected Effects}
-\begin{itemize}
-    \item Lower prompt size in routine turns due to selective layer-2 loading
-    \item Better instruction relevance for task-oriented and HITL-sensitive interactions
-    \item No intended quality loss, but full quantitative confirmation remains in Chapter~\ref{ch:testing-report}
-\end{itemize}
-
-\section{Summary of Contributions}
-
-The practical contribution of this work is a set of focused engineering changes that improve controllability and reduce avoidable operational failure modes:
-\begin{enumerate}
-	\item A clearer HITL confirmation workflow with a predictable one-credit-on-success model
-	\item A more robust GitHub-PyPI automation process with remote pull/merge synchronization
-	\item A token-efficient tiered skill architecture replacing long monolithic prompts
-\end{enumerate}
-
-These changes do not claim a complete production hardening, but they establish clearer operational rules and testable behavior boundaries.
-
-\section{Optimization Practices}
+\section{Project Methodology and Engineering Practices}
 \label{sec:optimization-practices}
 
-The optimization strategy used in this work follows a simple pattern:
-identify a repeated failure/cost point in real usage, define an explicit rule, and then enforce the rule in code and test it.
+The engineering methodology in this project follows a repeatable pattern:
+identify recurring operational risks, define explicit behavior rules, implement them in modular components, and validate through scenario-based testing.
 
 \subsection{Practice A: Workflow Safety as a Primary Constraint}
 \begin{itemize}
 	\item Introduced explicit \texttt{CONFIRM}/\texttt{CANCEL} gating before task submission
 	\item Applied charge only on successful submission (1 credit)
-    \item Added strict keyword matching to prevent accidental submit triggers
+	\item Added strict keyword matching to prevent accidental submit triggers
 \end{itemize}
 
 \subsection{Practice B: Release Reliability through Automation}
 \begin{itemize}
-    \item Added repository-state checks before taking sync actions
-    \item Restricted dangerous operations behind explicit user confirmation
-    \item Kept conflict paths fail-fast with visible warnings
+	\item Added repository-state checks before taking sync actions
+	\item Restricted dangerous operations behind explicit user confirmation
+	\item Kept conflict paths fail-fast with visible warnings
 \end{itemize}
 
 \subsection{Practice C: Context Efficiency through Skill Structuring}
 \begin{itemize}
-    \item Replaced monolithic system prompts with layer-1 + selective layer-2 skill loading
-    \item Bound skill injection to turn intent (task/literature/HITL state)
-    \item Reduced unnecessary context payload in non-relevant turns
+	\item Replaced monolithic system prompts with layer-1 + selective layer-2 skill loading
+	\item Bound skill injection to turn intent (task/literature/HITL state)
+	\item Reduced unnecessary context payload in non-relevant turns
 \end{itemize}
 
 \section{Future Work}
 \label{sec:future-work}
 
-Future work will focus on two gaps observed in the current iteration.
-First, synchronization is still command-driven and human-triggered; a continuous maintenance loop (\textit{diff} detection, impact analysis, patch proposal, regression checks) is still missing.
-Second, current evaluation coverage is stronger on workflow correctness than on long-run operational statistics.
+Future work focuses on two major gaps in the current project iteration.
+First, synchronization remains command-driven and human-triggered; a continuous maintenance loop (\textit{diff} detection, impact analysis, patch proposal, regression checks) is still incomplete.
+Second, evaluation currently emphasizes workflow correctness more than long-run operational statistics under sustained workloads.
 
 Another direction is an administrator-facing engineering assistant for repository hygiene and configuration consistency checks.
 The goal is not generic coding help, but project-specific diagnostics: identifying risky configuration drift, incomplete test evidence, and repetitive maintenance tasks that can be standardized.
 
 \section{Overall Summary}
 
-Compared with the summer-project baseline, this iteration prioritizes correctness of key paths over feature breadth.
-HITL confirmation, synchronization branching logic, and tiered skill loading are now implemented with clearer rules and observable outcomes.
-The current system remains an evolving engineering prototype, but its critical behaviors are more explicit, testable, and maintainable than before.
+This thesis presents RSHub-agent as an integrated remote sensing agent project spanning architecture, workflow control, skill organization, engineering automation, and software validation.
+The current system is still an evolving engineering prototype, but its key behaviors and interfaces are now clearer, more testable, and more maintainable than in the baseline stage.
+These results provide a practical foundation for scaling RSHub-agent toward more stable and extensible real-world deployment.
